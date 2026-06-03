@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: invitation_app
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - invitation_net
+
+  web:
+    image: nginx:alpine
+    container_name: invitation_web
+    ports:
+      - "8109:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - app
+    networks:
+      - invitation_net
+
+  db:
+    image: postgres:16
+    container_name: invitation_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: invitation_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret123!
+    ports:
+      - "5459:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - invitation_net
+
+networks:
+  invitation_net:
+
+volumes:
+  db_data:
