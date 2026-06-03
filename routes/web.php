@@ -7,6 +7,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+Route::get('/pricing', function () {
+    return view('pricing');
+})->name('pricing');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
