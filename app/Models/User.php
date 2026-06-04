@@ -47,10 +47,17 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsToMany(
-            Role::class,
-            'role_user'
-        );
+        return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')
+                    ->using(RoleUser::class) // <-- Beritahu Laravel untuk memakai model pivot kustom Anda
+                    ->withTimestamps();      // Tambahkan ini jika tabel pivot Anda punya created_at & updated_at
+    }
+
+    /**
+     * Helper untuk mengecek apakah user memiliki role tertentu
+     */
+    public function hasRole($roleName)
+    {
+        return $this->roles()->where('name', $roleName)->exists();
     }
     
 }

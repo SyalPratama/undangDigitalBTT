@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Model;
 
-class RoleUser extends Model
+class RoleUser extends Pivot
 {
     protected $table = 'role_user';
 
