@@ -213,7 +213,7 @@
 
                 <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
                     <a href="{{ url('/') }}#features" class="hover:text-indigo-600 transition">Fitur</a>
-                    <a href="#template" class="hover:text-indigo-600 transition">Template</a>
+                    <a href="{{ route('themes.index') }}" class="hover:text-indigo-600 transition">Template</a>
                     <a href="{{ route('pricing') }}" class="hover:text-indigo-600 transition">Harga</a>
                 </nav>
 
@@ -249,8 +249,9 @@
         <div id="mobile-menu"
             class="hidden md:hidden border-t border-slate-200/50 bg-white/95 backdrop-blur-lg px-4 pt-4 pb-6 shadow-xl space-y-4">
             <nav class="flex flex-col gap-4 text-base font-medium text-slate-600">
-                <a href="{{ url('/') }}#features" class="mobile-nav-link hover:text-indigo-600 transition py-1">Fitur</a>
-                <a href="#template" class="mobile-nav-link hover:text-indigo-600 transition py-1">Template</a>
+                <a href="{{ url('/') }}#features"
+                    class="mobile-nav-link hover:text-indigo-600 transition py-1">Fitur</a>
+                <a href="{{ route('themes.index') }}" class="mobile-nav-link hover:text-indigo-600 transition py-1">Template</a>
                 <a href="{{ route('pricing') }}" class="mobile-nav-link hover:text-indigo-600 transition py-1">Harga</a>
             </nav>
             <hr class="border-slate-200/60">
@@ -269,8 +270,10 @@
 
     <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12 text-center">
         @yield('content')
+    </main>
 
-        <footer class="mt-28 border-t border-slate-200/60 pt-16 text-left max-w-5xl mx-auto">
+    <footer class="w-full bg-white/60 backdrop-blur-xl border-t border-white/40 mt-28 shadow-lg shadow-slate-200/20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 text-left">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 pb-12">
                 <div class="md:col-span-2 pr-0 md:pr-12">
                     <div class="flex items-center gap-2 cursor-pointer mb-4">
@@ -282,9 +285,8 @@
                                     d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                             </svg>
                         </div>
-                        <span class="font-bold text-lg tracking-tight text-[#2d124d]">
-                            ngajak<span class="text-indigo-600">.com</span>
-                        </span>
+                        <span class="font-bold text-lg tracking-tight text-[#2d124d]">ngajak<span
+                                class="text-indigo-600">.com</span></span>
                     </div>
                     <p class="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-sm">
                         Platform undangan digital premium untuk momen yang layak dikenang. Cepat, elegan, interaktif.
@@ -311,29 +313,24 @@
                     </div>
                     <div>
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Perusahaan</h4>
-                        <p class="text-xs sm:text-sm font-semibold text-slate-800 mb-1">
-                            PT Berkah Teknologi Terdepan
+                        <p class="text-xs sm:text-sm font-semibold text-slate-800 mb-1">PT Berkah Teknologi Terdepan
                         </p>
                         <a href="mailto:support@ngajak.com"
-                            class="text-xs sm:text-sm text-slate-500 hover:text-indigo-600 transition">
-                            support@ngajak.com
-                        </a>
+                            class="text-xs sm:text-sm text-slate-500 hover:text-indigo-600 transition">support@ngajak.com</a>
                     </div>
                 </div>
             </div>
 
             <div
-                class="border-t border-slate-200/50 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] sm:text-xs text-slate-400 font-medium">
-                <div>
-                    &copy; 2026 PT Berkah Teknologi Terdepan. All rights reserved.
-                </div>
-                <div>
-                    by <a href="#" class="text-purple-600 font-semibold hover:underline">futurecloud.id</a>
+                class="border-t border-white/40 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] sm:text-xs text-slate-400 font-medium">
+                <div>&copy; 2026 PT Berkah Teknologi Terdepan. All rights reserved.</div>
+                <div>by <a href="#" class="text-purple-600 font-semibold hover:underline">futurecloud.id</a>
                 </div>
             </div>
-        </footer>
-    </main>
+        </div>
+    </footer>
 
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const menuButton = document.getElementById('mobile-menu-button');

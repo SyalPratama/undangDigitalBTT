@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Superadmin Dashboard') - NikahDigital</title>
+    <title>@yield('title', 'Customer Dashboard') - NikahDigital</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -84,18 +84,18 @@
 
                 <div class="px-6 pt-4">
                     <span
-                        class="text-[10px] font-bold text-stone-400 uppercase tracking-widest bg-stone-50 px-2.5 py-1 rounded-md border border-stone-200/40">Superadmin
+                        class="text-[10px] font-bold text-stone-400 uppercase tracking-widest bg-stone-50 px-2.5 py-1 rounded-md border border-stone-200/40">Customer
                         Workspace</span>
                 </div>
 
                 <nav class="p-4 space-y-1.5 mt-2">
                     {{-- MENU: Dashboard --}}
-                    <a href="{{ route('superadmin.dashboard') }}"
+                    <a href="{{ route('customer.dashboard') }}"
                         class="group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
-                        {{ request()->routeIs('superadmin.dashboard')
+                        {{ request()->routeIs('customer.dashboard')
                             ? 'bg-gradient-to-r from-emerald-50 to-emerald-100/30 text-emerald-900 border-l-4 border-emerald-600 pl-3 font-semibold'
                             : 'text-stone-500 hover:bg-stone-50 hover:text-stone-900 hover:translate-x-1' }}">
-                        <svg class="w-5 h-5 transition-colors {{ request()->routeIs('superadmin.dashboard') ? 'text-emerald-600' : 'text-stone-400 group-hover:text-stone-600' }}"
+                        <svg class="w-5 h-5 transition-colors {{ request()->routeIs('customer.dashboard') ? 'text-emerald-600' : 'text-stone-400 group-hover:text-stone-600' }}"
                             fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z">
@@ -105,48 +105,18 @@
                     </a>
 
                     {{-- MENU: Kelola Undangan --}}
-                    <a href="{{ route('superadmin.kelola-undangan.index') }}"
+                    <a href="{{ route('customer.kelola-undangan.index') }}"
                         class="group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
-                        {{ request()->routeIs('superadmin.kelola-undangan.*')
+                        {{ request()->routeIs('customer.kelola-undangan.*')
                             ? 'bg-gradient-to-r from-emerald-50 to-emerald-100/30 text-emerald-900 border-l-4 border-emerald-600 pl-3 font-semibold'
                             : 'text-stone-500 hover:bg-stone-50 hover:text-stone-900 hover:translate-x-1' }}">
-                        <svg class="w-5 h-5 transition-colors {{ request()->routeIs('superadmin.undangan.*') ? 'text-emerald-600' : 'text-stone-400 group-hover:text-stone-600' }}"
+                        <svg class="w-5 h-5 transition-colors {{ request()->routeIs('customer.undangan.*') ? 'text-emerald-600' : 'text-stone-400 group-hover:text-stone-600' }}"
                             fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                             </path>
                         </svg>
                         Kelola Undangan
-                    </a>
-
-                    {{-- MENU: Reseller & Customer --}}
-                    <a href="{{ route('superadmin.user.index') }}"
-                        class="group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
-                        {{ request()->routeIs('superadmin.user.*')
-                            ? 'bg-gradient-to-r from-emerald-50 to-emerald-100/30 text-emerald-900 border-l-4 border-emerald-600 pl-3 font-semibold'
-                            : 'text-stone-500 hover:bg-stone-50 hover:text-stone-900 hover:translate-x-1' }}">
-                        <svg class="w-5 h-5 transition-colors {{ request()->routeIs('superadmin.user.*') ? 'text-emerald-600' : 'text-stone-400 group-hover:text-stone-600' }}"
-                            fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                            </path>
-                        </svg>
-                        Reseller & Customer
-                    </a>
-
-                    {{-- MENU: Template Desain --}}
-                    <a href="{{ route('superadmin.themes.index') }}"
-                        class="group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
-                        {{ request()->routeIs('superadmin.themes.*')
-                            ? 'bg-gradient-to-r from-emerald-50 to-emerald-100/30 text-emerald-900 border-l-4 border-emerald-600 pl-3 font-semibold'
-                            : 'text-stone-500 hover:bg-stone-50 hover:text-stone-900 hover:translate-x-1' }}">
-                        <svg class="w-5 h-5 transition-colors {{ request()->routeIs('superadmin.themes.*') ? 'text-emerald-600' : 'text-stone-400 group-hover:text-stone-600' }}"
-                            fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z">
-                            </path>
-                        </svg>
-                        Template Desain
                     </a>
                 </nav>
             </div>
@@ -191,7 +161,7 @@
                         <span
                             class="text-xs font-semibold text-stone-800 leading-tight">{{ Auth::user()->name }}</span>
                         <span
-                            class="text-[10px] font-medium text-emerald-600 bg-emerald-50 border border-emerald-200/40 px-1.5 py-0.5 rounded-md mt-0.5 self-end">Superadmin</span>
+                            class="text-[10px] font-medium text-emerald-600 bg-emerald-50 border border-emerald-200/40 px-1.5 py-0.5 rounded-md mt-0.5 self-end">customer</span>
                     </div>
                     <div
                         class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-emerald-600/10 border-2 border-white ring-1 ring-stone-200/50">
