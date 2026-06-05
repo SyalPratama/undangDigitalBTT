@@ -4,19 +4,31 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Superadmin\DashboardController;
 use App\Http\Controllers\Superadmin\KelolaUserController;
 use App\Http\Controllers\Superadmin\KelolaUndanganController;
+use App\Http\Controllers\Superadmin\ThemeController;
+
+
+use App\Http\Controllers\Customer\CusDashboardController;
+use App\Http\Controllers\Customer\CusKelolaUndanganController;
 
 
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-
 Route::get('/pricing', function () {
     return view('pricing');
 })->name('pricing');
+
+Route::get('/themes', [HomeController::class, 'index'])->name('themes.index');
+Route::get('/themes/{id}/preview', [HomeController::class, 'preview'])->name('themes.preview');
+
+Route::get('/undangan/{slug}', [InvitationController::class, 'show'])
+    ->name('invitation.show');
+    
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -44,6 +56,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('kelola-undangan/{id}/edit', [KelolaUndanganController::class, 'edit'])->name('kelola-undangan.edit');
         Route::put('kelola-undangan/{id}', [KelolaUndanganController::class, 'update'])->name('kelola-undangan.update');
         Route::delete('kelola-undangan/{id}', [KelolaUndanganController::class, 'destroy'])->name('kelola-undangan.destroy');
+
+        Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
+        Route::post('themes', [ThemeController::class, 'store'])->name('themes.store');
+        Route::put('themes/{id}', [ThemeController::class, 'update'])->name('themes.update');
+        Route::delete('themes/{id}', [ThemeController::class, 'destroy'])->name('themes.destroy');
+        Route::patch('themes/{id}/toggle', [ThemeController::class, 'toggleStatus'])->name('themes.toggle');
+        Route::get('themes/{id}/preview', [ThemeController::class, 'preview'])->name('themes.preview');
     });
 
     Route::middleware(['role:reseller'])->prefix('reseller')->name('reseller.')->group(function () {
@@ -53,14 +72,23 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware(['role:customer'])->prefix('customer')->name('customer.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('customer.dashboard');
-        })->name('dashboard'); 
+        Route::get('/dashboard', [CusDashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('kelola-undangan', [CusKelolaUndanganController::class, 'index'])->name('kelola-undangan.index');
+        Route::get('kelola-undangan/create', [CusKelolaUndanganController::class, 'create'])->name('kelola-undangan.create');
+        Route::get('kelola-undangan/{id}/edit', [CusKelolaUndanganController::class, 'edit'])->name('kelola-undangan.edit');
+        
+        // SATU METHOD UNTUK TAMBAH & EDIT (Gunakan POST agar aman saat upload file/media)
+        Route::post('kelola-undangan/save/{id?}', [CusKelolaUndanganController::class, 'save'])->name('kelola-undangan.save');
+        Route::delete('kelola-undangan/{id}', [CusKelolaUndanganController::class, 'destroy'])->name('kelola-undangan.destroy');
+        Route::post('kelola-undangan/{id}/toggle-status', [CusKelolaUndanganController::class, 'toggleStatus'])
+        ->name('kelola-undangan.toggle-status');
+
+        Route::get('/themes/{id}/preview', [CusDashboardController::class, 'preview'])->name('themes.preview');
     });
 
 });
 
-Route::get('/undangan/{slug}', [InvitationController::class, 'show'])
-    ->name('invitation.show');
+
 
 require __DIR__.'/auth.php';

@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Theme extends Model
 {
     protected $fillable = [
+        'theme_category_id',
         'name',
         'slug',
         'description',
@@ -36,5 +38,10 @@ class Theme extends Model
     public function invitations()
     {
         return $this->hasMany(Invitation::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ThemeCategory::class, 'theme_category_id');
     }
 }

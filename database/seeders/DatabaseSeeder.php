@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             InvitationTypeSeeder::class,
             ThemeSeeder::class,
             InvitationSeeder::class,
+            AqiqahKhitanInvitationSeeder::class,
         ]);
     }
 }
