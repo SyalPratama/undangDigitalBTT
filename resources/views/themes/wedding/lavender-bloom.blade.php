@@ -881,7 +881,7 @@
                 style="position:absolute;width:450px;height:450px;border:1px solid rgba(139,123,181,.07);border-radius:50%;z-index:2;pointer-events:none">
             </div>
 
-            <div style="position:relative;z-index:3;text-align:center;padding:24px" class="anim">
+            <div style="position:relative;z-index:3;text-align:center;padding:24px">
                 <p class="anim anim-1"
                     style="font-size:10px;letter-spacing:.55em;color:var(--lavender-dk);text-transform:uppercase;margin-bottom:22px">
                     The Wedding Of
@@ -942,7 +942,7 @@
                 <use href="#floral-branch" x="-10" y="-180" />
             </svg>
 
-            <div style="max-width:580px;text-align:center;padding:40px 24px;z-index:1" class="anim">
+            <div style="max-width:580px;text-align:center;padding:40px 24px;z-index:1">
                 <svg class="anim anim-1" width="64" height="64" viewBox="0 0 64 64"
                     style="margin:0 auto 24px;opacity:.55">
                     <circle cx="32" cy="32" r="29" stroke="var(--lavender)" stroke-width=".8"
