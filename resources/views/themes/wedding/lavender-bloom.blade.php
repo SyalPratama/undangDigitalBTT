@@ -52,6 +52,7 @@
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
             scroll-behavior: smooth;
+            pointer-events: none; /* diaktifkan setelah envelope ditutup */
         }
 
         .snap-sec {
@@ -1534,6 +1535,9 @@
         //  ENVELOPE
         // ═══════════════════════════════════════════════════════
         function openInvitation() {
+            // Aktifkan scroll container (sebelumnya dinonaktifkan agar tidak block tombol)
+            document.getElementById('scroll-container').style.pointerEvents = 'auto';
+
             const env = document.getElementById('envelope');
             env.classList.add('closing');
             setTimeout(() => {

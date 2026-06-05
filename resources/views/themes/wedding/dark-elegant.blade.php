@@ -396,6 +396,27 @@
             .cdn          { font-size: 1.8rem !important; }
             .cdbox        { min-width: 52px !important; }
         }
+
+        /* ───── FLORAL / BOTANICAL DECORATIONS ───── */
+
+        /* Damask repeating pattern */
+        .damask-bg {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='130' height='130' viewBox='0 0 130 130'%3E%3Cg fill='%23c9a84c' opacity='0.042'%3E%3Cpath d='M65,27 C55,36 53,48 65,53 C77,48 75,36 65,27Z'/%3E%3Cpath d='M65,27 C55,36 53,48 65,53 C77,48 75,36 65,27Z' transform='rotate(45 65 65)'/%3E%3Cpath d='M65,27 C55,36 53,48 65,53 C77,48 75,36 65,27Z' transform='rotate(90 65 65)'/%3E%3Cpath d='M65,27 C55,36 53,48 65,53 C77,48 75,36 65,27Z' transform='rotate(135 65 65)'/%3E%3Cpath d='M65,27 C55,36 53,48 65,53 C77,48 75,36 65,27Z' transform='rotate(180 65 65)'/%3E%3Cpath d='M65,27 C55,36 53,48 65,53 C77,48 75,36 65,27Z' transform='rotate(225 65 65)'/%3E%3Cpath d='M65,27 C55,36 53,48 65,53 C77,48 75,36 65,27Z' transform='rotate(270 65 65)'/%3E%3Cpath d='M65,27 C55,36 53,48 65,53 C77,48 75,36 65,27Z' transform='rotate(315 65 65)'/%3E%3Ccircle cx='65' cy='65' r='4.5'/%3E%3Cpath d='M63,0 L65,5 L67,0 L65,-5Z' transform='translate(0,0)'/%3E%3Cpath d='M63,130 L65,125 L67,130'/%3E%3Cpath d='M0,63 L5,65 L0,67'/%3E%3Cpath d='M130,63 L125,65 L130,67'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 130px 130px;
+        }
+
+        /* Shared SVG decoration wrapper */
+        .floral-deco {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.09;
+        }
+
+        @media (max-width: 768px) {
+            .floral-deco { opacity: 0.07; }
+            .floral-deco.lg { width: 130px !important; height: 130px !important; }
+        }
     </style>
 </head>
 
@@ -578,6 +599,59 @@
             <div style="position:absolute;width:min(420px,90vw);height:min(420px,90vw);border:1px solid rgba(201,168,76,.055);border-radius:50%;z-index:2;animation:ring-pulse 6s ease-in-out 2s infinite"></div>
             <div style="position:absolute;width:min(560px,105vw);height:min(560px,105vw);border:1px solid rgba(201,168,76,.025);border-radius:50%;z-index:2"></div>
 
+
+            {{-- 🌸 HERO FLORAL CORNER --}}
+            <svg viewBox="0 0 160 280" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 class="floral-deco" style="bottom:60px;left:0;width:160px;height:280px;opacity:0.12;z-index:2">
+              <path d="M25,280 C18,240 30,200 25,160 C20,120 30,80 25,40 C22,20 25,0 25,0"
+                    stroke="#c9a84c" stroke-width="0.8" fill="none"/>
+              <g fill="#c9a84c">
+                <path d="M22,60 C6,46 2,26 14,12 C18,26 20,46 22,60Z" opacity="0.8"/>
+                <path d="M28,60 C44,46 48,26 36,12 C32,26 30,46 28,60Z" opacity="0.8"/>
+                <path d="M22,140 C6,126 2,106 14,92 C18,106 20,126 22,140Z" opacity="0.8"/>
+                <path d="M28,140 C44,126 48,106 36,92 C32,106 30,126 28,140Z" opacity="0.8"/>
+                <path d="M22,220 C6,206 2,186 14,172 C18,186 20,206 22,220Z" opacity="0.8"/>
+                <path d="M28,220 C44,206 48,186 36,172 C32,186 30,206 28,220Z" opacity="0.8"/>
+              </g>
+              <g transform="translate(25,100)" fill="#c9a84c">
+                <path d="M0,-28 C-9,-20 -9,-10 0,-6 C9,-10 9,-20 0,-28Z"/>
+                <path d="M0,-28 C-9,-20 -9,-10 0,-6 C9,-10 9,-20 0,-28Z" transform="rotate(72)"/>
+                <path d="M0,-28 C-9,-20 -9,-10 0,-6 C9,-10 9,-20 0,-28Z" transform="rotate(144)"/>
+                <path d="M0,-28 C-9,-20 -9,-10 0,-6 C9,-10 9,-20 0,-28Z" transform="rotate(216)"/>
+                <path d="M0,-28 C-9,-20 -9,-10 0,-6 C9,-10 9,-20 0,-28Z" transform="rotate(288)"/>
+                <circle r="3.5"/>
+              </g>
+              <g transform="translate(25,190)" fill="#c9a84c">
+                <path d="M0,-14 C-5,-9 -5,-4 0,-2 C5,-4 5,-9 0,-14Z"/>
+                <path d="M0,-14 C-5,-9 -5,-4 0,-2 C5,-4 5,-9 0,-14Z" transform="rotate(90)"/>
+                <path d="M0,-14 C-5,-9 -5,-4 0,-2 C5,-4 5,-9 0,-14Z" transform="rotate(180)"/>
+                <path d="M0,-14 C-5,-9 -5,-4 0,-2 C5,-4 5,-9 0,-14Z" transform="rotate(270)"/>
+                <circle r="2"/>
+              </g>
+            </svg>
+            {{-- 🌸 HERO FLORAL CORNER RIGHT --}}
+            <svg viewBox="0 0 160 280" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 class="floral-deco" style="top:60px;right:0;width:160px;height:280px;opacity:0.12;z-index:2;transform:scaleX(-1)">
+              <path d="M25,0 C18,40 30,80 25,120 C20,160 30,200 25,240 C22,260 25,280 25,280"
+                    stroke="#c9a84c" stroke-width="0.8" fill="none"/>
+              <g fill="#c9a84c">
+                <path d="M22,60 C6,46 2,26 14,12 C18,26 20,46 22,60Z" opacity="0.8"/>
+                <path d="M28,60 C44,46 48,26 36,12 C32,26 30,46 28,60Z" opacity="0.8"/>
+                <path d="M22,140 C6,126 2,106 14,92 C18,106 20,126 22,140Z" opacity="0.8"/>
+                <path d="M28,140 C44,126 48,106 36,92 C32,106 30,126 28,140Z" opacity="0.8"/>
+                <path d="M22,220 C6,206 2,186 14,172 C18,186 20,206 22,220Z" opacity="0.8"/>
+                <path d="M28,220 C44,206 48,186 36,172 C32,186 30,206 28,220Z" opacity="0.8"/>
+              </g>
+              <g transform="translate(25,180)" fill="#c9a84c">
+                <path d="M0,-28 C-9,-20 -9,-10 0,-6 C9,-10 9,-20 0,-28Z"/>
+                <path d="M0,-28 C-9,-20 -9,-10 0,-6 C9,-10 9,-20 0,-28Z" transform="rotate(72)"/>
+                <path d="M0,-28 C-9,-20 -9,-10 0,-6 C9,-10 9,-20 0,-28Z" transform="rotate(144)"/>
+                <path d="M0,-28 C-9,-20 -9,-10 0,-6 C9,-10 9,-20 0,-28Z" transform="rotate(216)"/>
+                <path d="M0,-28 C-9,-20 -9,-10 0,-6 C9,-10 9,-20 0,-28Z" transform="rotate(288)"/>
+                <circle r="3.5"/>
+              </g>
+            </svg>
+
             {{-- Konten utama — ⚠️ TIDAK pakai class="anim" di wrapper agar tidak invisible --}}
             <div style="position:relative;z-index:3;text-align:center;padding:20px 24px" class="hero-names">
 
@@ -620,7 +694,86 @@
         {{-- ══════════════════════════════
              SEC 1 · OPENING QUOTE
         ══════════════════════════════ --}}
-        <section class="snap-sec bg-navy2 top-line anim-ready" id="sec-1">
+        <section class="snap-sec bg-navy2 top-line damask-bg anim-ready" id="sec-1">
+
+        {{-- 🌸 FLORAL CORNER TOP-LEFT --}}
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+             class="floral-deco lg" style="top:0;left:0;width:200px;height:200px;opacity:0.1">
+          <g transform="translate(55,55)" fill="#c9a84c">
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(72)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(144)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(216)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(288)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(36)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(108)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(180)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(252)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(324)"/>
+            <circle r="5"/>
+          </g>
+          <path d="M88,36 C110,14 132,19 152,50 C130,58 107,52 88,36Z" fill="#c9a84c"/>
+          <path d="M36,88 C14,110 19,132 50,152 C58,130 52,107 36,88Z" fill="#c9a84c"/>
+          <path d="M76,76 C90,56 110,60 120,82 C104,90 84,86 76,76Z" fill="#c9a84c"/>
+          <path d="M55,55 C78,88 112,118 158,168" stroke="#c9a84c" stroke-width="0.8" fill="none"/>
+          <g transform="translate(128,112)" fill="#c9a84c">
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(90)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(180)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(270)"/>
+            <circle r="2.2"/>
+          </g>
+          <g transform="translate(98,152)" fill="#c9a84c">
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(90)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(180)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(270)"/>
+            <circle r="1.5"/>
+          </g>
+          <path d="M106,42 L109,39 L112,42 L109,45Z" fill="#c9a84c"/>
+          <path d="M42,106 L45,103 L48,106 L45,109Z" fill="#c9a84c"/>
+          <path d="M152,122 L154,120 L156,122 L154,124Z" fill="#c9a84c"/>
+          <path d="M122,152 L124,150 L126,152 L124,154Z" fill="#c9a84c"/>
+        </svg>
+
+        {{-- 🌸 FLORAL CORNER BOTTOM-RIGHT --}}
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+             class="floral-deco lg" style="bottom:0;right:0;width:200px;height:200px;opacity:0.1;transform:rotate(180deg)">
+          <g transform="translate(55,55)" fill="#c9a84c">
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(72)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(144)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(216)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(288)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(36)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(108)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(180)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(252)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(324)"/>
+            <circle r="5"/>
+          </g>
+          <path d="M88,36 C110,14 132,19 152,50 C130,58 107,52 88,36Z" fill="#c9a84c"/>
+          <path d="M36,88 C14,110 19,132 50,152 C58,130 52,107 36,88Z" fill="#c9a84c"/>
+          <path d="M76,76 C90,56 110,60 120,82 C104,90 84,86 76,76Z" fill="#c9a84c"/>
+          <path d="M55,55 C78,88 112,118 158,168" stroke="#c9a84c" stroke-width="0.8" fill="none"/>
+          <g transform="translate(128,112)" fill="#c9a84c">
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(90)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(180)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(270)"/>
+            <circle r="2.2"/>
+          </g>
+          <g transform="translate(98,152)" fill="#c9a84c">
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(90)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(180)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(270)"/>
+            <circle r="1.5"/>
+          </g>
+          <path d="M106,42 L109,39 L112,42 L109,45Z" fill="#c9a84c"/>
+          <path d="M42,106 L45,103 L48,106 L45,109Z" fill="#c9a84c"/>
+        </svg>
+
 
             <div class="sec-inner" style="max-width:580px;text-align:center;padding:32px 28px;width:100%">
 
@@ -654,6 +807,65 @@
              SEC 2 · THE COUPLE
         ══════════════════════════════ --}}
         <section class="snap-sec bg-navy dot-bg anim-ready" id="sec-2">
+
+        {{-- 🌿 SIDE VINE LEFT --}}
+        <svg viewBox="0 0 50 320" fill="none" xmlns="http://www.w3.org/2000/svg"
+             class="floral-deco" style="left:0;top:50%;transform:translateY(-50%);width:50px;height:320px;opacity:0.08">
+          <path d="M25,0 C20,28 30,56 25,90 C20,120 30,150 25,180 C20,210 30,240 25,270 C22,292 25,320 25,320"
+                stroke="#c9a84c" stroke-width="0.9" fill="none"/>
+          <path d="M22,55 C8,42 4,24 14,12 C17,24 20,42 22,55Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M28,55 C42,42 46,24 36,12 C33,24 30,42 28,55Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M22,130 C8,117 4,99 14,87 C17,99 20,117 22,130Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M28,130 C42,117 46,99 36,87 C33,99 30,117 28,130Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M22,205 C8,192 4,174 14,162 C17,174 20,192 22,205Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M28,205 C42,192 46,174 36,162 C33,174 30,192 28,205Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M22,275 C8,262 4,244 14,232 C17,244 20,262 22,275Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M28,275 C42,262 46,244 36,232 C33,244 30,262 28,275Z" fill="#c9a84c" opacity="0.7"/>
+          <g transform="translate(25,92)" fill="#c9a84c">
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(90)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(180)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(270)"/>
+            <circle r="1.8"/>
+          </g>
+          <g transform="translate(25,182)" fill="#c9a84c">
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(90)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(180)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(270)"/>
+            <circle r="1.8"/>
+          </g>
+        </svg>
+
+        {{-- 🌿 SIDE VINE RIGHT --}}
+        <svg viewBox="0 0 50 320" fill="none" xmlns="http://www.w3.org/2000/svg"
+             class="floral-deco" style="right:0;top:50%;transform:translateY(-50%) scaleX(-1);width:50px;height:320px;opacity:0.08">
+          <path d="M25,0 C20,28 30,56 25,90 C20,120 30,150 25,180 C20,210 30,240 25,270 C22,292 25,320 25,320"
+                stroke="#c9a84c" stroke-width="0.9" fill="none"/>
+          <path d="M22,55 C8,42 4,24 14,12 C17,24 20,42 22,55Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M28,55 C42,42 46,24 36,12 C33,24 30,42 28,55Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M22,130 C8,117 4,99 14,87 C17,99 20,117 22,130Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M28,130 C42,117 46,99 36,87 C33,99 30,117 28,130Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M22,205 C8,192 4,174 14,162 C17,174 20,192 22,205Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M28,205 C42,192 46,174 36,162 C33,174 30,192 28,205Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M22,275 C8,262 4,244 14,232 C17,244 20,262 22,275Z" fill="#c9a84c" opacity="0.7"/>
+          <path d="M28,275 C42,262 46,244 36,232 C33,244 30,262 28,275Z" fill="#c9a84c" opacity="0.7"/>
+          <g transform="translate(25,92)" fill="#c9a84c">
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(90)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(180)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(270)"/>
+            <circle r="1.8"/>
+          </g>
+          <g transform="translate(25,182)" fill="#c9a84c">
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(90)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(180)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(270)"/>
+            <circle r="1.8"/>
+          </g>
+        </svg>
+
 
             <div class="sec-inner" style="max-width:900px;margin:0 auto;padding:32px 24px;width:100%">
 
@@ -734,7 +946,86 @@
         {{-- ══════════════════════════════
              SEC 3 · THE DAY
         ══════════════════════════════ --}}
-        <section class="snap-sec bg-navy2 grid-bg top-line anim-ready" id="sec-3">
+        <section class="snap-sec bg-navy2 grid-bg top-line damask-bg anim-ready" id="sec-3">
+
+        {{-- 🌸 FLORAL CORNER TOP-LEFT --}}
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+             class="floral-deco lg" style="top:0;left:0;width:160px;height:160px;opacity:0.08">
+          <g transform="translate(55,55)" fill="#c9a84c">
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(72)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(144)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(216)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(288)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(36)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(108)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(180)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(252)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(324)"/>
+            <circle r="5"/>
+          </g>
+          <path d="M88,36 C110,14 132,19 152,50 C130,58 107,52 88,36Z" fill="#c9a84c"/>
+          <path d="M36,88 C14,110 19,132 50,152 C58,130 52,107 36,88Z" fill="#c9a84c"/>
+          <path d="M76,76 C90,56 110,60 120,82 C104,90 84,86 76,76Z" fill="#c9a84c"/>
+          <path d="M55,55 C78,88 112,118 158,168" stroke="#c9a84c" stroke-width="0.8" fill="none"/>
+          <g transform="translate(128,112)" fill="#c9a84c">
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(90)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(180)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(270)"/>
+            <circle r="2.2"/>
+          </g>
+          <g transform="translate(98,152)" fill="#c9a84c">
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(90)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(180)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(270)"/>
+            <circle r="1.5"/>
+          </g>
+          <path d="M106,42 L109,39 L112,42 L109,45Z" fill="#c9a84c"/>
+          <path d="M42,106 L45,103 L48,106 L45,109Z" fill="#c9a84c"/>
+          <path d="M152,122 L154,120 L156,122 L154,124Z" fill="#c9a84c"/>
+          <path d="M122,152 L124,150 L126,152 L124,154Z" fill="#c9a84c"/>
+        </svg>
+
+        {{-- 🌸 FLORAL CORNER BOTTOM-RIGHT --}}
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+             class="floral-deco lg" style="bottom:0;right:0;width:160px;height:160px;opacity:0.08;transform:rotate(180deg)">
+          <g transform="translate(55,55)" fill="#c9a84c">
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(72)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(144)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(216)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(288)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(36)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(108)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(180)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(252)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(324)"/>
+            <circle r="5"/>
+          </g>
+          <path d="M88,36 C110,14 132,19 152,50 C130,58 107,52 88,36Z" fill="#c9a84c"/>
+          <path d="M36,88 C14,110 19,132 50,152 C58,130 52,107 36,88Z" fill="#c9a84c"/>
+          <path d="M76,76 C90,56 110,60 120,82 C104,90 84,86 76,76Z" fill="#c9a84c"/>
+          <path d="M55,55 C78,88 112,118 158,168" stroke="#c9a84c" stroke-width="0.8" fill="none"/>
+          <g transform="translate(128,112)" fill="#c9a84c">
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(90)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(180)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(270)"/>
+            <circle r="2.2"/>
+          </g>
+          <g transform="translate(98,152)" fill="#c9a84c">
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(90)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(180)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(270)"/>
+            <circle r="1.5"/>
+          </g>
+          <path d="M106,42 L109,39 L112,42 L109,45Z" fill="#c9a84c"/>
+          <path d="M42,106 L45,103 L48,106 L45,109Z" fill="#c9a84c"/>
+        </svg>
+
 
             <div class="sec-inner" style="max-width:860px;margin:0 auto;padding:28px 20px;width:100%">
 
@@ -872,7 +1163,86 @@
         {{-- ══════════════════════════════
              SEC 5 · RSVP
         ══════════════════════════════ --}}
-        <section class="snap-sec bg-navy2 top-line anim-ready" id="sec-5">
+        <section class="snap-sec bg-navy2 top-line damask-bg anim-ready" id="sec-5">
+
+        {{-- 🌸 FLORAL CORNER TOP-LEFT --}}
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+             class="floral-deco lg" style="top:0;left:0;width:150px;height:150px;opacity:0.07">
+          <g transform="translate(55,55)" fill="#c9a84c">
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(72)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(144)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(216)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(288)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(36)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(108)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(180)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(252)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(324)"/>
+            <circle r="5"/>
+          </g>
+          <path d="M88,36 C110,14 132,19 152,50 C130,58 107,52 88,36Z" fill="#c9a84c"/>
+          <path d="M36,88 C14,110 19,132 50,152 C58,130 52,107 36,88Z" fill="#c9a84c"/>
+          <path d="M76,76 C90,56 110,60 120,82 C104,90 84,86 76,76Z" fill="#c9a84c"/>
+          <path d="M55,55 C78,88 112,118 158,168" stroke="#c9a84c" stroke-width="0.8" fill="none"/>
+          <g transform="translate(128,112)" fill="#c9a84c">
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(90)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(180)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(270)"/>
+            <circle r="2.2"/>
+          </g>
+          <g transform="translate(98,152)" fill="#c9a84c">
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(90)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(180)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(270)"/>
+            <circle r="1.5"/>
+          </g>
+          <path d="M106,42 L109,39 L112,42 L109,45Z" fill="#c9a84c"/>
+          <path d="M42,106 L45,103 L48,106 L45,109Z" fill="#c9a84c"/>
+          <path d="M152,122 L154,120 L156,122 L154,124Z" fill="#c9a84c"/>
+          <path d="M122,152 L124,150 L126,152 L124,154Z" fill="#c9a84c"/>
+        </svg>
+
+        {{-- 🌸 FLORAL CORNER BOTTOM-RIGHT --}}
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+             class="floral-deco lg" style="bottom:0;right:0;width:150px;height:150px;opacity:0.07;transform:rotate(180deg)">
+          <g transform="translate(55,55)" fill="#c9a84c">
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(72)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(144)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(216)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(288)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(36)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(108)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(180)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(252)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(324)"/>
+            <circle r="5"/>
+          </g>
+          <path d="M88,36 C110,14 132,19 152,50 C130,58 107,52 88,36Z" fill="#c9a84c"/>
+          <path d="M36,88 C14,110 19,132 50,152 C58,130 52,107 36,88Z" fill="#c9a84c"/>
+          <path d="M76,76 C90,56 110,60 120,82 C104,90 84,86 76,76Z" fill="#c9a84c"/>
+          <path d="M55,55 C78,88 112,118 158,168" stroke="#c9a84c" stroke-width="0.8" fill="none"/>
+          <g transform="translate(128,112)" fill="#c9a84c">
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(90)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(180)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(270)"/>
+            <circle r="2.2"/>
+          </g>
+          <g transform="translate(98,152)" fill="#c9a84c">
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(90)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(180)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(270)"/>
+            <circle r="1.5"/>
+          </g>
+          <path d="M106,42 L109,39 L112,42 L109,45Z" fill="#c9a84c"/>
+          <path d="M42,106 L45,103 L48,106 L45,109Z" fill="#c9a84c"/>
+        </svg>
+
 
             <div class="sec-inner rsvp-inner" style="max-width:500px;margin:0 auto;padding:28px 24px;width:100%">
 
@@ -926,7 +1296,37 @@
         {{-- ══════════════════════════════
              SEC 6 · WISHES
         ══════════════════════════════ --}}
-        <section class="snap-sec bg-navy anim-ready" id="sec-6">
+        <section class="snap-sec bg-navy damask-bg anim-ready" id="sec-6">
+
+        {{-- 🌸 FLORAL CORNER TOP-RIGHT --}}
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+             class="floral-deco lg" style="top:0;right:0;width:150px;height:150px;opacity:0.07;transform:scaleX(-1)">
+          <g transform="translate(55,55)" fill="#c9a84c">
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(72)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(144)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(216)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(288)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(36)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(108)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(180)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(252)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(324)"/>
+            <circle r="5"/>
+          </g>
+          <path d="M88,36 C110,14 132,19 152,50 C130,58 107,52 88,36Z" fill="#c9a84c"/>
+          <path d="M36,88 C14,110 19,132 50,152 C58,130 52,107 36,88Z" fill="#c9a84c"/>
+          <path d="M76,76 C90,56 110,60 120,82 C104,90 84,86 76,76Z" fill="#c9a84c"/>
+          <path d="M55,55 C78,88 112,118 158,168" stroke="#c9a84c" stroke-width="0.8" fill="none"/>
+          <g transform="translate(128,112)" fill="#c9a84c">
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(90)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(180)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(270)"/>
+            <circle r="2.2"/>
+          </g>
+        </svg>
+
 
             <div class="sec-inner wish-inner" style="max-width:660px;margin:0 auto;padding:28px 24px;width:100%">
 
@@ -970,7 +1370,48 @@
         {{-- ══════════════════════════════
              SEC 7 · WEDDING GIFT
         ══════════════════════════════ --}}
-        <section class="snap-sec bg-navy2 top-line anim-ready" id="sec-7">
+        <section class="snap-sec bg-navy2 top-line damask-bg anim-ready" id="sec-7">
+
+        {{-- 🌸 FLORAL CORNER TOP-LEFT --}}
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+             class="floral-deco lg" style="top:0;left:0;width:160px;height:160px;opacity:0.08">
+          <g transform="translate(55,55)" fill="#c9a84c">
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(72)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(144)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(216)"/>
+            <path d="M0,-38 C-12,-26 -12,-13 0,-8 C12,-13 12,-26 0,-38Z" transform="rotate(288)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(36)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(108)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(180)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(252)"/>
+            <path d="M0,-22 C-7,-16 -7,-9 0,-5 C7,-9 7,-16 0,-22Z" transform="rotate(324)"/>
+            <circle r="5"/>
+          </g>
+          <path d="M88,36 C110,14 132,19 152,50 C130,58 107,52 88,36Z" fill="#c9a84c"/>
+          <path d="M36,88 C14,110 19,132 50,152 C58,130 52,107 36,88Z" fill="#c9a84c"/>
+          <path d="M76,76 C90,56 110,60 120,82 C104,90 84,86 76,76Z" fill="#c9a84c"/>
+          <path d="M55,55 C78,88 112,118 158,168" stroke="#c9a84c" stroke-width="0.8" fill="none"/>
+          <g transform="translate(128,112)" fill="#c9a84c">
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(90)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(180)"/>
+            <path d="M0,-11 C-4,-7 -4,-3 0,-1 C4,-3 4,-7 0,-11Z" transform="rotate(270)"/>
+            <circle r="2.2"/>
+          </g>
+          <g transform="translate(98,152)" fill="#c9a84c">
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(90)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(180)"/>
+            <path d="M0,-8 C-3,-5 -3,-2 0,-1 C3,-2 3,-5 0,-8Z" transform="rotate(270)"/>
+            <circle r="1.5"/>
+          </g>
+          <path d="M106,42 L109,39 L112,42 L109,45Z" fill="#c9a84c"/>
+          <path d="M42,106 L45,103 L48,106 L45,109Z" fill="#c9a84c"/>
+          <path d="M152,122 L154,120 L156,122 L154,124Z" fill="#c9a84c"/>
+          <path d="M122,152 L124,150 L126,152 L124,154Z" fill="#c9a84c"/>
+        </svg>
+
 
             <div class="sec-inner gift-inner" style="max-width:600px;margin:0 auto;padding:28px 24px;width:100%;text-align:center">
 
@@ -1026,7 +1467,73 @@
         {{-- ══════════════════════════════
              SEC 8 · CLOSING
         ══════════════════════════════ --}}
-        <section class="snap-sec bg-navy dot-bg anim-ready" id="sec-8">
+        <section class="snap-sec bg-navy anim-ready" id="sec-8">
+
+        {{-- 🌸 BOTANICAL WREATH CLOSING --}}
+        <svg viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg"
+             class="floral-deco" style="top:50%;left:50%;transform:translate(-50%,-50%);width:min(340px,85vw);height:min(340px,85vw);opacity:0.07;z-index:0">
+          <!-- Outer ring -->
+          <circle cx="170" cy="170" r="158" stroke="#c9a84c" stroke-width="0.6" stroke-dasharray="3 5" fill="none"/>
+          <circle cx="170" cy="170" r="148" stroke="#c9a84c" stroke-width="0.3" fill="none" opacity="0.5"/>
+          <!-- 8 large leaves around ring -->
+          <g fill="#c9a84c">
+            <!-- Top -->
+            <path d="M170,12 C162,32 162,55 170,65 C178,55 178,32 170,12Z"/>
+            <!-- Bottom -->
+            <path d="M170,328 C162,308 162,285 170,275 C178,285 178,308 170,328Z"/>
+            <!-- Left -->
+            <path d="M12,170 C32,162 55,162 65,170 C55,178 32,178 12,170Z"/>
+            <!-- Right -->
+            <path d="M328,170 C308,162 285,162 275,170 C285,178 308,178 328,170Z"/>
+            <!-- Diagonal TL -->
+            <path d="M40,40 C52,58 58,78 52,86 C36,72 32,52 40,40Z"/>
+            <!-- Diagonal TR -->
+            <path d="M300,40 C288,58 282,78 288,86 C304,72 308,52 300,40Z"/>
+            <!-- Diagonal BL -->
+            <path d="M40,300 C52,282 58,262 52,254 C36,268 32,288 40,300Z"/>
+            <!-- Diagonal BR -->
+            <path d="M300,300 C288,282 282,262 288,254 C304,268 308,288 300,300Z"/>
+          </g>
+          <!-- 8 small flowers at cardinal intersections -->
+          <g fill="#c9a84c">
+            <g transform="translate(170,14)">
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(90)"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(180)"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(270)"/>
+              <circle r="1.5"/>
+            </g>
+            <g transform="translate(170,326)">
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(90)"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(180)"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(270)"/>
+              <circle r="1.5"/>
+            </g>
+            <g transform="translate(14,170)">
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(90)"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(180)"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(270)"/>
+              <circle r="1.5"/>
+            </g>
+            <g transform="translate(326,170)">
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(90)"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(180)"/>
+              <path d="M0,-7 C-2,-5 -2,-2 0,-1 C2,-2 2,-5 0,-7Z" transform="rotate(270)"/>
+              <circle r="1.5"/>
+            </g>
+          </g>
+          <!-- Diamond dots at diagonals -->
+          <path d="M50,50 L53,47 L56,50 L53,53Z" fill="#c9a84c"/>
+          <path d="M290,50 L293,47 L296,50 L293,53Z" fill="#c9a84c"/>
+          <path d="M50,290 L53,287 L56,290 L53,293Z" fill="#c9a84c"/>
+          <path d="M290,290 L293,287 L296,290 L293,293Z" fill="#c9a84c"/>
+          <!-- Inner ring -->
+          <circle cx="170" cy="170" r="120" stroke="#c9a84c" stroke-width="0.4" fill="none" opacity="0.3"/>
+        </svg>
+
 
             {{-- Cover bg blurred --}}
             @if($invitation->cover?->file_path)
