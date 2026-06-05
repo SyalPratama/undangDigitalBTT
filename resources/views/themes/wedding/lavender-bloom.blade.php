@@ -736,6 +736,53 @@
         </div>
     </div>
 
+    {{-- ═══════════════════════════════════════════════════ --}}
+    {{--  HANDLER TOMBOL BUKA UNDANGAN                      --}}
+    {{--  Ditempatkan di sini (script terpisah, tanpa Blade) --}}
+    {{--  agar bekerja meski main script di bawah error.     --}}
+    {{-- ═══════════════════════════════════════════════════ --}}
+    <script>
+    (function () {
+        function doOpenInvitation() {
+            /* 1. Aktifkan scroll container */
+            var sc = document.getElementById('scroll-container');
+            if (sc) sc.style.pointerEvents = 'auto';
+
+            /* 2. Animasikan dan sembunyikan envelope */
+            var env = document.getElementById('envelope');
+            if (!env) return;
+            env.classList.add('closing');
+            setTimeout(function () { env.style.display = 'none'; }, 950);
+
+            /* 3. Tampilkan tombol-tombol floating */
+            ['btn-music', 'arrow-up', 'arrow-down'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) el.style.display = 'flex';
+            });
+
+            /* 4. Panggil fungsi main script (pakai typeof agar aman jika main script error) */
+            setTimeout(function () {
+                if (typeof buildDots      === 'function') try { buildDots();      } catch (e) {}
+                if (typeof startCountdown === 'function') try { startCountdown(); } catch (e) {}
+                if (typeof startSlideshow === 'function') try { startSlideshow(); } catch (e) {}
+                if (typeof observeSections=== 'function') try { observeSections();} catch (e) {}
+                var audio = document.getElementById('weddingMusic');
+                if (audio) try { audio.play().catch(function () {}); } catch (e) {}
+            }, 100);
+        }
+
+        /* Daftarkan ke window agar bisa dipanggil via onclick="openInvitation()" */
+        window.openInvitation = doOpenInvitation;
+
+        /* Backup: pasang event listener langsung ke tombol */
+        var env = document.getElementById('envelope');
+        if (env) {
+            var btn = env.querySelector('button');
+            if (btn) btn.addEventListener('click', doOpenInvitation);
+        }
+    }());
+    </script>
+
     {{-- ════════════════════════════════ --}}
     {{--  FLOATING UI                     --}}
     {{-- ════════════════════════════════ --}}
@@ -1535,9 +1582,7 @@
         //  ENVELOPE
         // ═══════════════════════════════════════════════════════
         function openInvitation() {
-            // Aktifkan scroll container (sebelumnya dinonaktifkan agar tidak block tombol)
             document.getElementById('scroll-container').style.pointerEvents = 'auto';
-
             const env = document.getElementById('envelope');
             env.classList.add('closing');
             setTimeout(() => {
@@ -1740,7 +1785,7 @@
             e.preventDefault();
             const form = e.target;
             const data = {
-                invitation_id: {{ $invitation->id }},
+                invitation_id: {{ $invitation->id ?? 0 }},
                 name: form.name.value,
                 phone: form.phone.value,
                 attending: form.attending.value,
@@ -1786,7 +1831,7 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({
-                    invitation_id: {{ $invitation->id }},
+                    invitation_id: {{ $invitation->id ?? 0 }},
                     name,
                     message: msg
                 })
