@@ -841,7 +841,8 @@
             <form id="wish-form" onsubmit="submitWish(event)" class="anim a2">
                 <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
                     <input type="text" name="wish_name" placeholder="Nama Anda"
-                           class="inv-inp" value="{{ e(request()->get('to') ?? '') }}" required>
+                           class="inv-inp" value="{{ e(request()->get('to') ?? '') }}"
+                           data-default="{{ e(request()->get('to') ?? '') }}" required>
                     <textarea name="wish_msg" placeholder="Tuliskan ucapan dan doa terbaik Anda..."
                               class="inv-inp" rows="3" style="resize:none" required></textarea>
                     <div style="display:flex;justify-content:flex-end">
@@ -1017,37 +1018,47 @@
 </div>{{-- /scroll-container --}}
 
 {{-- ═══════════════════════════════════════════
-     MAIN SCRIPT — backend structure = dark-elegant
+     SCRIPT 1 — openInvitation ISOLATED
+     Tidak ada Blade variable di sini — tidak bisa
+     gagal karena PHP rendering error
+═══════════════════════════════════════════ --}}
+<script>
+function openInvitation() {
+    var env = document.getElementById('envelope');
+    if (env) {
+        env.classList.add('closing');
+        setTimeout(function () { env.style.display = 'none'; }, 980);
+    }
+    ['flt-music','flt-up','flt-dn'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'flex';
+    });
+    var bnav = document.getElementById('bnav');
+    if (bnav) bnav.style.display = 'flex';
+
+    setTimeout(function () {
+        if (typeof buildDots       === 'function') buildDots();
+        if (typeof observeSections === 'function') observeSections();
+        if (typeof startSlideshow  === 'function') startSlideshow();
+        if (typeof startCountdown  === 'function') startCountdown();
+        var aud = document.getElementById('weddingMusic');
+        if (aud) { try { aud.play(); } catch (e) {} }
+    }, 100);
+}
+</script>
+
+{{-- ═══════════════════════════════════════════
+     SCRIPT 2 — MAIN (navigation, music, forms)
 ═══════════════════════════════════════════ --}}
 <script>
 // ── CONFIG ──────────────────────────────────
-const FIRST_EVENT_DATE = "{{ $invitation->events->isNotEmpty() ? $invitation->events->first()->event_date : optional($invitation->event_date)->format('Y-m-d') }}";
-const INV_ID = {{ $invitation->id ?? 0 }};
-const CSRF   = '{{ csrf_token() }}';
+var FIRST_EVENT_DATE = '{{ $invitation->events->isNotEmpty() ? \Carbon\Carbon::parse($invitation->events->first()->event_date)->format("Y-m-d") : "" }}';
+var INV_ID = {{ $invitation->id ?? 0 }};
+var CSRF   = '{{ csrf_token() }}';
 
-let curSec = 0;
-const secs = [...document.querySelectorAll('.snap-sec')];
-const N    = secs.length;
-
-// ── OPEN INVITATION ─────────────────────────
-function openInvitation() {
-    const env = document.getElementById('envelope');
-    env.classList.add('closing');
-    setTimeout(() => { env.style.display = 'none'; }, 980);
-
-    document.getElementById('flt-music').style.display = 'flex';
-    document.getElementById('flt-up').style.display    = 'flex';
-    document.getElementById('flt-dn').style.display    = 'flex';
-
-    // Show bnav on desktop (mobile already shown by CSS)
-    document.getElementById('bnav').style.display = 'flex';
-
-    buildDots();
-    observeSections();
-    startSlideshow();
-    startCountdown();
-    document.getElementById('weddingMusic').play().catch(() => {});
-}
+var curSec = 0;
+var secs   = [].slice.call(document.querySelectorAll('.snap-sec'));
+var N      = secs.length;
 
 // ── SECTION DOTS ────────────────────────────
 function buildDots() {
@@ -1094,8 +1105,8 @@ function observeSections() {
 }
 
 // ── MUSIC ────────────────────────────────────
-const audio     = document.getElementById('weddingMusic');
-const musicIcon = document.getElementById('music-icon');
+var audio     = document.getElementById('weddingMusic');
+var musicIcon = document.getElementById('music-icon');
 
 function toggleMusic() {
     if (audio.paused) {
@@ -1218,7 +1229,8 @@ function submitWish(e) {
     `;
     list.prepend(card);
     f.reset();
-    f.wish_name.value = {!! json_encode(request()->get('to') ?? '') !!};
+    var defName = f.wish_name.getAttribute('data-default') || '';
+    f.wish_name.value = defName;
 }
 </script>
 
