@@ -53,7 +53,17 @@
     .snap-sec {
         scroll-snap-align: start; height: 100vh; width: 100%;
         position: relative; overflow: hidden;
+        display: flex; align-items: center; justify-content: center;
     }
+
+    /* Inner content wrapper — scrollable if content exceeds viewport */
+    .sec-inner {
+        width: 100%;
+        overflow-y: auto;
+        max-height: calc(100vh - 56px);
+        scrollbar-width: none;
+    }
+    .sec-inner::-webkit-scrollbar { display: none; }
 
     /* ── TYPE ── */
     .fp  { font-family: 'Playfair Display', serif; }
@@ -282,11 +292,11 @@
         /* Couple stagger → stack */
         .couple-stagger {
             grid-template-columns: 1fr 1fr !important;
-            gap: 16px !important;
+            gap: 14px !important;
         }
         .couple-stagger > div:last-child { padding-top: 0 !important; }
         .stagger-num { display: none !important; }
-        .cp-photo { width: 80px !important; height: 104px !important; margin-bottom: 12px !important; }
+        .cp-photo { width: 78px !important; height: 100px !important; margin-bottom: 10px !important; }
         .cp-name  { font-size: 1.3rem !important; }
         .cp-label { font-size: 7px !important; }
         .cp-par   { font-size: 10.5px !important; }
@@ -314,10 +324,9 @@
         .gal-grid .gi:first-child  { grid-column: span 2 !important; height: 158px !important; }
 
         /* RSVP / Wish */
-        .rsvp-inner { padding: 18px 20px calc(70px + 14px) !important; }
-        .wish-inner { padding: 16px 20px calc(70px + 14px) !important; }
-        #wishes-list { max-height: 200px !important; }
-        #wishes-twin { grid-template-columns: 1fr !important; }
+        .rsvp-inner { padding: 16px 20px calc(70px + 14px) !important; }
+        .wish-inner { padding: 14px 20px calc(70px + 14px) !important; }
+        #wishes-twin { max-height: 200px !important; grid-template-columns: 1fr !important; }
 
         /* Gift */
         .gift-inner { padding: 18px 20px calc(70px + 14px) !important; }
@@ -586,53 +595,53 @@
 
         <div class="side-label" style="color:var(--muted)">Dua Jiwa, Satu Janji</div>
 
-        <div class="sec-inner" style="max-width:760px;margin:0 auto;padding:24px 22px;width:100%;position:relative;z-index:2">
+        <div class="sec-inner" style="max-width:740px;margin:0 auto;padding:20px 28px;width:100%;position:relative;z-index:2">
 
-            <div class="mdiv anim a1" style="margin-bottom:28px">Tentang Kami</div>
+            <div class="mdiv anim a1" style="margin-bottom:24px">Tentang Kami</div>
 
             {{-- STAGGERED GRID --}}
-            <div class="couple-stagger" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start">
+            <div class="couple-stagger" style="display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start">
 
                 {{-- PRIA (left, starts higher) --}}
                 <div class="anim a2" style="position:relative">
-                    <div class="stagger-num" style="position:absolute;top:-22px;left:-14px;font-family:'Playfair Display',serif;font-size:7rem;font-weight:700;color:rgba(74,103,65,0.06);line-height:1;user-select:none;z-index:0">01</div>
+                    <div class="stagger-num" style="position:absolute;top:-16px;left:-10px;font-family:'Playfair Display',serif;font-size:6rem;font-weight:700;color:rgba(74,103,65,0.055);line-height:1;user-select:none;z-index:0;pointer-events:none">01</div>
                     <div style="position:relative;z-index:1">
                         @if($invitation->firstPersonPhoto)
-                            <div class="pf cp-photo" style="width:100%;height:220px;margin-bottom:18px">
+                            <div class="pf cp-photo" style="width:100%;height:200px;margin-bottom:16px">
                                 <img src="{{ asset('storage/'.$invitation->firstPersonPhoto->file_path) }}" alt="{{ $invitation->profile->first_name }}">
                             </div>
                         @else
-                            <div class="cp-photo" style="width:100%;height:220px;margin-bottom:18px;background:var(--ivory-2);border:1.5px dashed var(--parchment);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px">
-                                <i class="fa-solid fa-camera" style="font-size:1.5rem;color:var(--parchment)"></i>
-                                <p style="font-size:8px;color:var(--muted)">Foto</p>
+                            <div class="cp-photo" style="width:100%;height:200px;margin-bottom:16px;background:var(--ivory-2);border:1.5px dashed var(--parchment);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px">
+                                <i class="fa-solid fa-camera" style="font-size:1.4rem;color:var(--parchment)"></i>
+                                <p style="font-size:7.5px;color:var(--muted)">Foto</p>
                             </div>
                         @endif
-                        <h2 class="fp cp-name" style="font-size:1.75rem;font-weight:500;color:var(--warm);margin-bottom:5px">{{ $invitation->profile->first_name }}</h2>
-                        <p class="cp-label" style="font-size:8px;letter-spacing:.32em;color:var(--sage);text-transform:uppercase;margin-bottom:10px;font-family:'DM Sans',sans-serif;font-weight:300">Putra dari</p>
-                        <p class="cp-par" style="font-size:12px;color:var(--text);line-height:2;font-family:'DM Sans',sans-serif">
+                        <h2 class="fp cp-name" style="font-size:1.65rem;font-weight:500;color:var(--warm);margin-bottom:4px">{{ $invitation->profile->first_name }}</h2>
+                        <p class="cp-label" style="font-size:7.5px;letter-spacing:.32em;color:var(--sage);text-transform:uppercase;margin-bottom:8px;font-family:'DM Sans',sans-serif;font-weight:300">Putra dari</p>
+                        <p class="cp-par" style="font-size:12px;color:var(--text);line-height:1.9;font-family:'DM Sans',sans-serif">
                             {{ $invitation->profile->first_father }}<br>
                             &amp; {{ $invitation->profile->first_mother }}
                         </p>
                     </div>
                 </div>
 
-                {{-- WANITA (right, starts lower) --}}
-                <div class="anim a3" style="position:relative;padding-top:60px">
-                    <div class="stagger-num" style="position:absolute;top:38px;left:-14px;font-family:'Playfair Display',serif;font-size:7rem;font-weight:700;color:rgba(74,103,65,0.06);line-height:1;user-select:none;z-index:0">02</div>
+                {{-- WANITA (right, stagger down 44px) --}}
+                <div class="anim a3" style="position:relative;padding-top:44px">
+                    <div class="stagger-num" style="position:absolute;top:22px;left:-10px;font-family:'Playfair Display',serif;font-size:6rem;font-weight:700;color:rgba(74,103,65,0.055);line-height:1;user-select:none;z-index:0;pointer-events:none">02</div>
                     <div style="position:relative;z-index:1">
                         @if($invitation->secondPersonPhoto)
-                            <div class="pf cp-photo" style="width:100%;height:220px;margin-bottom:18px">
+                            <div class="pf cp-photo" style="width:100%;height:200px;margin-bottom:16px">
                                 <img src="{{ asset('storage/'.$invitation->secondPersonPhoto->file_path) }}" alt="{{ $invitation->profile->second_name }}">
                             </div>
                         @else
-                            <div class="cp-photo" style="width:100%;height:220px;margin-bottom:18px;background:var(--ivory-2);border:1.5px dashed var(--parchment);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px">
-                                <i class="fa-solid fa-camera" style="font-size:1.5rem;color:var(--parchment)"></i>
-                                <p style="font-size:8px;color:var(--muted)">Foto</p>
+                            <div class="cp-photo" style="width:100%;height:200px;margin-bottom:16px;background:var(--ivory-2);border:1.5px dashed var(--parchment);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px">
+                                <i class="fa-solid fa-camera" style="font-size:1.4rem;color:var(--parchment)"></i>
+                                <p style="font-size:7.5px;color:var(--muted)">Foto</p>
                             </div>
                         @endif
-                        <h2 class="fp cp-name" style="font-size:1.75rem;font-weight:500;color:var(--warm);margin-bottom:5px">{{ $invitation->profile->second_name }}</h2>
-                        <p class="cp-label" style="font-size:8px;letter-spacing:.32em;color:var(--sage);text-transform:uppercase;margin-bottom:10px;font-family:'DM Sans',sans-serif;font-weight:300">Putri dari</p>
-                        <p class="cp-par" style="font-size:12px;color:var(--text);line-height:2;font-family:'DM Sans',sans-serif">
+                        <h2 class="fp cp-name" style="font-size:1.65rem;font-weight:500;color:var(--warm);margin-bottom:4px">{{ $invitation->profile->second_name }}</h2>
+                        <p class="cp-label" style="font-size:7.5px;letter-spacing:.32em;color:var(--sage);text-transform:uppercase;margin-bottom:8px;font-family:'DM Sans',sans-serif;font-weight:300">Putri dari</p>
+                        <p class="cp-par" style="font-size:12px;color:var(--text);line-height:1.9;font-family:'DM Sans',sans-serif">
                             {{ $invitation->profile->second_father }}<br>
                             &amp; {{ $invitation->profile->second_mother }}
                         </p>
@@ -743,17 +752,19 @@
 
         <div class="side-label">Momen Kami</div>
 
-        <div class="sec-inner" style="max-width:920px;margin:0 auto;padding:24px 20px;width:100%">
-            <div class="mdiv anim a1" style="margin-bottom:22px">Momen Kami</div>
+        <div class="sec-inner" style="max-width:920px;margin:0 auto;padding:20px 20px;width:100%">
+            <div class="mdiv anim a1" style="margin-bottom:20px">Momen Kami</div>
 
             <div class="gal-grid anim a2">
                 @forelse($invitation->galleries as $gallery)
                     <div class="gi">
-                        <img src="{{ asset('storage/'.$gallery->file_path) }}" alt="Gallery {{ $loop->index+1 }}" loading="lazy">
+                        <img src="{{ asset('storage/'.$gallery->file_path) }}"
+                             alt="Gallery {{ $loop->index+1 }}" loading="lazy"
+                             onerror="this.style.display='none';this.parentElement.style.cssText+=';background:var(--ivory-2);display:flex;align-items:center;justify-content:center';">
                     </div>
                 @empty
                     @for($i=0;$i<6;$i++)
-                    <div class="gi" style="background:var(--ivory-2);display:flex;align-items:center;justify-content:center;min-height:120px">
+                    <div class="gi" style="background:var(--ivory-2);display:flex;align-items:center;justify-content:center">
                         <i class="fa-regular fa-image" style="font-size:1.8rem;color:var(--parchment)"></i>
                     </div>
                     @endfor
@@ -767,11 +778,8 @@
     ═══════════════════════════ --}}
     <section class="snap-sec anim-ready" id="sec-5" style="background:var(--blush)">
 
-        {{-- Curved top from previous section (ivory) --}}
-        <div style="position:absolute;top:0;left:-5%;right:-5%;height:70px;background:var(--ivory);border-radius:0 0 50% 50%;z-index:5"></div>
-
-        {{-- Botanical BR --}}
-        <svg class="floral-deco" style="bottom:0;right:0;width:155px;height:165px;opacity:0.1;transform:rotate(180deg)" viewBox="0 0 155 165" fill="none">
+        {{-- Botanical TL --}}
+        <svg class="floral-deco" style="top:0;left:0;width:155px;height:165px;opacity:0.1" viewBox="0 0 155 165" fill="none">
             <path d="M4,162 C16,122 40,84 64,46 C76,28 88,10 100,0" stroke="#4a6741" stroke-width=".85" fill="none"/>
             <path d="M56,60 C40,47 38,30 51,18 C53,34 55,48 56,60Z" fill="#4a6741"/>
             <path d="M68,60 C84,47 86,30 73,18 C71,34 69,48 68,60Z" fill="#4a6741"/>
@@ -780,7 +788,15 @@
             <circle cx="62" cy="70" r="3" fill="#c4996a" opacity=".55"/>
         </svg>
 
-        <div class="sec-inner rsvp-inner" style="max-width:480px;margin:0 auto;padding:76px 24px 28px;width:100%;position:relative;z-index:6">
+        {{-- Botanical BR --}}
+        <svg class="floral-deco" style="bottom:0;right:0;width:155px;height:165px;opacity:0.1;transform:rotate(180deg)" viewBox="0 0 155 165" fill="none">
+            <path d="M4,162 C16,122 40,84 64,46 C76,28 88,10 100,0" stroke="#4a6741" stroke-width=".85" fill="none"/>
+            <path d="M56,60 C40,47 38,30 51,18 C53,34 55,48 56,60Z" fill="#4a6741"/>
+            <path d="M68,60 C84,47 86,30 73,18 C71,34 69,48 68,60Z" fill="#4a6741"/>
+            <circle cx="62" cy="70" r="3" fill="#c4996a" opacity=".55"/>
+        </svg>
+
+        <div class="sec-inner rsvp-inner" style="max-width:480px;margin:0 auto;padding:28px 24px;width:100%;position:relative;z-index:2">
             <div class="mdiv anim a1" style="margin-bottom:8px">Hadir Bersama Kami</div>
             <p class="anim a2" style="text-align:center;font-size:11px;color:var(--text);margin-bottom:22px;font-family:'DM Sans',sans-serif">
                 Konfirmasi kehadiran sebelum {{ optional($invitation->event_date)->format('d M Y') }}
@@ -856,7 +872,7 @@
             </form>
 
             {{-- Two-column wishes list --}}
-            <div id="wishes-twin" class="anim a3" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:280px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent" id="wishes-list">
+            <div id="wishes-twin" class="anim a3" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:260px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent;min-height:60px">
                 @foreach($invitation->wishes ?? [] as $wish)
                 <div class="wcard">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
@@ -991,7 +1007,7 @@
 </div>{{-- /scroll-container --}}
 
 <script>
-    const FIRST_EVENT_DATE = "{{ $invitation->events->isNotEmpty() ? $invitation->events->first()->event_date : optional($invitation->event_date)->format('Y-m-d') }}";
+    const FIRST_EVENT_DATE = "{{ $invitation->events->isNotEmpty() ? \Carbon\Carbon::parse($invitation->events->first()->event_date)->format('Y-m-d') : optional($invitation->event_date)->format('Y-m-d') }}";
 
     let curSec = 0;
     const secs = [...document.querySelectorAll('.snap-sec')];
