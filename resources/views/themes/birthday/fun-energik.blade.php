@@ -22,11 +22,17 @@
     --amber:   #F59E0B;
     --night:   #0D0A1A;
     --cream:   #FFFDF8;
-    --nav-h:   80px;          /* bottom space reserved for floating nav */
+    --nav-h:   0px;           /* nav floats OVER content — no space reserved */
+    --nav-pb:  82px;          /* padding-bottom on content to clear floating nav */
     --sh:      calc(100dvh - var(--nav-h));
 }
 @supports not (height: 100dvh) {
     :root { --sh: calc(100vh - var(--nav-h)); }
+}
+/* ── desktop: hide nav, remove padding ── */
+@media (min-width: 1024px) {
+    :root { --nav-pb: 0px; }
+    #bottom-nav { display: none !important; }
 }
 
 /* ══════════════════════════════════
@@ -152,7 +158,7 @@ body {
     position: relative; z-index: 3;
     display: flex; flex-direction: column;
     align-items: center; text-align: center;
-    padding: 0 1.5rem; width: 100%;
+    padding: 0 1.5rem var(--nav-pb); width: 100%;
 }
 .h-eyebrow {
     display: flex; align-items: center; gap: .7rem;
@@ -221,6 +227,7 @@ body {
     width: 100%; max-width: 860px;
     display: flex; flex-direction: column;
     align-items: center; gap: 1rem;
+    padding-bottom: var(--nav-pb);
 }
 @media (min-width: 720px) {
     .ab-inner { flex-direction: row; gap: 4rem; align-items: center; }
@@ -284,6 +291,7 @@ body {
     position: relative; z-index: 1;
     width: 100%; max-width: 820px;
     display: flex; flex-direction: column; align-items: center; gap: 1.1rem;
+    padding-bottom: var(--nav-pb);
 }
 .ev-header { text-align: center; }
 .ev-kicker {
@@ -406,7 +414,7 @@ body {
     flex: 1; width: 100%;
     display: flex; align-items: center;
     gap: 1.2rem;
-    padding: .4rem 1.5rem 1rem;
+    padding: .4rem 1.5rem var(--nav-pb);
     overflow-x: auto; overflow-y: hidden;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
@@ -421,7 +429,7 @@ body {
     scroll-snap-align: center;
     background: white;
     /* Height fills most of the strip */
-    height: min(calc(var(--sh) - 120px), 480px);
+    height: min(calc(var(--sh) - var(--nav-pb) - 110px), 480px);
     /* Width auto via aspect-ratio */
     aspect-ratio: 3 / 4;
     /* Inner layout */
@@ -459,6 +467,7 @@ body {
     width: 100%; max-width: 420px;
     display: flex; flex-direction: column; gap: .9rem;
     position: relative; z-index: 1;
+    padding-bottom: var(--nav-pb);
 }
 .rsvp-header { text-align: center; }
 .rsvp-kicker {
@@ -565,7 +574,7 @@ body {
     position: relative; z-index: 2;
     display: flex; flex-direction: column; align-items: center;
     text-align: center; max-width: 460px; width: 100%;
-    padding: 0 1.5rem;
+    padding: 0 1.5rem var(--nav-pb);
 }
 .cl-emoji  { font-size: clamp(2rem, 7vw, 3.2rem); margin-bottom: .7rem; }
 .cl-title  {
