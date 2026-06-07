@@ -406,7 +406,7 @@ body::after{
 .s9-mq-bot .mq-i{animation-duration:16s;animation-direction:reverse}
 .s9-mq-bot .mq-i span{
   font-family:'Courier Prime',monospace;font-size:clamp(10px,1.4vw,14px);
-  letter-spacing:.35em;color:rgba(242,237,230,.3);padding:0 20px;text-transform:uppercase;
+  letter-spacing:.35em;color:rgba(242,237,230,.55);padding:0 20px;text-transform:uppercase;
 }
 
 /* ═══════════════════════════════════
@@ -422,10 +422,13 @@ body::after{
 @media(max-width:768px){
   body{overflow:hidden}
 
+  /* FIX: konten tidak terpotong bottom nav */
+  .snap{padding-bottom:60px}
+
   /* S1 masthead → single column */
   .s1-grid{grid-template-columns:1fr;overflow:hidden}
   .s1-left{
-    min-height:0;flex:1;padding:28px 24px 16px;
+    min-height:0;flex:1;padding:24px 22px 14px;
     border-right:none;border-bottom:1px solid rgba(242,237,230,.07);
     justify-content:space-between;
   }
@@ -435,23 +438,24 @@ body::after{
   .s1-date small{font-size:clamp(1rem,6vw,1.6rem)}
   .s1-deets{font-size:10px;line-height:2}
 
-  /* S2 invited → hide photo, single col */
-  .s2-headline{padding:20px 20px 0}
-  .s2-headline span{font-size:clamp(3.5rem,18vw,6rem)}
+  /* S2 invited → foto compact di mobile */
+  .s2-headline{padding:16px 20px 0}
+  .s2-headline span{font-size:clamp(3rem,16vw,5.5rem)}
   .s2-body{
-    grid-template-columns:1fr;gap:12px;
-    padding:14px 20px 20px;align-items:start;
+    grid-template-columns:1fr;gap:10px;
+    padding:12px 20px 16px;align-items:start;
   }
-  .s2-photo-wrap{display:none}
+  .s2-photo-wrap{display:block!important;height:160px!important;min-height:0;overflow:hidden}
+  .s2-photo{height:160px!important;object-position:top center}
   .s2-quote{font-size:clamp(1.3rem,5.5vw,2rem)}
   .s2-body-text{font-size:12px}
 
-  /* S3 date → compact */
-  #s3{padding:24px 20px}
-  .s3-bigdate{font-size:clamp(3rem,18vw,6rem)}
-  .s3-bigdate small{font-size:clamp(1.4rem,8vw,2.5rem)}
-  .s3-n{font-size:clamp(2rem,10vw,3.5rem)}
-  .s3-unit{padding:0 12px 0 0;margin-right:12px;min-width:58px}
+  /* S3 date → compact + countdown visible */
+  #s3{padding:20px 20px}
+  .s3-bigdate{font-size:clamp(2.4rem,12vw,4rem)!important;flex:none!important;margin:auto 0}
+  .s3-bigdate small{font-size:clamp(1.2rem,7vw,2rem)}
+  .s3-n{font-size:clamp(1.8rem,9vw,3rem)}
+  .s3-unit{padding:0 10px 0 0;margin-right:10px;min-width:52px}
 
   /* S4 party → horizontal scroll for events */
   #s4{padding:20px 20px}
@@ -668,6 +672,15 @@ body::after{
     @if($invitation->events->count() > 1)
     <p class="s4-swipe-hint">&larr; geser untuk acara lainnya &rarr;</p>
     @endif
+
+    {{-- Bottom strip fill (mobile) --}}
+    <div class="s4-bot-strip" style="flex-shrink:0;margin-top:auto;overflow:hidden;white-space:nowrap;padding:12px 0;border-top:1px solid rgba(17,17,17,.08)">
+      <div class="mq-i" style="animation-duration:20s">
+        @foreach(['★ BIRTHDAY PARTY','· CELEBRATE LIFE ·','★ MAKE A WISH','· GOOD TIMES ·','★ BIRTHDAY PARTY','· CELEBRATE LIFE ·','★ MAKE A WISH','· GOOD TIMES ·'] as $bt)
+          <span class="f-mono" style="font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:rgba(17,17,17,.2);padding:0 20px">{{ $bt }}</span>
+        @endforeach
+      </div>
+    </div>
   </section>
 
   {{-- S5: GALLERY --}}
@@ -779,10 +792,20 @@ body::after{
         <span class="s9-tag f-mono">{{ optional($invitation->event_date)->format('Y') }}</span>
       </div>
     </div>
-    <div class="s9-mq-bot mq mq-rev">
-      <div class="mq-i">
-        @foreach(['● CELEBRATE LIFE','· GOOD TIMES ·','● MAKE A WISH','· CHEERS ·','● CELEBRATE LIFE','· GOOD TIMES ·','● MAKE A WISH','· CHEERS ·'] as $t)
-          <span>{{ $t }}</span>
+    {{-- Bottom running text 1 --}}
+    <div class="mq s9-mq-bot" style="flex-shrink:0;padding:10px 0;overflow:hidden;background:rgba(0,0,0,.1)">
+      <div class="mq-i mq-rev" style="animation-duration:20s">
+        @foreach(['● CELEBRATE LIFE','· GOOD TIMES ·','● MAKE A WISH','· CHEERS ·','● BIRTHDAY BASH','· LET'S PARTY ·','● CELEBRATE LIFE','· GOOD TIMES ·','● MAKE A WISH','· CHEERS ·','● BIRTHDAY BASH','· LET'S PARTY ·'] as $t)
+          <span class="f-mono" style="font-size:clamp(9px,1.2vw,12px);letter-spacing:.32em;color:rgba(242,237,230,.6);text-transform:uppercase;padding:0 18px">{{ $t }}</span>
+        @endforeach
+      </div>
+    </div>
+
+    {{-- Bottom running text 2 (nama berulang, outline) --}}
+    <div class="mq" style="flex-shrink:0;padding:8px 0;overflow:hidden">
+      <div class="mq-i" style="animation-duration:14s">
+        @foreach(array_fill(0,10,$invitation->profile->first_name ?? 'Birthday') as $n)
+          <span class="f-anton" style="font-size:clamp(1.2rem,4vw,2.5rem);color:transparent;-webkit-text-stroke:1px rgba(242,237,230,.25);padding:0 16px;letter-spacing:.06em">{{ strtoupper($n) }}</span>
         @endforeach
       </div>
     </div>
