@@ -134,8 +134,9 @@
         .flt:hover { background: rgba(201,116,125,.1); }
 
         /* ── MUSIC BUTTON ── */
+        /* Music — top-left, pisah dari up/down yang di kanan */
         #flt-music {
-            position: fixed; top: 20px; right: 20px; z-index: 400;
+            position: fixed; top: 20px; left: 20px; z-index: 400;
             width: 40px; height: 40px;
             background: rgba(255,255,255,.92);
             border: 1px solid rgba(201,116,125,.2);
@@ -601,14 +602,16 @@
     </div>
 </div>
 
-<!-- FLOAT MUSIC -->
-<button id="flt-music" onclick="toggleMusic()" style="display:none">
+{{-- Music — pojok KIRI atas, tidak mengganggu tombol lain --}}
+<button id="flt-music" onclick="toggleMusic()" title="Musik" style="display:none">
     <i id="music-icon" class="fa-solid fa-music" style="font-size:13px;animation:spin-slow 4s linear infinite"></i>
 </button>
-<button id="flt-up" class="flt" style="top:70px;right:20px;display:none" onclick="scrollPrev()">
+
+{{-- Up/Down — pojok KANAN atas, desktop only --}}
+<button id="flt-up" class="flt" style="top:20px;right:20px;display:none" onclick="scrollPrev()" title="Halaman sebelumnya">
     <i class="fa-solid fa-chevron-up" style="font-size:12px"></i>
 </button>
-<button id="flt-dn" class="flt" style="top:118px;right:20px;display:none" onclick="scrollNext()">
+<button id="flt-dn" class="flt" style="top:68px;right:20px;display:none" onclick="scrollNext()" title="Halaman berikutnya">
     <i class="fa-solid fa-chevron-down" style="font-size:12px"></i>
 </button>
 
