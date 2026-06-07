@@ -523,6 +523,119 @@ body::after{
 }
 
 .s4-swipe-hint{display:none;font-family:'Courier Prime',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(17,17,17,.3);text-align:center;margin-top:8px}
+
+/* ═══════════════════════════════════
+   OPENING SCREEN
+═══════════════════════════════════ */
+#opening{
+  position:fixed;inset:0;z-index:998;
+  background:#111;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transition:transform .9s cubic-bezier(.77,0,.18,1);
+}
+#opening.out{transform:translateY(-100%)}
+
+/* corner brackets */
+.op-br{position:absolute;width:44px;height:44px;pointer-events:none}
+.op-br.tl{top:22px;left:22px;border-top:2px solid #D62828;border-left:2px solid #D62828}
+.op-br.tr{top:22px;right:22px;border-top:2px solid rgba(242,237,230,.2);border-right:2px solid rgba(242,237,230,.2)}
+.op-br.bl{bottom:22px;left:22px;border-bottom:2px solid rgba(242,237,230,.2);border-left:2px solid rgba(242,237,230,.2)}
+.op-br.br{bottom:22px;right:22px;border-bottom:2px solid #D62828;border-right:2px solid #D62828}
+
+/* red diagonal accent blobs */
+.op-blob{position:absolute;pointer-events:none}
+.op-blob-1{
+  bottom:-80px;right:-60px;
+  width:280px;height:280px;
+  background:#D62828;
+  clip-path:polygon(40% 0%,100% 0%,100% 100%,0% 100%);
+  opacity:.18;
+}
+.op-blob-2{
+  top:-60px;left:-40px;
+  width:200px;height:200px;
+  background:#D62828;
+  clip-path:polygon(0% 0%,100% 0%,60% 100%,0% 100%);
+  opacity:.1;
+}
+
+/* main center content */
+.op-main{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:clamp(32px,6vw,80px) clamp(24px,5vw,60px);
+  text-align:center;position:relative;z-index:2;
+}
+.op-pretag{
+  font-family:'Courier Prime',monospace;
+  font-size:10px;letter-spacing:.45em;text-transform:uppercase;
+  color:rgba(242,237,230,.3);margin-bottom:clamp(20px,3vw,36px);
+  display:flex;align-items:center;gap:14px;
+}
+.op-pretag::before,.op-pretag::after{
+  content:'';flex:1;height:1px;background:rgba(242,237,230,.12);max-width:60px;
+}
+.op-name{
+  font-family:'Anton',sans-serif;
+  font-size:clamp(4rem,18vw,11rem);
+  line-height:.88;margin-bottom:clamp(16px,2.5vw,32px);
+}
+.op-name .solid{color:#F2EDE6}
+.op-name .stroke{color:transparent;-webkit-text-stroke:2px #D62828}
+.op-divider{
+  width:clamp(50px,12vw,100px);height:2px;
+  background:#D62828;margin:0 auto clamp(16px,2.5vw,28px);
+}
+.op-to{
+  font-family:'Sacramento',cursive;
+  font-size:clamp(1.4rem,4vw,2.2rem);
+  color:rgba(242,237,230,.7);
+  margin-bottom:clamp(8px,1.5vw,16px);
+}
+.op-meta{
+  font-family:'Courier Prime',monospace;
+  font-size:clamp(9px,1.4vw,11px);letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(242,237,230,.28);margin-bottom:clamp(28px,4vw,48px);
+  line-height:2;
+}
+.op-btn{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:clamp(14px,2.2vw,18px) clamp(28px,5vw,52px);
+  background:#D62828;color:#F2EDE6;border:none;
+  font-family:'Anton',sans-serif;
+  font-size:clamp(16px,2.5vw,22px);letter-spacing:.12em;
+  cursor:pointer;transition:background .25s,transform .2s;
+  position:relative;overflow:hidden;
+}
+.op-btn::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(255,255,255,.1);
+  transform:translateX(-100%);
+  transition:transform .4s;
+}
+.op-btn:hover{background:#111;transform:scale(1.03)}
+.op-btn:hover::after{transform:translateX(100%)}
+.op-btn:active{transform:scale(.98)}
+
+/* bottom marquee strip */
+.op-mq{
+  flex-shrink:0;background:#F5C842;padding:10px 0;
+  overflow:hidden;white-space:nowrap;
+}
+.op-mq .mq-i{animation-duration:14s}
+.op-mq .mq-i span{
+  font-family:'Anton',sans-serif;
+  font-size:clamp(12px,2vw,16px);
+  letter-spacing:.22em;color:#111;padding:0 24px;
+}
+
+@keyframes op-fade-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.op-in-1{animation:op-fade-in .7s .2s both ease}
+.op-in-2{animation:op-fade-in .7s .4s both ease}
+.op-in-3{animation:op-fade-in .7s .55s both ease}
+.op-in-4{animation:op-fade-in .7s .7s both ease}
+.op-in-5{animation:op-fade-in .7s .85s both ease}
 </style>
 </head>
 <body>
@@ -552,6 +665,71 @@ body::after{
 <audio id="bgm" loop>
   <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" type="audio/mpeg">
 </audio>
+
+{{-- ═══════════════════════════════
+     OPENING SCREEN
+═══════════════════════════════ --}}
+<div id="opening">
+
+  {{-- Corner brackets --}}
+  <div class="op-br tl"></div>
+  <div class="op-br tr"></div>
+  <div class="op-br bl"></div>
+  <div class="op-br br"></div>
+
+  {{-- Red diagonal blobs --}}
+  <div class="op-blob op-blob-1"></div>
+  <div class="op-blob op-blob-2"></div>
+
+  {{-- Center content --}}
+  <div class="op-main">
+
+    <p class="op-pretag op-in-1">
+      Birthday Invitation &nbsp;·&nbsp; {{ optional($invitation->event_date)->format('Y') }}
+    </p>
+
+    <h1 class="op-name op-in-2">
+      @php $words = explode(' ', $invitation->profile->first_name ?? 'Name'); @endphp
+      @foreach($words as $word)
+        @if($loop->odd)
+          <span class="solid" style="display:block">{{ $word }}</span>
+        @else
+          <span class="stroke" style="display:block">{{ $word }}</span>
+        @endif
+      @endforeach
+    </h1>
+
+    <div class="op-divider op-in-3"></div>
+
+    <p class="op-to op-in-3">
+      Untuk, {{ request()->get('to') ?? 'Tamu Spesial' }}
+    </p>
+
+    <div class="op-meta op-in-4">
+      @if($invitation->events->count())
+        {{ optional(\Carbon\Carbon::parse($invitation->events->first()->event_date))->translatedFormat('l, d F Y') }}<br>
+        {{ $invitation->events->first()->venue_name }} &nbsp;·&nbsp; {{ $invitation->events->first()->start_time }} WIB
+      @else
+        {{ optional($invitation->event_date)->translatedFormat('l, d F Y') }}
+      @endif
+    </div>
+
+    <button class="op-btn op-in-5" onclick="openInvitation()">
+      BUKA UNDANGAN &nbsp;→
+    </button>
+
+  </div>
+
+  {{-- Bottom marquee --}}
+  <div class="op-mq mq">
+    <div class="mq-i">
+      @foreach(['★ HAPPY BIRTHDAY','· YOU\'RE INVITED ·','★ CELEBRATE LIFE','· SPECIAL DAY ·','★ HAPPY BIRTHDAY','· YOU\'RE INVITED ·','★ CELEBRATE LIFE','· SPECIAL DAY ·'] as $t)
+        <span>{{ $t }}</span>
+      @endforeach
+    </div>
+  </div>
+
+</div>
 
 {{-- ═══════════════════════════════
      SNAP SCROLL CONTAINER
@@ -817,6 +995,33 @@ body::after{
 // ── FIRST EVENT DATE (backend) ──
 const FED = "{{ $invitation->events->isNotEmpty() ? $invitation->events->first()->event_date : optional($invitation->event_date)->format('Y-m-d') }}";
 
+// ── OPENING SCREEN ──
+let invitationOpened = false;
+
+function openInvitation() {
+  if (invitationOpened) return;
+  invitationOpened = true;
+
+  const op = document.getElementById('opening');
+  op.classList.add('out');
+
+  // after transition, hide completely
+  setTimeout(() => {
+    op.style.display = 'none';
+    // start countdown & music after open
+    startCountdown();
+    // start music
+    document.getElementById('bgm').play().catch(() => {});
+    // show floating buttons
+    document.getElementById('sdots').style.display = 'flex';
+  }, 950);
+}
+
+// hide UI until opened
+document.getElementById('pill').style.display      = 'none';
+document.getElementById('music-btn').style.display = 'none';
+document.getElementById('sdots').style.display     = 'none';
+
 // ── SNAP SECTIONS ──
 const sc   = document.getElementById('sc');
 const secs = [...document.querySelectorAll('.snap')];
@@ -847,13 +1052,13 @@ const io = new IntersectionObserver(entries => {
     document.querySelectorAll('.sdot').forEach((d,j) => d.classList.toggle('on', j===i));
     document.querySelectorAll('.bn').forEach(b => b.classList.toggle('on', +b.dataset.i===i));
 
-    // RSVP pill: show after hero, hide when at rsvp section
+    // RSVP pill: show after hero, hide when at rsvp section (only if opened)
     const pill = document.getElementById('pill');
-    if (pill) pill.style.display = (i > 0 && i !== 5) ? 'block' : 'none';
+    if (pill && invitationOpened) pill.style.display = (i > 0 && i !== 5) ? 'block' : 'none';
 
-    // music button: show after hero
+    // music button: show after hero (only if opened)
     const mb = document.getElementById('music-btn');
-    if (mb) mb.style.display = i > 0 ? 'flex' : 'none';
+    if (mb && invitationOpened) mb.style.display = i > 0 ? 'flex' : 'none';
 
     // trigger reveal animations
     e.target.querySelectorAll('[data-r]').forEach(el => el.classList.add('vis'));
@@ -892,8 +1097,8 @@ function toggleMusic(){
   else { bgm.pause(); mic.className='fa-solid fa-pause'; mic.style.animation='none'; }
 }
 
-// ── COUNTDOWN (NaN-safe) ──
-(function(){
+// ── COUNTDOWN (NaN-safe, called after opening) ──
+function startCountdown() {
   if (!FED || !FED.trim()) return;
   const t = new Date(FED+'T00:00:00');
   if (isNaN(t)) return;
@@ -909,7 +1114,7 @@ function toggleMusic(){
     });
   }
   tick(); setInterval(tick,1000);
-})();
+}
 
 // ── ADD TO CALENDAR ──
 function addCal(name,date,loc){

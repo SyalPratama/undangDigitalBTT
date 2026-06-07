@@ -329,7 +329,7 @@
     .op-n2     { opacity:0; animation:slideUp .65s 2.0s both ease; }
     .op-sep    { opacity:0; animation:expandLine .5s 2.6s both ease; }
     .op-guest  { opacity:0; animation:fadeUp .5s 3.0s both ease; }
-    .op-btn    { opacity:0; animation:fadeUp .6s 3.4s both ease; }
+    .op-btn    { opacity:0; animation:fadeUp .6s 3.4s both ease, glowPulse 2.4s 4.2s infinite; }
 
     @keyframes kamonAppear { from{opacity:0;transform:scale(.5) rotate(-30deg)} to{opacity:1;transform:scale(1) rotate(0)} }
     @keyframes slideUp     { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
@@ -537,7 +537,7 @@
             </div>
         </div>
 
-        <button class="op-btn btn-verm" onclick="openInvitation()" style="animation:glowPulse 2.2s 4s infinite">
+        <button class="op-btn btn-verm" onclick="openInvitation()">
             <i class="fa-solid fa-play" style="font-size:10px"></i>&nbsp; Mulai
         </button>
     </div>
