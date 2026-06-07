@@ -795,7 +795,7 @@ body::after{
     {{-- Bottom running text 1 --}}
     <div class="mq s9-mq-bot" style="flex-shrink:0;padding:10px 0;overflow:hidden;background:rgba(0,0,0,.1)">
       <div class="mq-i mq-rev" style="animation-duration:20s">
-        @foreach(['● CELEBRATE LIFE','· GOOD TIMES ·','● MAKE A WISH','· CHEERS ·','● BIRTHDAY BASH','· LET'S PARTY ·','● CELEBRATE LIFE','· GOOD TIMES ·','● MAKE A WISH','· CHEERS ·','● BIRTHDAY BASH','· LET'S PARTY ·'] as $t)
+        @foreach(['● CELEBRATE LIFE','· GOOD TIMES ·','● MAKE A WISH','· CHEERS ·','● BIRTHDAY BASH','· LET\'S PARTY ·','● CELEBRATE LIFE','· GOOD TIMES ·','● MAKE A WISH','· CHEERS ·','● BIRTHDAY BASH','· LET\'S PARTY ·'] as $t)
           <span class="f-mono" style="font-size:clamp(9px,1.2vw,12px);letter-spacing:.32em;color:rgba(242,237,230,.6);text-transform:uppercase;padding:0 18px">{{ $t }}</span>
         @endforeach
       </div>
