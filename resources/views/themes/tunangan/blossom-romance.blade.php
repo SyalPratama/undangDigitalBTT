@@ -6,47 +6,42 @@
     <title>{{ $invitation->title }}</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Outfit:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@1,300;1,400;1,600&display=swap" rel="stylesheet">
 
     <style>
-        /* ═══════════════════════════════════════════
-           DESIGN TOKENS — BLOSSOM ROMANCE (LIGHT)
-        ═══════════════════════════════════════════ */
+        /* ════════════════════════════════════════════
+           PETAL EDITORIAL — Design System
+           Konsep: Magazine spread, asimetris, editorial
+        ════════════════════════════════════════════ */
         :root {
-            --ivory:      #FFFCF7;
-            --ivory-2:    #FFF8EF;
-            --blush:      #FAE8E8;
-            --blush-2:    #F5D5D8;
-            --blush-3:    #F0C8CC;
-            --rose:       #D4858E;
-            --rose-lt:    #E8A8B0;
-            --rose-deep:  #C07080;
-            --gold:       #C8956C;
-            --gold-lt:    #E8C4A8;
-            --sage:       #9BB89A;
-            --text:       #4A3040;
-            --text-2:     #7A5A65;
-            --text-3:     #B08890;
-            --card:       rgba(255,255,255,0.90);
-            --nav-h:      66px;
-            --radius-lg:  20px;
-            --radius-md:  14px;
-            --radius-sm:  10px;
+            --linen:      #FAF7F2;
+            --cream:      #F2EDE3;
+            --blush:      #F8E6E8;
+            --rose-pale:  #F2D2D6;
+            --rose:       #C9747D;
+            --rose-lt:    #E0A0A8;
+            --rose-deep:  #A85860;
+            --sage:       #88A885;
+            --gold:       #C4906A;
+            --text:       #2C2028;
+            --text-2:     #6B4F55;
+            --text-3:     #A88890;
+            --white:      #FFFFFF;
+            --pill-h:     58px;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         html, body {
             height: 100%; width: 100%;
-            background: var(--ivory);
+            background: var(--linen);
             color: var(--text);
-            font-family: 'DM Sans', sans-serif;
-            font-weight: 400;
+            font-family: 'Outfit', sans-serif;
             overscroll-behavior: none;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* ═══ SNAP SCROLL ═══ */
+        /* ── SNAP SCROLL ── */
         #scroll-container {
             height: 100vh;
             overflow-y: scroll;
@@ -59,306 +54,448 @@
             width: 100%;
             position: relative;
             overflow: hidden;
-            display: flex;
+        }
+
+        /* ── FONTS ── */
+        .fp  { font-family: 'Playfair Display', serif; }
+        .fpi { font-family: 'Playfair Display', serif; font-style: italic; }
+        .fc  { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+
+        /* ── PROGRESS BAR (desktop) ── */
+        #progress-track {
+            position: fixed; top: 0; left: 0; right: 0; height: 2px;
+            background: rgba(201,116,125,.12); z-index: 300;
+        }
+        #progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rose-pale), var(--rose));
+            transition: width .5s ease;
+        }
+
+        /* ── SECTION COUNTER (desktop side label) ── */
+        .sec-num {
+            position: absolute; left: 18px; bottom: 40px; z-index: 10;
+            font-family: 'Playfair Display', serif; font-size: 9rem;
+            font-weight: 700; color: rgba(201,116,125,.06);
+            line-height: 1; pointer-events: none; user-select: none;
+            letter-spacing: -.02em;
+        }
+
+        /* ── FLOATING PILL NAV (mobile) ── */
+        #pill-nav {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 500;
+            background: rgba(255,255,255,.96);
+            border-radius: 50px;
+            padding: 7px 10px;
+            display: none;
             align-items: center;
-            justify-content: center;
-        }
-
-        /* ═══ TYPOGRAPHY ═══ */
-        .fp { font-family: 'Playfair Display', serif; }
-        .fc { font-family: 'Cormorant Garamond', serif; }
-        .fi { font-family: 'Cormorant Garamond', serif; font-style: italic; }
-
-        /* ═══ DIVIDER ═══ */
-        .rdiv {
-            display: flex; align-items: center; gap: 12px;
-            color: var(--rose); font-size: 8.5px; letter-spacing: .36em;
-            text-transform: uppercase; white-space: nowrap;
-            font-weight: 500;
-        }
-        .rdiv::before, .rdiv::after {
-            content: ''; flex: 1; height: 1px;
-        }
-        .rdiv::before { background: linear-gradient(90deg, transparent, var(--rose-lt)); }
-        .rdiv::after  { background: linear-gradient(90deg, var(--rose-lt), transparent); }
-
-        /* ═══ CARD ═══ */
-        .scard {
-            background: var(--card);
-            border: 1px solid rgba(212,133,142,.16);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: var(--radius-lg);
+            gap: 4px;
             box-shadow:
-                0 8px 32px rgba(212,133,142,.10),
-                0 2px 6px rgba(0,0,0,.04),
-                inset 0 1px 0 rgba(255,255,255,.8);
-            transition: box-shadow .3s, border-color .3s;
+                0 8px 32px rgba(180,90,100,.18),
+                0 2px 8px rgba(0,0,0,.06),
+                inset 0 1px 0 rgba(255,255,255,.9);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
         }
-        .scard:hover {
-            border-color: rgba(212,133,142,.3);
-            box-shadow: 0 14px 44px rgba(212,133,142,.18), 0 4px 10px rgba(0,0,0,.04);
+        .pn-btn {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-3); cursor: pointer;
+            transition: all .28s cubic-bezier(.34,1.56,.64,1);
+            font-size: 18px;
+            position: relative;
+            border: none; background: transparent;
         }
-
-        /* ═══ PHOTO FRAME ═══ */
-        .pf {
-            position: relative; overflow: hidden;
-            border: 2px solid rgba(212,133,142,.28);
-            border-radius: 50% 50% 46% 46%;
-            box-shadow: 0 8px 28px rgba(212,133,142,.18);
-        }
-        .pf::after {
-            content: '';
-            position: absolute; inset: 5px;
-            border: 1px solid rgba(255,255,255,.6);
-            pointer-events: none; z-index: 2;
-            border-radius: inherit;
-        }
-        .pf img { width: 100%; height: 100%; object-fit: cover; transition: transform .9s ease; }
-        .pf:hover img { transform: scale(1.06); }
-
-        /* ═══ COUNTDOWN ═══ */
-        .cdbox {
-            background: white;
-            border: 1px solid rgba(212,133,142,.2);
-            padding: 15px 14px; text-align: center; min-width: 72px;
-            border-radius: var(--radius-md);
-            box-shadow: 0 4px 16px rgba(212,133,142,.09), 0 1px 3px rgba(0,0,0,.04);
-            position: relative; overflow: hidden;
-        }
-        .cdbox::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, var(--blush-3), var(--rose-lt), var(--gold-lt));
-        }
-        .cdn {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.6rem; line-height: 1;
-            color: var(--rose); font-weight: 600;
-        }
-        .cdl {
-            font-size: 7.5px; letter-spacing: .22em; text-transform: uppercase;
-            color: var(--text-3); margin-top: 5px; display: block; font-weight: 500;
+        .pn-btn.active {
+            background: var(--rose);
+            color: white;
+            transform: scale(1.08);
+            box-shadow: 0 4px 16px rgba(201,116,125,.4);
         }
 
-        /* ═══ FORM ═══ */
-        .inv-inp {
-            width: 100%;
-            background: rgba(255,255,255,.95);
-            border: 1.5px solid rgba(212,133,142,.2);
-            color: var(--text);
-            padding: 12px 16px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 13px; font-weight: 400;
-            outline: none; transition: border-color .25s, box-shadow .25s;
-            border-radius: var(--radius-md);
-            -webkit-appearance: none;
-        }
-        .inv-inp:focus {
-            border-color: var(--rose-lt);
-            box-shadow: 0 0 0 3px rgba(212,133,142,.12);
-        }
-        .inv-inp::placeholder { color: var(--text-3); }
-        select.inv-inp { cursor: pointer; }
-
-        /* ═══ WISH CARD ═══ */
-        .wcard {
-            background: rgba(255,255,255,.88);
-            border: 1px solid rgba(212,133,142,.14);
-            padding: 15px 17px; border-radius: var(--radius-md);
-            box-shadow: 0 2px 10px rgba(212,133,142,.07);
-        }
-
-        /* ═══ GALLERY GRID ═══ */
-        .gal-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 6px;
-        }
-        .gal-grid .gi:nth-child(1) { grid-column: span 7; grid-row: span 2; height: 305px; }
-        .gal-grid .gi:nth-child(2) { grid-column: span 5; height: 148px; }
-        .gal-grid .gi:nth-child(3) { grid-column: span 5; height: 148px; }
-        .gal-grid .gi:nth-child(n+4) { grid-column: span 4; height: 148px; }
-        .gi { overflow: hidden; border-radius: var(--radius-sm); }
-        .gi img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s ease; }
-        .gi:hover img { transform: scale(1.08); }
-
-        /* ═══ FLOAT BUTTONS ═══ */
+        /* ── FLOAT BUTTONS ── */
         .flt {
-            position: fixed; z-index: 200;
-            width: 42px; height: 42px;
-            background: rgba(255,252,247,.94);
-            border: 1.5px solid rgba(212,133,142,.22);
+            position: fixed; z-index: 400;
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,.92);
+            border: 1px solid rgba(201,116,125,.2);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             color: var(--rose); cursor: pointer;
-            transition: all .3s; backdrop-filter: blur(12px);
-            box-shadow: 0 4px 16px rgba(212,133,142,.14);
+            transition: all .25s;
+            box-shadow: 0 4px 14px rgba(180,90,100,.12);
+            backdrop-filter: blur(10px);
         }
-        .flt:hover { background: rgba(212,133,142,.1); border-color: var(--rose); }
+        .flt:hover { background: rgba(201,116,125,.1); }
 
-        /* ═══ BOTTOM NAV ═══ */
-        #bnav {
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
-            height: var(--nav-h);
-            background: rgba(255,252,247,.97);
-            border-top: 1px solid rgba(212,133,142,.14);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
+        /* ── MUSIC BUTTON ── */
+        #flt-music {
+            position: fixed; top: 20px; right: 20px; z-index: 400;
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,.92);
+            border: 1px solid rgba(201,116,125,.2);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--rose); cursor: pointer;
+            box-shadow: 0 4px 14px rgba(180,90,100,.12);
+            backdrop-filter: blur(10px);
             display: none;
-            align-items: center;
-            padding: 0 4px;
-            padding-bottom: env(safe-area-inset-bottom);
-            box-shadow: 0 -4px 20px rgba(212,133,142,.09);
-        }
-        .bn-item {
-            flex: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 3px;
-            height: 100%; cursor: pointer;
-            color: var(--text-3); font-size: 6.5px; letter-spacing: .1em;
-            text-transform: uppercase; transition: color .25s;
-            font-weight: 500; position: relative;
-        }
-        .bn-item i { font-size: 17px; transition: transform .25s; }
-        .bn-item.active { color: var(--rose); }
-        .bn-item.active i { transform: scale(1.12); }
-        .bn-pip {
-            position: absolute; top: 8px; right: calc(50% - 14px);
-            width: 4px; height: 4px; border-radius: 50%;
-            background: var(--rose); opacity: 0;
-            transform: scale(0); transition: all .25s;
-        }
-        .bn-item.active .bn-pip { opacity: 1; transform: scale(1); }
-
-        /* ═══ SECTION DOTS ═══ */
-        #sdots {
-            position: fixed; right: 14px; top: 50%;
-            transform: translateY(-50%); z-index: 200;
-            display: flex; flex-direction: column; gap: 8px;
-        }
-        .sdot {
-            width: 5px; height: 5px; border-radius: 50%;
-            background: rgba(212,133,142,.22); cursor: pointer;
-            transition: all .35s;
-        }
-        .sdot.on {
-            background: var(--rose);
-            box-shadow: 0 0 8px rgba(212,133,142,.5);
-            height: 16px; border-radius: 3px;
         }
 
-        /* ═══ HERO SLIDESHOW ═══ */
-        .h-slide {
-            position: absolute; inset: 0;
-            background-size: cover; background-position: center;
-            transition: opacity 2.5s ease; opacity: 0;
-        }
-        .h-slide.on { opacity: 1; }
-
-        /* ═══ ANIMATIONS ═══ */
+        /* ── ANIMATIONS ── */
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(26px); }
+            from { opacity: 0; transform: translateY(30px); }
             to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeLeft {
+            from { opacity: 0; transform: translateX(30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeRight {
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0); }
         }
         @keyframes fadeIn {
             from { opacity: 0; } to { opacity: 1; }
         }
         @keyframes spin-slow { to { transform: rotate(360deg); } }
-        @keyframes petalFall {
-            0%   { opacity: 0; transform: translate(0, -30px) rotate(0deg); }
-            8%   { opacity: .65; }
-            90%  { opacity: .35; }
-            100% { opacity: 0; transform: translate(var(--tx), 110vh) rotate(var(--rot)); }
-        }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50%       { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
         }
-        @keyframes shimmerR {
+        @keyframes shimR {
             0%   { background-position: -200% center; }
             100% { background-position:  200% center; }
         }
-        @keyframes ringPulse {
-            0%, 100% { transform: scale(1); opacity: .4; }
-            50%       { transform: scale(1.05); opacity: .7; }
+        @keyframes arrowBounce {
+            0%, 100% { transform: translateY(0); opacity: .5; }
+            50% { transform: translateY(6px); opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { opacity:0; transform:translateY(20px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        @keyframes petalSpin {
+            0%   { opacity:0; transform:translate(0,-20px) rotate(0deg); }
+            10%  { opacity:.7; }
+            90%  { opacity:.3; }
+            100% { opacity:0; transform:translate(var(--px,40px),110vh) rotate(var(--pr,360deg)); }
         }
 
-        .shimmer-text {
-            background: linear-gradient(90deg, var(--text) 0%, var(--rose) 35%, var(--gold) 50%, var(--rose) 65%, var(--text) 100%);
+        .shimmer-rose {
+            background: linear-gradient(90deg, var(--text) 0%, var(--rose) 40%, var(--gold) 55%, var(--rose) 70%, var(--text) 100%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: shimmerR 5s linear infinite;
+            animation: shimR 5s linear infinite;
         }
 
-        .anim-ready .anim { opacity: 0; }
-        .anim-ready.in-view .a1 { animation: fadeUp .7s .08s  forwards ease; }
-        .anim-ready.in-view .a2 { animation: fadeUp .7s .20s  forwards ease; }
-        .anim-ready.in-view .a3 { animation: fadeUp .7s .34s  forwards ease; }
-        .anim-ready.in-view .a4 { animation: fadeUp .7s .48s  forwards ease; }
-        .anim-ready.in-view .a5 { animation: fadeUp .7s .62s  forwards ease; }
+        /* ANIM READY */
+        .ar .an { opacity: 0; }
+        .ar.iv .a1 { animation: fadeUp  .65s .08s forwards; }
+        .ar.iv .a2 { animation: fadeUp  .65s .18s forwards; }
+        .ar.iv .a3 { animation: fadeUp  .65s .30s forwards; }
+        .ar.iv .a4 { animation: fadeUp  .65s .44s forwards; }
+        .ar.iv .a5 { animation: fadeUp  .65s .58s forwards; }
+        .ar.iv .al1{ animation: fadeLeft .65s .08s forwards; }
+        .ar.iv .al2{ animation: fadeLeft .65s .22s forwards; }
+        .ar.iv .al3{ animation: fadeLeft .65s .36s forwards; }
+        .ar.iv .ar1{ animation: fadeRight .65s .08s forwards; }
+        .ar.iv .ar2{ animation: fadeRight .65s .22s forwards; }
 
-        /* ═══ RESPONSIVE MOBILE ═══ */
+        /* ─────────────────────────────────────
+           COVER / ENVELOPE
+        ───────────────────────────────────── */
+        #envelope {
+            position: fixed; inset: 0; z-index: 999;
+            background: var(--linen);
+            overflow: hidden;
+            transition: clip-path .9s cubic-bezier(.77,0,.18,1), opacity .9s ease;
+        }
+        #envelope.closing {
+            clip-path: circle(0% at 50% 50%);
+            opacity: 0;
+        }
+
+        /* ─────────────────────────────────────
+           SEC 0 — HERO: diagonal split
+        ───────────────────────────────────── */
+        .hero-photo-side {
+            position: absolute;
+            top: 0; right: 0; bottom: 0; width: 42%;
+            overflow: hidden;
+        }
+        .hero-photo-side::before {
+            content: '';
+            position: absolute; inset: 0; z-index: 2;
+            background: linear-gradient(to right, var(--linen) 0%, transparent 30%),
+                        linear-gradient(to top, var(--linen) 0%, transparent 25%);
+        }
+        .hero-photo-side .h-slide {
+            position: absolute; inset: 0;
+            background-size: cover; background-position: center;
+            transition: opacity 2.5s ease; opacity: 0;
+        }
+        .hero-photo-side .h-slide.on { opacity: 1; }
+
+        /* ─────────────────────────────────────
+           SEC 2 — COUPLE: full split panels
+        ───────────────────────────────────── */
+        .couple-panel {
+            position: absolute; top: 0; bottom: 0; width: 50%;
+            overflow: hidden; display: flex; flex-direction: column;
+            justify-content: flex-end;
+        }
+        .couple-panel.left  { left: 0;  background: var(--rose-pale); }
+        .couple-panel.right { right: 0; background: var(--cream); }
+        .cp-photo {
+            position: absolute; inset: 0;
+            background-size: cover; background-position: center top;
+        }
+        .cp-overlay {
+            position: absolute; inset: 0;
+        }
+        .cp-info {
+            position: relative; z-index: 3;
+            padding: 20px 18px;
+        }
+
+        /* ─────────────────────────────────────
+           SEC 3 — THE DAY
+        ───────────────────────────────────── */
+        .day-bg-text {
+            position: absolute;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700; color: rgba(201,116,125,.055);
+            user-select: none; pointer-events: none;
+            line-height: 1; letter-spacing: -.02em;
+        }
+        .ev-card {
+            border-left: 3px solid var(--rose-lt);
+            padding: 14px 16px;
+            background: rgba(255,255,255,.7);
+            border-radius: 0 12px 12px 0;
+            backdrop-filter: blur(8px);
+        }
+        .ev-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(201,116,125,.1);
+            color: var(--rose); border-radius: 50px;
+            padding: 5px 12px; font-size: 10px;
+            letter-spacing: .1em; text-transform: uppercase; font-weight: 600;
+        }
+
+        /* ─────────────────────────────────────
+           SEC 4 — GALLERY: polaroid horizontal
+        ───────────────────────────────────── */
+        .polaroid-strip {
+            display: flex; gap: 16px;
+            overflow-x: auto; padding: 20px 28px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+        }
+        .polaroid-strip::-webkit-scrollbar { display: none; }
+        .polaroid {
+            flex-shrink: 0; scroll-snap-align: center;
+            background: white;
+            padding: 10px 10px 36px;
+            box-shadow: 0 6px 24px rgba(0,0,0,.1), 0 2px 6px rgba(0,0,0,.06);
+            transform-origin: center center;
+        }
+        .polaroid:nth-child(odd)  { transform: rotate(-2.5deg); }
+        .polaroid:nth-child(even) { transform: rotate(2deg); }
+        .polaroid img {
+            width: 200px; height: 240px; object-fit: cover;
+            display: block;
+        }
+        .polaroid-label {
+            text-align: center; margin-top: 10px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic; font-size: 12px;
+            color: var(--text-2);
+        }
+
+        /* ─────────────────────────────────────
+           FORM — RSVP
+        ───────────────────────────────────── */
+        .field {
+            width: 100%;
+            background: var(--white);
+            border: 1.5px solid rgba(201,116,125,.18);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 13.5px; color: var(--text);
+            outline: none;
+            transition: border-color .25s, box-shadow .25s;
+            -webkit-appearance: none;
+        }
+        .field:focus {
+            border-color: var(--rose-lt);
+            box-shadow: 0 0 0 3px rgba(201,116,125,.1);
+        }
+        .field::placeholder { color: var(--text-3); }
+
+        /* ─────────────────────────────────────
+           WISHES — chat bubbles
+        ───────────────────────────────────── */
+        .bubble-list {
+            display: flex; flex-direction: column;
+            gap: 10px; overflow-y: auto;
+            max-height: 200px;
+            padding: 4px 2px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(201,116,125,.2) transparent;
+        }
+        .bubble {
+            display: flex; gap: 9px; align-items: flex-end;
+        }
+        .bubble.left  { flex-direction: row; }
+        .bubble.right { flex-direction: row-reverse; }
+        .b-avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--rose-pale), var(--rose-lt));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 600; color: var(--rose-deep);
+            flex-shrink: 0;
+        }
+        .b-body { max-width: 80%; }
+        .b-name { font-size: 10px; font-weight: 600; color: var(--text-2); margin-bottom: 4px; }
+        .bubble.right .b-name { text-align: right; }
+        .b-text {
+            padding: 10px 13px; border-radius: 16px;
+            font-size: 12px; line-height: 1.6;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+        }
+        .bubble.left  .b-text {
+            background: white;
+            border: 1px solid rgba(201,116,125,.15);
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+        }
+        .bubble.right .b-text {
+            background: linear-gradient(135deg, var(--rose), #D4858E);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .b-time { font-size: 9px; color: var(--text-3); margin-top: 4px; }
+        .bubble.right .b-time { text-align: right; }
+
+        /* Chat input bar */
+        .chat-input {
+            display: flex; gap: 8px; align-items: center;
+            padding: 10px 12px;
+            background: white;
+            border: 1.5px solid rgba(201,116,125,.18);
+            border-radius: 50px;
+            margin-top: 10px;
+        }
+        .chat-input input {
+            flex: 1; border: none; outline: none;
+            font-family: 'Outfit', sans-serif; font-size: 13px;
+            color: var(--text); background: transparent;
+        }
+        .chat-input input::placeholder { color: var(--text-3); }
+        .chat-send {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: var(--rose); border: none;
+            color: white; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; flex-shrink: 0;
+            transition: transform .2s;
+        }
+        .chat-send:hover { transform: scale(1.08); }
+
+        /* ─────────────────────────────────────
+           BANK CARDS
+        ───────────────────────────────────── */
+        .bank-card {
+            border-radius: 18px;
+            padding: 22px 22px;
+            color: white;
+            position: relative; overflow: hidden;
+        }
+        .bank-card::before {
+            content: '';
+            position: absolute; top: -40px; right: -40px;
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.1);
+        }
+        .bank-card::after {
+            content: '';
+            position: absolute; bottom: -30px; right: 30px;
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.07);
+        }
+
+        /* ─────────────────────────────────────
+           RESPONSIVE
+        ───────────────────────────────────── */
         @media (max-width: 768px) {
-            #bnav              { display: flex; }
-            #sdots             { display: none; }
-            #flt-up, #flt-dn   { display: none !important; }
+            #pill-nav { display: flex; }
+            #sdots    { display: none !important; }
+            #flt-up, #flt-dn { display: none !important; }
 
-            .snap-sec          { height: 100svh; }
-            .sec-inner         { padding-bottom: calc(var(--nav-h) + 10px) !important; }
+            .snap-sec { height: 100svh; }
 
-            .hero-name         { font-size: clamp(2.6rem, 12vw, 4rem) !important; }
-            .hero-amp          { font-size: 1.8rem !important; }
-            .hero-date-line    { display: none !important; }
+            /* Hero */
+            .hero-photo-side { width: 38%; }
+            .hero-main-text .giant-name { font-size: clamp(2.6rem, 12vw, 4rem) !important; }
 
-            .couple-photo      { width: 90px !important; height: 115px !important; margin-bottom: 10px !important; }
-            .couple-name       { font-size: 1.4rem !important; }
-            .couple-par        { font-size: 11px !important; }
+            /* Couple */
+            .couple-panel { width: 50%; }
+            .cp-info h2 { font-size: 1.3rem !important; }
 
-            .cdn               { font-size: 2rem !important; }
-            .cdbox             { padding: 10px 11px !important; min-width: 56px !important; }
-            .cdl               { font-size: 7px !important; }
-            .cd-row            { gap: 6px !important; }
+            /* Day */
+            .day-bg-text { font-size: 5rem !important; }
+            .cdn { font-size: 2rem !important; }
+            .cdbox { min-width: 56px !important; padding: 10px 8px !important; }
 
-            .ev-wrap {
-                display: flex !important;
-                overflow-x: auto !important;
-                scroll-snap-type: x mandatory !important;
-                -webkit-overflow-scrolling: touch !important;
-                gap: 10px !important;
-                padding-bottom: 4px !important;
-                scrollbar-width: none !important;
-                width: 100% !important;
-            }
-            .ev-wrap::-webkit-scrollbar { display: none !important; }
-            .ev-item {
-                scroll-snap-align: center !important;
-                min-width: calc(85vw) !important;
-                flex-shrink: 0 !important;
-            }
+            /* Gallery */
+            .polaroid img { width: 160px !important; height: 195px !important; }
 
-            .gal-grid {
-                grid-template-columns: 1fr 1fr !important;
-                gap: 4px !important;
-            }
-            .gal-grid .gi { height: 115px !important; grid-column: span 1 !important; grid-row: span 1 !important; }
-            .gal-grid .gi:first-child { grid-column: span 2 !important; height: 155px !important; }
-
-            .gift-grid         { grid-template-columns: 1fr !important; gap: 10px !important; }
-            .rsvp-inner        { padding-left: 18px !important; padding-right: 18px !important; }
-            .wish-scroll       { max-height: 175px !important; }
-            .cls-name          { font-size: clamp(2rem, 8vw, 3.6rem) !important; }
+            /* Padding for pill nav */
+            .sec-pad-bottom { padding-bottom: calc(var(--pill-h) + 40px) !important; }
         }
 
-        @media (max-width: 400px) {
-            .couple-photo  { width: 76px !important; height: 98px !important; }
-            .couple-name   { font-size: 1.2rem !important; }
-            .cdn           { font-size: 1.75rem !important; }
-            .cdbox         { min-width: 50px !important; }
+        @media (min-width: 769px) {
+            #progress-track { display: block; }
+        }
+
+        /* Countdown boxes */
+        .cdbox {
+            background: white; border-radius: 14px;
+            padding: 13px 10px; min-width: 64px; text-align: center;
+            box-shadow: 0 4px 16px rgba(201,116,125,.09);
+            position: relative; overflow: hidden;
+        }
+        .cdbox::after {
+            content: '';
+            position: absolute; bottom: 0; left: 10%; right: 10%; height: 2px;
+            background: linear-gradient(90deg, var(--rose-pale), var(--rose-lt), var(--rose-pale));
+            border-radius: 2px;
+        }
+        .cdn {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem; line-height: 1; font-weight: 700;
+            color: var(--rose);
+        }
+        .cdl {
+            font-size: 7.5px; letter-spacing: .2em; text-transform: uppercase;
+            color: var(--text-3); margin-top: 5px; display: block; font-weight: 500;
         }
     </style>
 </head>
-
 <body>
 
 <audio id="weddingMusic" loop preload="none">
@@ -367,566 +504,363 @@
     @endif
 </audio>
 
-{{-- ══════════════════════════════════════════════
-     ENVELOPE — OPENING SCREEN
-══════════════════════════════════════════════ --}}
-<div id="envelope" style="
-    position:fixed;inset:0;z-index:999;
-    display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(150deg,#FFFCF7 0%,#FAE8E8 45%,#F5D5D8 100%);
-    overflow:hidden;
-    transition:transform .95s cubic-bezier(.77,0,.18,1),opacity .95s ease;
-">
-    <!-- Petal rain container -->
-    <div id="env-petals" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
+<!-- PROGRESS BAR (desktop) -->
+<div id="progress-track" style="display:none">
+    <div id="progress-fill" style="width:11.1%"></div>
+</div>
 
-    <!-- Decorative circles bg -->
-    <svg style="position:absolute;top:-80px;right:-80px;opacity:.09;pointer-events:none" width="380" height="380" viewBox="0 0 380 380" fill="none">
-        <circle cx="190" cy="190" r="178" stroke="#D4858E" stroke-width="1"/>
-        <circle cx="190" cy="190" r="140" stroke="#D4858E" stroke-width=".6"/>
-        <circle cx="190" cy="190" r="100" stroke="#C8956C" stroke-width=".4"/>
-    </svg>
-    <svg style="position:absolute;bottom:-90px;left:-90px;opacity:.08;pointer-events:none" width="350" height="350" viewBox="0 0 350 350" fill="none">
-        <circle cx="175" cy="175" r="162" stroke="#D4858E" stroke-width=".8"/>
-        <circle cx="175" cy="175" r="128" stroke="#C8956C" stroke-width=".5"/>
-    </svg>
+{{-- ══════════════════════════════════════
+     ENVELOPE — Luxury Letter Style
+══════════════════════════════════════ --}}
+<div id="envelope">
 
-    <!-- Floral corner TL -->
-    <svg style="position:absolute;top:0;left:0;opacity:.22;pointer-events:none" width="180" height="180" viewBox="0 0 200 200" fill="none">
-        <g transform="translate(38,38)">
-            <g fill="#D4858E">
-                <path d="M0,-42 C-13,-30 -13,-15 0,-9 C13,-15 13,-30 0,-42Z"/>
-                <path d="M0,-42 C-13,-30 -13,-15 0,-9 C13,-15 13,-30 0,-42Z" transform="rotate(72)"/>
-                <path d="M0,-42 C-13,-30 -13,-15 0,-9 C13,-15 13,-30 0,-42Z" transform="rotate(144)"/>
-                <path d="M0,-42 C-13,-30 -13,-15 0,-9 C13,-15 13,-30 0,-42Z" transform="rotate(216)"/>
-                <path d="M0,-42 C-13,-30 -13,-15 0,-9 C13,-15 13,-30 0,-42Z" transform="rotate(288)"/>
-                <circle r="7" fill="#C8956C"/>
-            </g>
-            <path d="M40,18 C62,8 84,16 88,44 C66,48 46,40 40,18Z" fill="#D4858E" opacity=".7"/>
-            <path d="M18,40 C8,62 16,84 44,88 C48,66 40,46 18,40Z" fill="#D4858E" opacity=".7"/>
-        </g>
-    </svg>
-    <!-- Floral corner BR -->
-    <svg style="position:absolute;bottom:0;right:0;opacity:.22;pointer-events:none;transform:rotate(180deg)" width="180" height="180" viewBox="0 0 200 200" fill="none">
-        <g transform="translate(38,38)">
-            <g fill="#D4858E">
-                <path d="M0,-42 C-13,-30 -13,-15 0,-9 C13,-15 13,-30 0,-42Z"/>
-                <path d="M0,-42 C-13,-30 -13,-15 0,-9 C13,-15 13,-30 0,-42Z" transform="rotate(72)"/>
-                <path d="M0,-42 C-13,-30 -13,-15 0,-9 C13,-15 13,-30 0,-42Z" transform="rotate(144)"/>
-                <path d="M0,-42 C-13,-30 -13,-15 0,-9 C13,-15 13,-30 0,-42Z" transform="rotate(216)"/>
-                <path d="M0,-42 C-13,-30 -13,-15 0,-9 C13,-15 13,-30 0,-42Z" transform="rotate(288)"/>
-                <circle r="7" fill="#C8956C"/>
-            </g>
-            <path d="M40,18 C62,8 84,16 88,44 C66,48 46,40 40,18Z" fill="#D4858E" opacity=".7"/>
-            <path d="M18,40 C8,62 16,84 44,88 C48,66 40,46 18,40Z" fill="#D4858E" opacity=".7"/>
-        </g>
-    </svg>
+    <!-- Petals container -->
+    <div id="env-petals" style="position:absolute;inset:0;overflow:hidden;pointer-events:none"></div>
 
-    <!-- Content -->
-    <div style="position:relative;z-index:2;text-align:center;padding:32px 28px;max-width:400px;width:100%">
+    <!-- Large faded monogram background -->
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-weight:700;font-style:italic;font-size:min(38vw,280px);color:rgba(201,116,125,.05);white-space:nowrap;user-select:none;pointer-events:none;line-height:1">
+        {{ substr($invitation->profile->first_name, 0, 1) }}&amp;{{ substr($invitation->profile->second_name, 0, 1) }}
+    </div>
 
-        <!-- Animated ring icon -->
-        <div style="margin:0 auto 26px;animation:float 3.5s ease-in-out infinite">
-            <svg width="90" height="90" viewBox="0 0 90 90" fill="none">
-                <!-- outer ring pulse -->
-                <circle cx="45" cy="45" r="40" stroke="#D4858E" stroke-width=".6" stroke-dasharray="3 5" opacity=".4" style="animation:ringPulse 3s ease-in-out infinite"/>
-                <!-- ring band -->
-                <circle cx="45" cy="45" r="26" stroke="#C8956C" stroke-width="3" fill="none" opacity=".75"/>
-                <!-- inner shine -->
-                <circle cx="45" cy="45" r="20" stroke="rgba(255,255,255,.5)" stroke-width="1" fill="none"/>
-                <!-- Diamond stone -->
-                <polygon points="45,12 52,22 45,28 38,22" fill="#D4858E" opacity=".85"/>
-                <polygon points="45,12 52,22 45,18" fill="#F5D5D8" opacity=".9"/>
-                <polygon points="45,12 38,22 45,18" fill="#C07080" opacity=".7"/>
-                <polygon points="52,22 45,28 45,18" fill="#E8A8B0" opacity=".6"/>
-                <!-- tiny sparkles -->
-                <circle cx="62" cy="28" r="1.5" fill="#C8956C" opacity=".5"/>
-                <circle cx="30" cy="22" r="1" fill="#D4858E" opacity=".4"/>
-            </svg>
-        </div>
+    <!-- Corner marks -->
+    <div style="position:absolute;top:20px;left:20px;width:36px;height:36px;border-top:1.5px solid rgba(201,116,125,.35);border-left:1.5px solid rgba(201,116,125,.35)"></div>
+    <div style="position:absolute;top:20px;right:20px;width:36px;height:36px;border-top:1.5px solid rgba(201,116,125,.35);border-right:1.5px solid rgba(201,116,125,.35)"></div>
+    <div style="position:absolute;bottom:20px;left:20px;width:36px;height:36px;border-bottom:1.5px solid rgba(201,116,125,.35);border-left:1.5px solid rgba(201,116,125,.35)"></div>
+    <div style="position:absolute;bottom:20px;right:20px;width:36px;height:36px;border-bottom:1.5px solid rgba(201,116,125,.35);border-right:1.5px solid rgba(201,116,125,.35)"></div>
 
-        <p style="font-family:'DM Sans',sans-serif;font-size:8px;letter-spacing:.55em;color:var(--rose);text-transform:uppercase;margin-bottom:16px;font-weight:500">
+    <!-- Left vertical stripe -->
+    <div style="position:absolute;left:44px;top:60px;bottom:60px;width:1px;background:linear-gradient(to bottom,transparent,rgba(201,116,125,.2),transparent)"></div>
+    <div style="position:absolute;left:46px;top:60px;bottom:60px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-left:8px">
+        <p style="font-size:8px;letter-spacing:.38em;color:var(--text-3);text-transform:uppercase;writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);font-weight:500">
             Undangan Tunangan
         </p>
+    </div>
 
-        <!-- Divider -->
-        <div style="display:flex;align-items:center;gap:10px;margin:0 auto 20px;max-width:280px">
-            <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(212,133,142,.4))"></div>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M7,1 C4.5,3.5 3,5.5 7,13 C11,5.5 9.5,3.5 7,1Z" fill="#D4858E" opacity=".6"/>
-                <path d="M7,1 C4.5,3.5 3,5.5 7,13 C11,5.5 9.5,3.5 7,1Z" fill="#D4858E" opacity=".6" transform="rotate(90,7,7)"/>
-            </svg>
-            <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(212,133,142,.4),transparent)"></div>
+    <!-- Main content -->
+    <div style="position:relative;z-index:2;height:100%;display:flex;align-items:center;justify-content:center">
+        <div style="text-align:center;padding:40px 60px 40px 80px;max-width:480px">
+
+            <!-- Ring illustration (floating) -->
+            <div style="margin:0 auto 28px;animation:float 3.5s ease-in-out infinite;width:fit-content">
+                <svg width="88" height="88" viewBox="0 0 88 88" fill="none">
+                    <circle cx="44" cy="44" r="30" stroke="rgba(196,144,106,.5)" stroke-width="2.5" fill="none"/>
+                    <circle cx="44" cy="44" r="24" stroke="rgba(201,116,125,.2)" stroke-width=".8" fill="none"/>
+                    <!-- Diamond -->
+                    <polygon points="44,10 52,22 44,28 36,22" fill="#C9747D" opacity=".8"/>
+                    <polygon points="44,10 52,22 44,19" fill="#F2D2D6" opacity=".95"/>
+                    <polygon points="44,10 36,22 44,19" fill="#A85860" opacity=".7"/>
+                    <polygon points="52,22 44,28 44,19" fill="#E0A0A8" opacity=".6"/>
+                    <!-- Sparkle lines -->
+                    <line x1="44" y1="3" x2="44" y2="7" stroke="#C4906A" stroke-width="1.2" opacity=".5"/>
+                    <line x1="62" y1="10" x2="59" y2="13" stroke="#C4906A" stroke-width="1.2" opacity=".4"/>
+                    <line x1="26" y1="10" x2="29" y2="13" stroke="#C4906A" stroke-width="1.2" opacity=".4"/>
+                    <!-- Ring band lines -->
+                    <path d="M15,44 Q20,38 44,38 Q68,38 73,44" stroke="rgba(201,116,125,.15)" stroke-width=".6" fill="none"/>
+                </svg>
+            </div>
+
+            <p style="font-size:8px;letter-spacing:.55em;color:var(--rose);text-transform:uppercase;font-weight:600;margin-bottom:20px">
+                Hadir di Hari Spesial Kami
+            </p>
+
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,116,125,.3))"></div>
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--rose-lt)"></div>
+                <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(201,116,125,.3),transparent)"></div>
+            </div>
+
+            <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,9vw,3.2rem);font-weight:400;color:var(--text);line-height:1.1;margin-bottom:4px">
+                {{ $invitation->profile->first_name }}
+            </h1>
+            <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:2rem;color:var(--rose);line-height:1;margin:2px 0">&amp;</p>
+            <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,9vw,3.2rem);font-weight:400;color:var(--text);line-height:1.1;margin-bottom:28px">
+                {{ $invitation->profile->second_name }}
+            </h1>
+
+            <p style="font-size:12px;color:var(--text-3);margin-bottom:4px">Kepada Yth.</p>
+            <p style="font-size:14px;font-weight:600;color:var(--text-2);margin-bottom:30px">
+                {{ request()->get('to', 'Tamu Undangan') }}
+            </p>
+
+            <button onclick="openInvitation()" style="
+                padding:13px 38px;
+                background:var(--rose);
+                border:none; border-radius:4px;
+                color:white; font-family:'Outfit',sans-serif;
+                font-size:11px; letter-spacing:.28em; text-transform:uppercase;
+                cursor:pointer; font-weight:600;
+                box-shadow: 0 8px 28px rgba(201,116,125,.35);
+                transition: transform .2s, box-shadow .2s;
+                position:relative; overflow:hidden;
+            " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 14px 36px rgba(201,116,125,.46)'"
+               onmouseout="this.style.transform='none';this.style.boxShadow='0 8px 28px rgba(201,116,125,.35)'">
+                <i class="fa-solid fa-envelope-open" style="margin-right:8px"></i>
+                Buka Undangan
+            </button>
         </div>
-
-        <h1 style="font-family:'Playfair Display',serif;font-size:clamp(1.9rem,9vw,3.1rem);font-weight:400;color:var(--text);line-height:1.15;margin-bottom:6px">
-            {{ $invitation->profile->first_name }}
-        </h1>
-        <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.8rem;color:var(--rose);line-height:1;margin-bottom:6px">&amp;</p>
-        <h1 style="font-family:'Playfair Display',serif;font-size:clamp(1.9rem,9vw,3.1rem);font-weight:400;color:var(--text);line-height:1.15;margin-bottom:24px">
-            {{ $invitation->profile->second_name }}
-        </h1>
-
-        <p style="font-size:12px;color:var(--text-2);margin-bottom:6px">
-            Kepada Yth.
-        </p>
-        <p style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:28px">
-            {{ request()->get('to', 'Tamu Undangan') }}
-        </p>
-
-        <div style="width:50px;height:1px;background:linear-gradient(90deg,transparent,var(--rose-lt),transparent);margin:0 auto 24px"></div>
-
-        <button onclick="openInvitation()" style="
-            padding:14px 40px;
-            background:linear-gradient(135deg,#D4858E 0%,#C8956C 100%);
-            border:none; border-radius:50px;
-            color:white; font-family:'DM Sans',sans-serif;
-            font-size:11px; letter-spacing:.28em; text-transform:uppercase;
-            cursor:pointer; font-weight:500;
-            box-shadow: 0 8px 28px rgba(212,133,142,.38);
-            transition: transform .2s ease, box-shadow .2s ease;
-        " onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 14px 36px rgba(212,133,142,.50)'"
-           onmouseout="this.style.transform='none';this.style.boxShadow='0 8px 28px rgba(212,133,142,.38)'">
-            <i class="fa-solid fa-envelope-open-text" style="margin-right:9px;font-size:12px"></i>
-            Buka Undangan
-        </button>
     </div>
 </div>
 
-{{-- FLOAT BUTTONS --}}
-<button id="flt-music" class="flt" style="bottom:calc(var(--nav-h) + 14px);right:16px;display:none" onclick="toggleMusic()">
+<!-- FLOAT MUSIC -->
+<button id="flt-music" onclick="toggleMusic()" style="display:none">
     <i id="music-icon" class="fa-solid fa-music" style="font-size:13px;animation:spin-slow 4s linear infinite"></i>
 </button>
-<button id="flt-up" class="flt" style="bottom:110px;right:16px;display:none" onclick="scrollPrev()">
+<button id="flt-up" class="flt" style="top:70px;right:20px;display:none" onclick="scrollPrev()">
     <i class="fa-solid fa-chevron-up" style="font-size:12px"></i>
 </button>
-<button id="flt-dn" class="flt" style="bottom:62px;right:16px;display:none" onclick="scrollNext()">
+<button id="flt-dn" class="flt" style="top:118px;right:20px;display:none" onclick="scrollNext()">
     <i class="fa-solid fa-chevron-down" style="font-size:12px"></i>
 </button>
 
-{{-- SECTION DOTS --}}
-<div id="sdots"></div>
-
-{{-- ══════════════════════════════════════════════
-     BOTTOM NAV — 5 tabs (clean & minimal)
-══════════════════════════════════════════════ --}}
-<nav id="bnav">
-    <div class="bn-item" data-sec="0" onclick="goToSection(0)">
-        <span class="bn-pip"></span>
-        <i class="fa-solid fa-house-chimney-heart"></i>
-        <span>Home</span>
-    </div>
-    <div class="bn-item" data-sec="2" onclick="goToSection(2)">
-        <span class="bn-pip"></span>
-        <i class="fa-solid fa-people-arrows"></i>
-        <span>Kami</span>
-    </div>
-    <div class="bn-item" data-sec="3" onclick="goToSection(3)">
-        <span class="bn-pip"></span>
-        <i class="fa-solid fa-calendar-heart"></i>
-        <span>Acara</span>
-    </div>
-    <div class="bn-item" data-sec="5" onclick="goToSection(5)">
-        <span class="bn-pip"></span>
-        <i class="fa-solid fa-circle-check"></i>
-        <span>RSVP</span>
-    </div>
-    <div class="bn-item" data-sec="6" onclick="goToSection(6)">
-        <span class="bn-pip"></span>
-        <i class="fa-solid fa-message-heart"></i>
-        <span>Ucapan</span>
-    </div>
-</nav>
-
-{{-- ══════════════════════════════════════════════
-     SCROLL CONTAINER
-══════════════════════════════════════════════ --}}
-<div id="scroll-container">
+<!-- SIDE DOTS (desktop) -->
+<div id="sdots" style="position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:300;display:flex;flex-direction:column;gap:8px"></div>
 
 {{-- ══════════════════════
-     SEC 0 · HERO
+     FLOATING PILL NAV
 ══════════════════════ --}}
-<section class="snap-sec anim-ready" id="sec-0">
+<nav id="pill-nav">
+    <button class="pn-btn" data-sec="0" onclick="goToSection(0)"><i class="fa-solid fa-house-heart"></i></button>
+    <button class="pn-btn" data-sec="2" onclick="goToSection(2)"><i class="fa-solid fa-people-arrows"></i></button>
+    <button class="pn-btn" data-sec="3" onclick="goToSection(3)"><i class="fa-solid fa-calendar-heart"></i></button>
+    <button class="pn-btn" data-sec="5" onclick="goToSection(5)"><i class="fa-solid fa-circle-check"></i></button>
+    <button class="pn-btn" data-sec="6" onclick="goToSection(6)"><i class="fa-solid fa-comment-heart"></i></button>
+</nav>
 
-    <!-- BG gradient -->
-    <div style="position:absolute;inset:0;background:linear-gradient(150deg,#FFFCF7 0%,#FAE8E8 40%,#F2D0D5 100%);pointer-events:none"></div>
 
-    <!-- Slideshow photos (dim overlay) -->
-    @foreach($invitation->galleries->take(3) as $gal)
-    <div class="h-slide" style="background-image:url('{{ asset('storage/'.$gal->file_path) }}');opacity:0"></div>
-    @endforeach
-    @if($invitation->cover?->file_path)
-    <div class="h-slide" style="background-image:url('{{ asset('storage/'.$invitation->cover->file_path) }}');opacity:0"></div>
-    @endif
+{{-- ══════════════════════════════════════════
+     SCROLL CONTAINER
+══════════════════════════════════════════ --}}
+<div id="scroll-container">
 
-    <!-- Photo overlay tint -->
-    <div style="position:absolute;inset:0;background:rgba(255,248,239,.72);z-index:1;pointer-events:none"></div>
 
-    <!-- Big faded circles -->
-    <svg style="position:absolute;top:-100px;right:-100px;opacity:.08;pointer-events:none;z-index:1" width="500" height="500" viewBox="0 0 500 500" fill="none">
-        <circle cx="250" cy="250" r="240" stroke="#D4858E" stroke-width=".8"/>
-        <circle cx="250" cy="250" r="190" stroke="#C8956C" stroke-width=".5"/>
-        <circle cx="250" cy="250" r="140" stroke="#D4858E" stroke-width=".4"/>
-    </svg>
+{{-- ══ SEC 0 — HERO: Editorial Magazine Split ══ --}}
+<section class="snap-sec ar" id="sec-0" style="background:var(--linen)">
 
-    <!-- Floral vine L -->
-    <svg style="position:absolute;left:0;top:0;bottom:0;height:100%;width:60px;opacity:.14;z-index:2;pointer-events:none" viewBox="0 0 60 800" preserveAspectRatio="none" fill="none">
-        <path d="M30,0 C22,60 38,120 30,200 C22,270 38,340 30,420 C22,490 38,560 30,640 C24,700 30,800 30,800" stroke="#D4858E" stroke-width="1.2" fill="none"/>
-        <path d="M27,80 C10,65 6,42 18,28 C22,42 25,64 27,80Z" fill="#D4858E"/>
-        <path d="M33,80 C50,65 54,42 42,28 C38,42 35,64 33,80Z" fill="#D4858E"/>
-        <path d="M27,200 C10,185 6,162 18,148 C22,162 25,184 27,200Z" fill="#D4858E"/>
-        <path d="M33,200 C50,185 54,162 42,148 C38,162 35,184 33,200Z" fill="#D4858E"/>
-        <path d="M27,320 C10,305 6,282 18,268 C22,282 25,304 27,320Z" fill="#D4858E"/>
-        <path d="M33,320 C50,305 54,282 42,268 C38,282 35,304 33,320Z" fill="#D4858E"/>
-        <path d="M27,440 C10,425 6,402 18,388 C22,402 25,424 27,440Z" fill="#C8956C"/>
-        <path d="M33,440 C50,425 54,402 42,388 C38,402 35,424 33,440Z" fill="#C8956C"/>
-    </svg>
-    <!-- Floral vine R -->
-    <svg style="position:absolute;right:0;top:0;bottom:0;height:100%;width:60px;opacity:.14;z-index:2;pointer-events:none;transform:scaleX(-1)" viewBox="0 0 60 800" preserveAspectRatio="none" fill="none">
-        <path d="M30,0 C22,60 38,120 30,200 C22,270 38,340 30,420 C22,490 38,560 30,640 C24,700 30,800 30,800" stroke="#D4858E" stroke-width="1.2" fill="none"/>
-        <path d="M27,80 C10,65 6,42 18,28 C22,42 25,64 27,80Z" fill="#D4858E"/>
-        <path d="M33,80 C50,65 54,42 42,28 C38,42 35,64 33,80Z" fill="#D4858E"/>
-        <path d="M27,200 C10,185 6,162 18,148 C22,162 25,184 27,200Z" fill="#D4858E"/>
-        <path d="M33,200 C50,185 54,162 42,148 C38,162 35,184 33,200Z" fill="#D4858E"/>
-        <path d="M27,320 C10,305 6,282 18,268 C22,282 25,304 27,320Z" fill="#D4858E"/>
-        <path d="M33,320 C50,305 54,282 42,268 C38,282 35,304 33,320Z" fill="#D4858E"/>
-    </svg>
+    <div class="sec-num">01</div>
 
-    <!-- Content -->
-    <div class="sec-inner" style="position:relative;z-index:3;text-align:center;padding:32px 28px;max-width:580px;width:100%">
-
-        <p class="anim a1" style="font-size:8px;letter-spacing:.55em;color:var(--rose);text-transform:uppercase;margin-bottom:18px;font-weight:500">
-            Tunangan
-        </p>
-
-        <!-- Small ring ornament -->
-        <div class="anim a1" style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:22px">
-            <div style="flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,transparent,rgba(212,133,142,.45))"></div>
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                <circle cx="14" cy="14" r="9" stroke="#C8956C" stroke-width="2" fill="none" opacity=".7"/>
-                <polygon points="14,3 17,9 14,11 11,9" fill="#D4858E" opacity=".75"/>
-            </svg>
-            <div style="flex:1;max-width:80px;height:1px;background:linear-gradient(90deg,rgba(212,133,142,.45),transparent)"></div>
-        </div>
-
-        <h1 class="fp hero-name anim a2" style="font-size:clamp(3rem,14vw,5.5rem);font-weight:400;color:var(--text);line-height:1.05;margin-bottom:8px">
-            {{ $invitation->profile->first_name }}
-        </h1>
-        <p class="fi hero-amp anim a3" style="font-size:2.2rem;color:var(--rose);line-height:1;margin:4px 0 4px">&amp;</p>
-        <h1 class="fp hero-name anim a4" style="font-size:clamp(3rem,14vw,5.5rem);font-weight:400;color:var(--text);line-height:1.05;margin-bottom:26px">
-            {{ $invitation->profile->second_name }}
-        </h1>
-
-        @if($invitation->events->isNotEmpty())
-        <div class="anim a5" style="display:flex;align-items:center;justify-content:center;gap:14px;font-size:9.5px;letter-spacing:.28em;color:var(--text-2);text-transform:uppercase">
-            <span class="hero-date-line" style="display:block;width:60px;height:1px;background:rgba(212,133,142,.38)"></span>
-            <span>{{ \Carbon\Carbon::parse($invitation->events->first()->event_date)->isoFormat('DD MMMM YYYY') }}</span>
-            <span class="hero-date-line" style="display:block;width:60px;height:1px;background:rgba(212,133,142,.38)"></span>
-        </div>
+    <!-- Photo right side -->
+    <div class="hero-photo-side">
+        @foreach($invitation->galleries->take(3) as $gal)
+        <div class="h-slide" style="background-image:url('{{ asset('storage/'.$gal->file_path) }}')"></div>
+        @endforeach
+        @if($invitation->cover?->file_path)
+        <div class="h-slide" style="background-image:url('{{ asset('storage/'.$invitation->cover->file_path) }}')"></div>
         @endif
     </div>
 
-    <!-- Scroll hint -->
-    <div style="position:absolute;bottom:calc(var(--nav-h) + 20px);left:50%;transform:translateX(-50%);z-index:3;text-align:center;animation:fadeIn 2s 2s both">
-        <div style="width:1px;height:34px;background:linear-gradient(to bottom,var(--rose-lt),transparent);margin:0 auto 8px"></div>
-        <p style="font-size:7px;letter-spacing:.35em;color:rgba(186,130,138,.5);text-transform:uppercase">Geser</p>
+    <!-- Subtle dot pattern bg -->
+    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(201,116,125,.07) 1px,transparent 1px);background-size:20px 20px;pointer-events:none;z-index:0"></div>
+
+    <!-- Left content — left aligned, editorial -->
+    <div class="hero-main-text" style="position:relative;z-index:2;width:60%;padding:0 40px 0 56px;display:flex;flex-direction:column;justify-content:center;height:100%">
+
+        <!-- Top label -->
+        <div class="an a1" style="display:flex;align-items:center;gap:12px;margin-bottom:32px">
+            <div style="width:36px;height:1.5px;background:var(--rose)"></div>
+            <p style="font-size:8px;letter-spacing:.5em;color:var(--rose);text-transform:uppercase;font-weight:600">Tunangan</p>
+        </div>
+
+        <!-- Giant names left-aligned -->
+        <h1 class="fp giant-name an a2" style="font-size:clamp(3rem,7.5vw,5.8rem);font-weight:400;color:var(--text);line-height:.95;margin-bottom:8px;letter-spacing:-.01em">
+            {{ $invitation->profile->first_name }}
+        </h1>
+        <p class="fc an a3" style="font-size:clamp(2rem,4vw,3.2rem);color:var(--rose);line-height:1;margin-bottom:8px;margin-left:4px">&amp;</p>
+        <h1 class="fp giant-name an a4" style="font-size:clamp(3rem,7.5vw,5.8rem);font-weight:400;color:var(--text);line-height:.95;margin-bottom:36px;letter-spacing:-.01em">
+            {{ $invitation->profile->second_name }}
+        </h1>
+
+        <!-- Date and event info -->
+        @if($invitation->events->isNotEmpty())
+        <div class="an a5" style="display:flex;align-items:center;gap:14px">
+            <div style="width:1px;height:48px;background:linear-gradient(to bottom,var(--rose-lt),transparent)"></div>
+            <div>
+                <p style="font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--text-3);font-weight:500;margin-bottom:4px">Tanggal</p>
+                <p style="font-size:15px;font-weight:500;color:var(--text-2)">
+                    {{ \Carbon\Carbon::parse($invitation->events->first()->event_date)->isoFormat('D MMMM YYYY') }}
+                </p>
+            </div>
+        </div>
+        @endif
+
+        <!-- Scroll indicator -->
+        <div style="position:absolute;bottom:32px;left:56px;text-align:center;animation:arrowBounce 2s ease-in-out infinite">
+            <i class="fa-solid fa-chevron-down" style="font-size:11px;color:var(--rose-lt)"></i>
+            <p style="font-size:7.5px;letter-spacing:.3em;color:var(--text-3);text-transform:uppercase;margin-top:4px">Geser</p>
+        </div>
     </div>
+
+    <!-- Thin vertical divider -->
+    <div style="position:absolute;top:15%;bottom:15%;width:1px;background:linear-gradient(to bottom,transparent,rgba(201,116,125,.25),transparent);z-index:3" id="hero-divider"></div>
 </section>
 
 
-{{-- ══════════════════════
-     SEC 1 · OPENING / QUOTE
-══════════════════════ --}}
-<section class="snap-sec anim-ready" id="sec-1" style="background:linear-gradient(160deg,#FFFCF7 0%,#FAE8E8 55%,#FFFCF7 100%)">
+{{-- ══ SEC 1 — QUOTE: Full-width Editorial ══ --}}
+<section class="snap-sec ar" id="sec-1" style="background:var(--cream);display:flex;align-items:center;justify-content:center">
 
-    <!-- Dot pattern -->
-    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(212,133,142,.08) 1px,transparent 1px);background-size:22px 22px;pointer-events:none"></div>
+    <div class="sec-num" style="bottom:auto;top:40px;right:24px;left:auto;font-size:7rem;color:rgba(201,116,125,.06)">02</div>
 
-    <!-- Floral TR -->
-    <svg style="position:absolute;top:0;right:0;opacity:.18;pointer-events:none" width="200" height="200" viewBox="0 0 200 200" fill="none">
-        <g transform="translate(155,45)">
-            <g fill="#D4858E">
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z"/>
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z" transform="rotate(60)"/>
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z" transform="rotate(120)"/>
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z" transform="rotate(180)"/>
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z" transform="rotate(240)"/>
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z" transform="rotate(300)"/>
-                <circle r="6" fill="#C8956C"/>
-            </g>
-            <path d="M36,16 C58,6 80,14 84,40 C62,44 44,36 36,16Z" fill="#D4858E" opacity=".6"/>
-            <path d="M16,36 C6,58 14,80 40,84 C44,62 36,44 16,36Z" fill="#D4858E" opacity=".6"/>
-        </g>
-    </svg>
-    <!-- Floral BL -->
-    <svg style="position:absolute;bottom:0;left:0;opacity:.18;pointer-events:none;transform:rotate(180deg)" width="200" height="200" viewBox="0 0 200 200" fill="none">
-        <g transform="translate(155,45)">
-            <g fill="#D4858E">
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z"/>
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z" transform="rotate(60)"/>
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z" transform="rotate(120)"/>
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z" transform="rotate(180)"/>
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z" transform="rotate(240)"/>
-                <path d="M0,-38 C-12,-27 -12,-13 0,-8 C12,-13 12,-27 0,-38Z" transform="rotate(300)"/>
-                <circle r="6" fill="#C8956C"/>
-            </g>
-        </g>
-    </svg>
+    <!-- Giant quote marks -->
+    <div style="position:absolute;top:30px;left:36px;font-family:'Playfair Display',serif;font-size:min(18rem,35vw);color:rgba(201,116,125,.06);line-height:.8;pointer-events:none;font-style:italic;z-index:0">"</div>
 
-    <div class="sec-inner" style="max-width:560px;text-align:center;padding:32px 28px;width:100%">
+    <!-- Sage line left -->
+    <div style="position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(to bottom,transparent,var(--sage),transparent)"></div>
 
-        <!-- Ornament flower -->
-        <svg class="anim a1" width="72" height="72" viewBox="0 0 72 72" style="margin:0 auto 22px">
-            <circle cx="36" cy="36" r="32" stroke="#D4858E" stroke-width=".7" fill="none" stroke-dasharray="3 4.5" opacity=".5"/>
-            <circle cx="36" cy="36" r="24" stroke="#C8956C" stroke-width=".4" fill="none" opacity=".3"/>
-            <g transform="translate(36,36)">
-                <path d="M0,-18 C-5,-12 -5,-6 0,-3 C5,-6 5,-12 0,-18Z" fill="#D4858E" opacity=".6"/>
-                <path d="M0,-18 C-5,-12 -5,-6 0,-3 C5,-6 5,-12 0,-18Z" fill="#D4858E" opacity=".6" transform="rotate(72)"/>
-                <path d="M0,-18 C-5,-12 -5,-6 0,-3 C5,-6 5,-12 0,-18Z" fill="#D4858E" opacity=".6" transform="rotate(144)"/>
-                <path d="M0,-18 C-5,-12 -5,-6 0,-3 C5,-6 5,-12 0,-18Z" fill="#D4858E" opacity=".6" transform="rotate(216)"/>
-                <path d="M0,-18 C-5,-12 -5,-6 0,-3 C5,-6 5,-12 0,-18Z" fill="#D4858E" opacity=".6" transform="rotate(288)"/>
-                <circle r="4" fill="#C8956C" opacity=".8"/>
-            </g>
-        </svg>
+    <div class="sec-pad-bottom" style="position:relative;z-index:2;max-width:600px;padding:48px 52px;width:100%">
 
-        <p class="anim a2" style="font-size:8px;letter-spacing:.48em;color:var(--rose);text-transform:uppercase;margin-bottom:18px;font-weight:500">
+        <p class="an a1" style="font-size:8px;letter-spacing:.5em;color:var(--rose);text-transform:uppercase;font-weight:600;margin-bottom:28px;display:flex;align-items:center;gap:10px">
+            <span style="width:28px;height:1.5px;background:var(--rose);display:inline-block"></span>
             Bismillahirrahmanirrahim
         </p>
 
-        <blockquote class="fc anim a3" style="font-size:clamp(.95rem,2.4vw,1.22rem);font-style:italic;font-weight:300;line-height:2;color:var(--text)">
-            &#8220;{{ $invitation->profile->quote }}&#8221;
+        <blockquote class="fc an a2" style="font-size:clamp(1.1rem,2.8vw,1.55rem);line-height:1.85;color:var(--text);font-weight:400;margin-bottom:24px">
+            "{{ $invitation->profile->quote }}"
         </blockquote>
 
-        <div class="rdiv anim a4" style="margin:22px 0">QS. Ar-Rum : 21</div>
+        <div class="an a3" style="display:flex;align-items:center;gap:14px;margin-bottom:28px">
+            <div style="flex:0 0 28px;height:1px;background:var(--rose-lt)"></div>
+            <p style="font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--text-3);font-weight:500">QS. Ar-Rum : 21</p>
+        </div>
 
-        <p class="anim a5" style="font-size:12px;color:var(--text-2);line-height:2;max-width:420px;margin:0 auto">
-            Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud
-            melangsungkan pertunangan putra-putri kami. Dengan penuh
-            kebahagiaan kami mengundang Bapak/Ibu/Saudara/i untuk hadir
-            memberikan doa dan restu.
+        <p class="an a4" style="font-size:13px;color:var(--text-2);line-height:2;max-width:480px">
+            Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud melangsungkan
+            pertunangan putra-putri kami. Dengan penuh kebahagiaan kami mengundang
+            Bapak/Ibu/Saudara/i untuk hadir memberikan doa dan restu.
         </p>
     </div>
 </section>
 
 
-{{-- ══════════════════════
-     SEC 2 · THE COUPLE
-══════════════════════ --}}
-<section class="snap-sec anim-ready" id="sec-2" style="background:linear-gradient(135deg,#FFFCF7 0%,#FAE8E8 50%,#FFFCF7 100%)">
+{{-- ══ SEC 2 — COUPLE: Full Bleed Split Panel ══ --}}
+<section class="snap-sec ar" id="sec-2" style="background:var(--blush)">
 
-    <!-- Subtle dot -->
-    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(212,133,142,.07) 1px,transparent 1px);background-size:24px 24px;pointer-events:none"></div>
+    <div class="sec-num" style="font-size:6rem;bottom:16px;right:auto;left:50%;transform:translateX(-50%);color:rgba(201,116,125,.05)">03</div>
 
-    <!-- Vine L -->
-    <svg style="position:absolute;left:0;top:50%;transform:translateY(-50%);opacity:.14;pointer-events:none" width="52" height="330" viewBox="0 0 52 330" fill="none">
-        <path d="M26,0 C18,35 36,70 26,110 C16,148 36,185 26,225 C18,258 26,330 26,330" stroke="#D4858E" stroke-width="1.1" fill="none"/>
-        <path d="M23,65 C6,50 2,28 15,14 C19,28 22,50 23,65Z" fill="#D4858E"/>
-        <path d="M29,65 C46,50 50,28 37,14 C33,28 30,50 29,65Z" fill="#D4858E"/>
-        <path d="M23,155 C6,140 2,118 15,104 C19,118 22,140 23,155Z" fill="#D4858E"/>
-        <path d="M29,155 C46,140 50,118 37,104 C33,118 30,140 29,155Z" fill="#D4858E"/>
-        <path d="M23,245 C6,230 2,208 15,194 C19,208 22,230 23,245Z" fill="#C8956C"/>
-        <path d="M29,245 C46,230 50,208 37,194 C33,208 30,230 29,245Z" fill="#C8956C"/>
-    </svg>
-    <!-- Vine R -->
-    <svg style="position:absolute;right:0;top:50%;transform:translateY(-50%) scaleX(-1);opacity:.14;pointer-events:none" width="52" height="330" viewBox="0 0 52 330" fill="none">
-        <path d="M26,0 C18,35 36,70 26,110 C16,148 36,185 26,225 C18,258 26,330 26,330" stroke="#D4858E" stroke-width="1.1" fill="none"/>
-        <path d="M23,65 C6,50 2,28 15,14 C19,28 22,50 23,65Z" fill="#D4858E"/>
-        <path d="M29,65 C46,50 50,28 37,14 C33,28 30,50 29,65Z" fill="#D4858E"/>
-        <path d="M23,155 C6,140 2,118 15,104 C19,118 22,140 23,155Z" fill="#D4858E"/>
-        <path d="M29,155 C46,140 50,118 37,104 C33,118 30,140 29,155Z" fill="#D4858E"/>
-        <path d="M23,245 C6,230 2,208 15,194 C19,208 22,230 23,245Z" fill="#C8956C"/>
-        <path d="M29,245 C46,230 50,208 37,194 C33,208 30,230 29,245Z" fill="#C8956C"/>
-    </svg>
-
-    <div class="sec-inner" style="max-width:860px;margin:0 auto;padding:32px 24px;width:100%">
-
-        <div class="rdiv anim a1" style="margin-bottom:30px">The Couple</div>
-
-        <div id="couple-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
-
-            {{-- Mempelai Pria --}}
-            <div style="text-align:center" class="anim a2">
-                @if($invitation->firstPersonPhoto)
-                <div class="pf couple-photo" style="width:145px;height:185px;margin:0 auto 16px">
-                    <img src="{{ asset('storage/'.$invitation->firstPersonPhoto->file_path) }}" alt="{{ $invitation->profile->first_name }}">
-                </div>
-                @else
-                <div class="couple-photo" style="width:145px;height:185px;margin:0 auto 16px;background:linear-gradient(145deg,rgba(212,133,142,.07),rgba(200,149,108,.05));border:1.5px solid rgba(212,133,142,.25);border-radius:50% 50% 46% 46%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px">
-                    <i class="fa-solid fa-camera" style="font-size:1.6rem;color:rgba(212,133,142,.35)"></i>
-                    <p style="font-size:8px;color:rgba(212,133,142,.35);letter-spacing:.12em">Foto Pengantin</p>
-                </div>
-                @endif
-
-                <h2 class="fp couple-name" style="font-size:1.8rem;font-weight:400;color:var(--text);margin-bottom:6px">
-                    {{ $invitation->profile->first_name }}
-                </h2>
-                <p style="font-size:7.5px;letter-spacing:.3em;color:var(--rose);text-transform:uppercase;margin-bottom:10px;font-weight:500">
-                    Calon Mempelai Pria
-                </p>
-                <p class="couple-par" style="font-size:12px;color:var(--text-2);line-height:2">
-                    Putra dari:<br>
-                    {{ $invitation->profile->first_father }}<br>
-                    &amp; {{ $invitation->profile->first_mother }}
-                </p>
-            </div>
-
-            {{-- Mempelai Wanita --}}
-            <div style="text-align:center" class="anim a3">
-                @if($invitation->secondPersonPhoto)
-                <div class="pf couple-photo" style="width:145px;height:185px;margin:0 auto 16px">
-                    <img src="{{ asset('storage/'.$invitation->secondPersonPhoto->file_path) }}" alt="{{ $invitation->profile->second_name }}">
-                </div>
-                @else
-                <div class="couple-photo" style="width:145px;height:185px;margin:0 auto 16px;background:linear-gradient(145deg,rgba(212,133,142,.07),rgba(200,149,108,.05));border:1.5px solid rgba(212,133,142,.25);border-radius:50% 50% 46% 46%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px">
-                    <i class="fa-solid fa-camera" style="font-size:1.6rem;color:rgba(212,133,142,.35)"></i>
-                    <p style="font-size:8px;color:rgba(212,133,142,.35);letter-spacing:.12em">Foto Pengantin</p>
-                </div>
-                @endif
-
-                <h2 class="fp couple-name" style="font-size:1.8rem;font-weight:400;color:var(--text);margin-bottom:6px">
-                    {{ $invitation->profile->second_name }}
-                </h2>
-                <p style="font-size:7.5px;letter-spacing:.3em;color:var(--rose);text-transform:uppercase;margin-bottom:10px;font-weight:500">
-                    Calon Mempelai Wanita
-                </p>
-                <p class="couple-par" style="font-size:12px;color:var(--text-2);line-height:2">
-                    Putri dari:<br>
-                    {{ $invitation->profile->second_father }}<br>
-                    &amp; {{ $invitation->profile->second_mother }}
-                </p>
-            </div>
-
+    <!-- Left panel — Male -->
+    <div class="couple-panel left">
+        @if($invitation->firstPersonPhoto)
+        <div class="cp-photo" style="background-image:url('{{ asset('storage/'.$invitation->firstPersonPhoto->file_path) }}');background-position:center top"></div>
+        <div class="cp-overlay" style="background:linear-gradient(to top,rgba(44,32,40,.85) 0%,rgba(44,32,40,.3) 50%,transparent 80%)"></div>
+        @else
+        <div class="cp-overlay" style="background:linear-gradient(135deg,var(--rose-pale),var(--blush))"></div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2">
+            <i class="fa-solid fa-camera" style="font-size:2.5rem;color:rgba(201,116,125,.3)"></i>
         </div>
+        @endif
+        <div class="cp-info" style="position:relative;z-index:3">
+            <p style="font-size:7.5px;letter-spacing:.3em;color:rgba(255,255,255,.6);text-transform:uppercase;font-weight:500;margin-bottom:6px">Calon Mempelai Pria</p>
+            <h2 class="an ar1" style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:white;margin-bottom:4px;line-height:1.15">
+                {{ $invitation->profile->first_name }}
+            </h2>
+            <p class="an ar2" style="font-size:11px;color:rgba(255,255,255,.65);line-height:1.8">
+                Putra {{ $invitation->profile->first_father }}<br>
+                &amp; {{ $invitation->profile->first_mother }}
+            </p>
+        </div>
+    </div>
 
-        <!-- Bottom ornament -->
-        <div style="text-align:center;margin-top:26px" class="anim a4">
-            <svg width="140" height="18" viewBox="0 0 140 18" fill="none">
-                <line x1="0" y1="9" x2="56" y2="9" stroke="#D4858E" stroke-width=".6" opacity=".4"/>
-                <path d="M70,3 C65,6 63,11 70,15 C77,11 75,6 70,3Z" fill="#D4858E" opacity=".5"/>
-                <line x1="84" y1="9" x2="140" y2="9" stroke="#D4858E" stroke-width=".6" opacity=".4"/>
+    <!-- Divider line center -->
+    <div style="position:absolute;top:0;left:50%;width:1px;height:100%;background:linear-gradient(to bottom,transparent,rgba(201,116,125,.3),transparent);z-index:10;transform:translateX(-50%)">
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;border-radius:50%;background:var(--linen);border:1.5px solid rgba(201,116,125,.3);display:flex;align-items:center;justify-content:center">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8,13 C8,13 2,9.5 2,5.5 C2,3.5 3.7,2 6,2 C7.1,2 8,2.7 8,4 C8,2.7 8.9,2 10,2 C12.3,2 14,3.5 14,5.5 C14,9.5 8,13 8,13Z" fill="#C9747D" opacity=".7"/>
             </svg>
         </div>
+    </div>
 
+    <!-- Right panel — Female -->
+    <div class="couple-panel right">
+        @if($invitation->secondPersonPhoto)
+        <div class="cp-photo" style="background-image:url('{{ asset('storage/'.$invitation->secondPersonPhoto->file_path) }}');background-position:center top"></div>
+        <div class="cp-overlay" style="background:linear-gradient(to top,rgba(44,32,40,.82) 0%,rgba(44,32,40,.25) 50%,transparent 80%)"></div>
+        @else
+        <div class="cp-overlay" style="background:linear-gradient(135deg,var(--cream),var(--rose-pale))"></div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2">
+            <i class="fa-solid fa-camera" style="font-size:2.5rem;color:rgba(201,116,125,.3)"></i>
+        </div>
+        @endif
+        <div class="cp-info">
+            <p style="font-size:7.5px;letter-spacing:.3em;color:rgba(255,255,255,.6);text-transform:uppercase;font-weight:500;margin-bottom:6px">Calon Mempelai Wanita</p>
+            <h2 class="an al1" style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:white;margin-bottom:4px;line-height:1.15">
+                {{ $invitation->profile->second_name }}
+            </h2>
+            <p class="an al2" style="font-size:11px;color:rgba(255,255,255,.65);line-height:1.8">
+                Putri {{ $invitation->profile->second_father }}<br>
+                &amp; {{ $invitation->profile->second_mother }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Section label rotated top -->
+    <div style="position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:10">
+        <p style="font-size:7.5px;letter-spacing:.45em;color:var(--text-3);text-transform:uppercase;font-weight:500;background:var(--linen);padding:4px 14px;border-radius:50px;border:1px solid rgba(201,116,125,.18)">The Couple</p>
     </div>
 </section>
 
 
-{{-- ══════════════════════
-     SEC 3 · THE DAY
-══════════════════════ --}}
-<section class="snap-sec anim-ready" id="sec-3" style="background:linear-gradient(155deg,#FFFCF7 0%,#F5D5D8 50%,#FFFCF7 100%)">
+{{-- ══ SEC 3 — THE DAY: Typography-led ══ --}}
+<section class="snap-sec ar" id="sec-3" style="background:var(--linen);display:flex;align-items:center;justify-content:center">
 
-    <!-- Grid pattern -->
-    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(212,133,142,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(212,133,142,.06) 1px,transparent 1px);background-size:32px 32px;pointer-events:none"></div>
+    <!-- Giant date bg text -->
+    @if($invitation->events->isNotEmpty())
+    <div class="day-bg-text" style="font-size:min(12rem,28vw);top:-10px;left:-10px;color:rgba(201,116,125,.055)">
+        {{ \Carbon\Carbon::parse($invitation->events->first()->event_date)->format('d') }}
+    </div>
+    <div class="day-bg-text" style="font-size:min(7rem,16vw);bottom:-10px;right:16px;text-align:right;color:rgba(196,144,106,.05)">
+        {{ \Carbon\Carbon::parse($invitation->events->first()->event_date)->isoFormat('MMMM') }}
+    </div>
+    @endif
 
-    <!-- Floral TL -->
-    <svg style="position:absolute;top:0;left:0;opacity:.2;pointer-events:none" width="175" height="175" viewBox="0 0 200 200" fill="none">
-        <g transform="translate(48,48)">
-            <g fill="#D4858E">
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(72)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(144)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(216)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(288)"/>
-                <circle r="7" fill="#C8956C"/>
-            </g>
-            <path d="M40,18 C62,8 84,16 88,44 C66,48 46,40 40,18Z" fill="#D4858E" opacity=".65"/>
-            <path d="M18,40 C8,62 16,84 44,88 C48,66 40,46 18,40Z" fill="#D4858E" opacity=".65"/>
-            <path d="M48,48 C70,80 105,110 150,158" stroke="#D4858E" stroke-width=".8" fill="none" opacity=".6"/>
-        </g>
-    </svg>
-    <!-- Floral BR -->
-    <svg style="position:absolute;bottom:0;right:0;opacity:.2;pointer-events:none;transform:rotate(180deg)" width="165" height="165" viewBox="0 0 200 200" fill="none">
-        <g transform="translate(48,48)">
-            <g fill="#D4858E">
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(72)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(144)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(216)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(288)"/>
-                <circle r="7" fill="#C8956C"/>
-            </g>
-            <path d="M40,18 C62,8 84,16 88,44 C66,48 46,40 40,18Z" fill="#D4858E" opacity=".65"/>
-        </g>
-    </svg>
+    <!-- Right accent line -->
+    <div style="position:absolute;right:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,transparent,var(--rose-pale),transparent)"></div>
 
-    <div class="sec-inner" style="max-width:700px;margin:0 auto;padding:28px 22px;width:100%">
+    <div class="sec-pad-bottom" style="position:relative;z-index:2;width:100%;max-width:620px;padding:36px 40px">
 
-        <div class="rdiv anim a1" style="margin-bottom:6px">Hari Istimewa</div>
+        <!-- Section tag -->
+        <div class="an a1" style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+            <p style="font-size:7.5px;letter-spacing:.45em;color:var(--rose);text-transform:uppercase;font-weight:600">Hari Istimewa</p>
+            <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--rose-lt),transparent)"></div>
+        </div>
 
         @if($invitation->events->isNotEmpty())
-        <p class="fc anim a2" style="text-align:center;font-size:1.05rem;font-style:italic;color:var(--text-2);margin-bottom:18px">
+        <p class="fc an a2" style="font-size:1.1rem;color:var(--text-2);margin-bottom:20px">
             {{ \Carbon\Carbon::parse($invitation->events->first()->event_date)->isoFormat('dddd, D MMMM YYYY') }}
         </p>
         @endif
 
         <!-- Countdown -->
-        <div class="cd-row anim a2" style="display:flex;justify-content:center;gap:10px;margin-bottom:22px">
-            <div class="cdbox">
-                <div class="cdn" id="cd-d">00</div>
-                <span class="cdl">Hari</span>
-            </div>
-            <div class="cdbox">
-                <div class="cdn" id="cd-h">00</div>
-                <span class="cdl">Jam</span>
-            </div>
-            <div class="cdbox">
-                <div class="cdn" id="cd-m">00</div>
-                <span class="cdl">Menit</span>
-            </div>
-            <div class="cdbox">
-                <div class="cdn" id="cd-s">00</div>
-                <span class="cdl">Detik</span>
-            </div>
+        <div class="an a2" style="display:flex;gap:10px;margin-bottom:28px">
+            <div class="cdbox"><div class="cdn" id="cd-d">00</div><span class="cdl">Hari</span></div>
+            <div class="cdbox"><div class="cdn" id="cd-h">00</div><span class="cdl">Jam</span></div>
+            <div class="cdbox"><div class="cdn" id="cd-m">00</div><span class="cdl">Menit</span></div>
+            <div class="cdbox"><div class="cdn" id="cd-s">00</div><span class="cdl">Detik</span></div>
         </div>
 
-        <!-- Event cards -->
-        <div class="ev-wrap anim a3" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+        <!-- Event cards — left border style -->
+        <div style="display:flex;flex-direction:column;gap:12px">
             @foreach($invitation->events as $event)
-            <div class="ev-item scard" style="padding:20px 22px">
-                <p style="font-size:8px;letter-spacing:.3em;color:var(--rose);text-transform:uppercase;margin-bottom:14px;font-weight:500">
-                    {{ $event->name }}
-                </p>
-                <div style="display:flex;flex-direction:column;gap:11px">
-                    <div style="display:flex;gap:12px;align-items:flex-start">
-                        <span style="width:30px;height:30px;border-radius:9px;background:rgba(212,133,142,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                            <i class="fa-regular fa-calendar" style="color:var(--rose);font-size:12px"></i>
-                        </span>
-                        <div>
-                            <p style="font-size:8px;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px">Tanggal</p>
-                            <p style="font-size:13px;color:var(--text);font-weight:500">{{ \Carbon\Carbon::parse($event->event_date)->isoFormat('dddd, D MMMM YYYY') }}</p>
-                        </div>
+            <div class="ev-card an a3">
+                <div class="ev-pill" style="margin-bottom:12px">{{ $event->name }}</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                    <div>
+                        <p style="font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-3);font-weight:500;margin-bottom:3px">Waktu</p>
+                        <p style="font-size:13px;color:var(--text);font-weight:500">{{ $event->start_time }} WIB</p>
                     </div>
-                    <div style="display:flex;gap:12px;align-items:flex-start">
-                        <span style="width:30px;height:30px;border-radius:9px;background:rgba(212,133,142,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                            <i class="fa-regular fa-clock" style="color:var(--rose);font-size:12px"></i>
-                        </span>
-                        <div>
-                            <p style="font-size:8px;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px">Waktu</p>
-                            <p style="font-size:13px;color:var(--text)">{{ $event->start_time }} — Selesai</p>
-                        </div>
-                    </div>
-                    <div style="display:flex;gap:12px;align-items:flex-start">
-                        <span style="width:30px;height:30px;border-radius:9px;background:rgba(212,133,142,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                            <i class="fa-solid fa-location-dot" style="color:var(--rose);font-size:12px"></i>
-                        </span>
-                        <div>
-                            <p style="font-size:8px;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px">Lokasi</p>
-                            <p style="font-size:13px;font-weight:500;color:var(--text)">{{ $event->venue_name }}</p>
-                            <p style="font-size:11px;color:var(--text-2);margin-top:2px;line-height:1.6">{{ $event->address }}</p>
-                        </div>
+                    <div>
+                        <p style="font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-3);font-weight:500;margin-bottom:3px">Lokasi</p>
+                        <p style="font-size:13px;color:var(--text);font-weight:500">{{ $event->venue_name }}</p>
+                        <p style="font-size:10.5px;color:var(--text-3);margin-top:2px">{{ $event->address }}</p>
                     </div>
                 </div>
-                <div style="display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(212,133,142,.12)">
+                <div style="display:flex;gap:8px;margin-top:12px">
                     <a href="https://maps.google.com/?q={{ urlencode($event->address) }}" target="_blank"
-                       style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border:1.5px solid rgba(212,133,142,.28);color:var(--rose);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;border-radius:10px;transition:background .25s;font-weight:500"
-                       onmouseover="this.style.background='rgba(212,133,142,.09)'"
+                       style="display:inline-flex;align-items:center;gap:5px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--rose);font-weight:600;text-decoration:none;padding:7px 14px;border:1.5px solid rgba(201,116,125,.3);border-radius:6px;transition:background .2s"
+                       onmouseover="this.style.background='rgba(201,116,125,.08)'"
                        onmouseout="this.style.background='transparent'">
                         <i class="fa-solid fa-map-location-dot" style="font-size:11px"></i> Maps
                     </a>
                     <button onclick="addToCalendar('{{ addslashes($event->name) }}','{{ $event->event_date }}','{{ addslashes($event->venue_name.', '.$event->address) }}')"
-                       style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border:1.5px solid rgba(212,133,142,.28);color:var(--rose);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;background:transparent;cursor:pointer;border-radius:10px;transition:background .25s;font-weight:500"
-                       onmouseover="this.style.background='rgba(212,133,142,.09)'"
+                       style="display:inline-flex;align-items:center;gap:5px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--rose);font-weight:600;padding:7px 14px;border:1.5px solid rgba(201,116,125,.3);border-radius:6px;background:transparent;cursor:pointer;transition:background .2s"
+                       onmouseover="this.style.background='rgba(201,116,125,.08)'"
                        onmouseout="this.style.background='transparent'">
                         <i class="fa-regular fa-calendar-plus" style="font-size:11px"></i> Kalender
                     </button>
@@ -934,252 +868,212 @@
             </div>
             @endforeach
         </div>
-
-        @if($invitation->events->count() > 1)
-        <p class="anim a5" style="text-align:center;margin-top:10px;font-size:8.5px;color:rgba(186,130,138,.45);letter-spacing:.2em;text-transform:uppercase">
-            ← geser untuk acara lainnya →
-        </p>
-        @endif
-
     </div>
 </section>
 
 
-{{-- ══════════════════════
-     SEC 4 · GALLERY
-══════════════════════ --}}
-<section class="snap-sec anim-ready" id="sec-4" style="background:var(--ivory)">
+{{-- ══ SEC 4 — GALLERY: Horizontal Polaroid Strip ══ --}}
+<section class="snap-sec ar" id="sec-4" style="background:var(--cream);display:flex;align-items:center;overflow:hidden">
 
-    <!-- Soft radial blush -->
-    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(250,232,232,.55) 0%,transparent 70%);pointer-events:none"></div>
+    <div class="sec-num" style="right:auto;left:16px;bottom:24px;font-size:6rem;color:rgba(201,116,125,.06)">04</div>
 
-    <div class="sec-inner" style="max-width:1080px;margin:0 auto;padding:26px 20px;width:100%">
+    <!-- Vertical label left -->
+    <div style="position:absolute;left:0;top:0;bottom:0;width:44px;background:var(--rose);z-index:2;display:flex;align-items:center;justify-content:center">
+        <p style="writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);font-size:8px;letter-spacing:.45em;text-transform:uppercase;color:rgba(255,255,255,.9);font-weight:600">Foto Kami</p>
+    </div>
 
-        <div class="rdiv anim a1" style="margin-bottom:18px">Foto Kami</div>
+    <!-- Strip area -->
+    <div style="position:relative;z-index:1;width:100%;padding-left:44px">
 
+        <!-- Label top -->
+        <div class="an a1" style="padding:0 28px 16px">
+            <p style="font-size:11px;color:var(--text-3)">Geser untuk melihat semua foto →</p>
+        </div>
+
+        <!-- Polaroids -->
         @if($invitation->galleries->count())
-        <div class="gal-grid anim a2">
-            @foreach($invitation->galleries as $gal)
-            <div class="gi">
-                <img src="{{ asset('storage/'.$gal->file_path) }}" alt="Gallery">
+        <div class="polaroid-strip an a2">
+            @foreach($invitation->galleries as $i => $gal)
+            <div class="polaroid">
+                <img src="{{ asset('storage/'.$gal->file_path) }}" alt="Gallery {{ $i+1 }}">
+                <p class="polaroid-label">{{ \Carbon\Carbon::now()->isoFormat('MMMM YYYY') }}</p>
             </div>
             @endforeach
         </div>
         @else
-        <div style="text-align:center;padding:54px 20px;opacity:.35">
-            <i class="fa-solid fa-images" style="font-size:2.8rem;color:var(--rose);display:block;margin-bottom:14px"></i>
-            <p style="font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--text-2)">Foto belum ditambahkan</p>
-            <p style="font-size:11px;color:var(--text-3);margin-top:6px">Upload via Admin → Gallery</p>
+        <div style="padding:0 40px;text-align:center;opacity:.35">
+            <i class="fa-solid fa-images" style="font-size:2.5rem;color:var(--rose);display:block;margin-bottom:14px"></i>
+            <p style="font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--text-2)">Belum ada foto</p>
         </div>
         @endif
     </div>
 </section>
 
 
-{{-- ══════════════════════
-     SEC 5 · RSVP
-══════════════════════ --}}
-<section class="snap-sec anim-ready" id="sec-5" style="background:linear-gradient(148deg,#FFFCF7 0%,#FAE8E8 52%,#FFFCF7 100%)">
+{{-- ══ SEC 5 — RSVP: Clean Split Form ══ --}}
+<section class="snap-sec ar" id="sec-5" style="background:var(--linen);display:flex;align-items:center;justify-content:center">
 
-    <!-- Dot pattern -->
-    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(212,133,142,.07) 1px,transparent 1px);background-size:22px 22px;pointer-events:none"></div>
+    <div class="sec-num" style="bottom:20px;right:16px;font-size:6.5rem;color:rgba(201,116,125,.055)">05</div>
 
-    <!-- Floral TL & BR -->
-    <svg style="position:absolute;top:0;left:0;opacity:.16;pointer-events:none" width="155" height="155" viewBox="0 0 200 200" fill="none">
-        <g transform="translate(48,48)">
-            <g fill="#D4858E">
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(72)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(144)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(216)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(288)"/>
-                <circle r="7" fill="#C8956C"/>
-            </g>
-        </g>
-    </svg>
-    <svg style="position:absolute;bottom:0;right:0;opacity:.16;pointer-events:none;transform:rotate(180deg)" width="155" height="155" viewBox="0 0 200 200" fill="none">
-        <g transform="translate(48,48)">
-            <g fill="#D4858E">
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(72)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(144)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(216)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(288)"/>
-                <circle r="7" fill="#C8956C"/>
-            </g>
-        </g>
-    </svg>
+    <!-- Top accent bar -->
+    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--rose-pale),var(--rose),var(--gold),var(--rose-pale))"></div>
 
-    <div class="sec-inner rsvp-inner" style="max-width:480px;margin:0 auto;padding:28px 24px;width:100%">
+    <div class="sec-pad-bottom" style="position:relative;z-index:2;width:100%;max-width:520px;padding:40px 36px">
 
-        <div class="rdiv anim a1" style="margin-bottom:8px">Konfirmasi Hadir</div>
-        <p class="anim a2" style="text-align:center;font-size:11.5px;color:var(--text-2);margin-bottom:20px;line-height:1.7">
-            Mohon konfirmasi kehadiran Anda sebelum<br>
-            <strong style="color:var(--text)">{{ optional($invitation->event_date)->format('d M Y') }}</strong>
-        </p>
-
-        <form id="rsvp-form" onsubmit="submitRsvp(event)" class="anim a3">
-            <div style="display:flex;flex-direction:column;gap:11px">
-                <input type="text" name="name" placeholder="Nama lengkap Anda"
-                       class="inv-inp" value="{{ request()->get('to') }}" required>
-                <input type="text" name="phone" placeholder="Nomor WhatsApp (opsional)" class="inv-inp">
-                <select name="attending" class="inv-inp" required>
-                    <option value="" disabled selected>Konfirmasi kehadiran</option>
-                    <option value="yes">✓  Ya, saya akan hadir</option>
-                    <option value="no">✗  Mohon maaf, tidak bisa hadir</option>
-                </select>
-                <div style="display:flex;gap:10px;align-items:center">
-                    <span style="font-size:12.5px;color:var(--text-2);white-space:nowrap;flex-shrink:0">Jumlah tamu:</span>
-                    <input type="number" name="guests" min="1" max="10" value="1"
-                           class="inv-inp" style="max-width:80px">
-                </div>
-                <textarea name="message" placeholder="Pesan atau ucapan (opsional)"
-                          class="inv-inp" rows="2" style="resize:none"></textarea>
-                <button type="submit" style="
-                    width:100%;padding:14px;
-                    background:linear-gradient(135deg,#D4858E 0%,#C8956C 100%);
-                    border:none; border-radius:50px;
-                    color:white; font-family:'DM Sans',sans-serif;
-                    font-size:10px; letter-spacing:.28em; text-transform:uppercase;
-                    cursor:pointer; font-weight:500;
-                    box-shadow: 0 7px 24px rgba(212,133,142,.38);
-                    transition: transform .2s, box-shadow .2s;
-                " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 32px rgba(212,133,142,.48)'"
-                   onmouseout="this.style.transform='none';this.style.boxShadow='0 7px 24px rgba(212,133,142,.38)'">
-                    <i class="fa-solid fa-paper-plane" style="margin-right:8px;font-size:11px"></i> Kirim Konfirmasi
-                </button>
+        <!-- Header -->
+        <div class="an a1" style="margin-bottom:28px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+                <div style="width:32px;height:1.5px;background:var(--rose)"></div>
+                <p style="font-size:8px;letter-spacing:.45em;color:var(--rose);text-transform:uppercase;font-weight:600">Konfirmasi Hadir</p>
             </div>
-        </form>
-
-        <div id="rsvp-ok" style="display:none;text-align:center;padding:34px 0">
-            <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,rgba(212,133,142,.12),rgba(200,149,108,.08));border:1.5px solid rgba(212,133,142,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:float 3s ease-in-out infinite">
-                <i class="fa-solid fa-heart-circle-check" style="font-size:1.9rem;color:var(--rose)"></i>
-            </div>
-            <h3 class="fp" style="font-size:1.5rem;color:var(--text);margin-bottom:8px">Terima kasih!</h3>
-            <p style="font-size:12px;color:var(--text-2);line-height:1.8">
-                Konfirmasi kehadiran Anda telah kami terima.<br>
-                Kami sangat mengharapkan kehadiran Anda.
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:400;color:var(--text);line-height:1.2">
+                Apakah Anda<br><em>akan hadir?</em>
+            </h2>
+            <p style="font-size:12px;color:var(--text-3);margin-top:8px">
+                Sebelum {{ optional($invitation->event_date)->format('d M Y') }}
             </p>
         </div>
-    </div>
-</section>
 
-
-{{-- ══════════════════════
-     SEC 6 · WISHES
-══════════════════════ --}}
-<section class="snap-sec anim-ready" id="sec-6" style="background:linear-gradient(152deg,#FAE8E8 0%,#FFFCF7 55%,#FAE8E8 100%)">
-
-    <!-- Dot bg -->
-    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(212,133,142,.07) 1px,transparent 1px);background-size:24px 24px;pointer-events:none"></div>
-
-    <!-- Floral TR -->
-    <svg style="position:absolute;top:0;right:0;opacity:.17;pointer-events:none;transform:scaleX(-1)" width="155" height="155" viewBox="0 0 200 200" fill="none">
-        <g transform="translate(48,48)">
-            <g fill="#D4858E">
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(72)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(144)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(216)"/>
-                <path d="M0,-40 C-13,-28 -13,-14 0,-8 C13,-14 13,-28 0,-40Z" transform="rotate(288)"/>
-                <circle r="7" fill="#C8956C"/>
-            </g>
-        </g>
-    </svg>
-
-    <div class="sec-inner" style="max-width:580px;margin:0 auto;padding:28px 22px;width:100%">
-
-        <div class="rdiv anim a1" style="margin-bottom:8px">Ucapan &amp; Doa</div>
-        <p class="anim a2" style="text-align:center;font-size:11px;color:var(--text-2);margin-bottom:18px">
-            Sampaikan doa &amp; ucapan terbaik untuk kami
-        </p>
-
-        <!-- Wish form -->
-        <form onsubmit="submitWish(event)" class="anim a3">
-            <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:14px">
-                <input type="text" name="wish_name" placeholder="Nama Anda" class="inv-inp" required>
-                <textarea name="wish_msg" placeholder="Tuliskan doa &amp; ucapan selamat Anda…" class="inv-inp" rows="2" style="resize:none" required></textarea>
+        <form id="rsvp-form" onsubmit="submitRsvp(event)" class="an a2">
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <input type="text" name="name" class="field" placeholder="Nama lengkap Anda"
+                       value="{{ request()->get('to') }}" required>
+                <input type="text" name="phone" class="field" placeholder="Nomor WhatsApp (opsional)">
+                <select name="attending" class="field" required>
+                    <option value="" disabled selected>Konfirmasi kehadiran...</option>
+                    <option value="yes">✓  Ya, saya akan hadir</option>
+                    <option value="no">✗  Maaf, tidak bisa hadir</option>
+                </select>
+                <div style="display:flex;gap:10px;align-items:center">
+                    <label style="font-size:13px;color:var(--text-2);white-space:nowrap">Tamu:</label>
+                    <input type="number" name="guests" min="1" max="10" value="1" class="field" style="max-width:80px">
+                </div>
+                <textarea name="message" class="field" rows="2" placeholder="Pesan (opsional)" style="resize:none"></textarea>
                 <button type="submit" style="
-                    width:100%;padding:12px;
-                    background:transparent;
-                    border:1.5px solid var(--rose);
-                    border-radius:50px;
-                    color:var(--rose); font-family:'DM Sans',sans-serif;
-                    font-size:10px; letter-spacing:.24em; text-transform:uppercase;
-                    cursor:pointer; font-weight:500;
-                    transition:background .25s, color .25s;
-                " onmouseover="this.style.background='rgba(212,133,142,.1)'"
-                   onmouseout="this.style.background='transparent'">
-                    <i class="fa-regular fa-paper-plane" style="margin-right:6px"></i> Kirim Ucapan
+                    padding:14px 28px; border:none; border-radius:4px;
+                    background:var(--rose); color:white;
+                    font-family:'Outfit',sans-serif; font-size:10.5px;
+                    letter-spacing:.28em; text-transform:uppercase; font-weight:600;
+                    cursor:pointer;
+                    box-shadow:0 6px 22px rgba(201,116,125,.36);
+                    transition:transform .2s,box-shadow .2s;
+                " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 30px rgba(201,116,125,.48)'"
+                   onmouseout="this.style.transform='none';this.style.boxShadow='0 6px 22px rgba(201,116,125,.36)'">
+                    <i class="fa-solid fa-paper-plane" style="margin-right:7px"></i> Kirim Konfirmasi
                 </button>
             </div>
         </form>
 
-        <!-- Wishes list -->
-        <div id="wishes-list" class="wish-scroll anim a4" style="display:flex;flex-direction:column;gap:9px;max-height:220px;overflow-y:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:rgba(212,133,142,.2) transparent">
-            @foreach($invitation->wishes ?? [] as $wish)
-            <div class="wcard">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
-                    <p style="font-size:12.5px;font-weight:500;color:var(--text)">{{ $wish->name }}</p>
-                    <p style="font-size:8.5px;color:var(--text-3)">{{ $wish->created_at->diffForHumans() }}</p>
-                </div>
-                <p class="fi" style="font-size:12px;color:var(--text-2);line-height:1.9">"{{ $wish->message }}"</p>
+        <div id="rsvp-ok" style="display:none;text-align:center;padding:40px 0">
+            <div style="width:70px;height:70px;border-radius:50%;background:rgba(201,116,125,.1);border:2px solid rgba(201,116,125,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:float 3s ease-in-out infinite">
+                <i class="fa-solid fa-heart-circle-check" style="font-size:2rem;color:var(--rose)"></i>
             </div>
-            @endforeach
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:var(--text);margin-bottom:8px">Terima kasih!</h3>
+            <p style="font-size:13px;color:var(--text-2);line-height:1.8">Konfirmasi Anda sudah kami terima.<br>Kami sangat menantikan kehadiran Anda.</p>
         </div>
     </div>
 </section>
 
 
-{{-- ══════════════════════
-     SEC 7 · GIFT / AMPLOP DIGITAL
-══════════════════════ --}}
-<section class="snap-sec anim-ready" id="sec-7" style="background:linear-gradient(145deg,#FFFCF7 0%,#FAE8E8 45%,#FFFCF7 100%)">
+{{-- ══ SEC 6 — WISHES: Chat Bubble Style ══ --}}
+<section class="snap-sec ar" id="sec-6" style="background:var(--blush);display:flex;align-items:center;justify-content:center">
 
-    <!-- Dot bg -->
-    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(212,133,142,.07) 1px,transparent 1px);background-size:22px 22px;pointer-events:none"></div>
+    <div class="sec-num" style="bottom:16px;right:16px;font-size:6rem;color:rgba(201,116,125,.06)">06</div>
 
-    <div class="sec-inner" style="max-width:540px;margin:0 auto;padding:32px 24px;width:100%;text-align:center">
+    <!-- Left colored strip -->
+    <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,transparent,var(--sage),transparent)"></div>
 
-        <!-- Envelope SVG icon -->
-        <svg class="anim a1" width="68" height="68" viewBox="0 0 68 68" style="margin:0 auto 18px;animation:float 3.5s ease-in-out infinite">
-            <rect x="6" y="20" width="56" height="38" rx="8" stroke="#D4858E" stroke-width="1" fill="rgba(212,133,142,.07)"/>
-            <path d="M6,26 L34,42 L62,26" stroke="#D4858E" stroke-width="1" fill="none"/>
-            <path d="M34,5 C28,5 24,9 24,15 C24,20.5 29,24 34,24 C39,24 44,20.5 44,15 C44,9 40,5 34,5Z" stroke="#C8956C" stroke-width="1" fill="rgba(200,149,108,.09)"/>
-            <polygon points="34,7 38,13 34,16 30,13" fill="#C8956C" opacity=".6"/>
-        </svg>
+    <div class="sec-pad-bottom" style="position:relative;z-index:2;width:100%;max-width:540px;padding:36px 32px">
 
-        <div class="rdiv anim a2" style="margin-bottom:8px">Amplop Digital</div>
-        <p class="anim a3" style="font-size:12px;color:var(--text-2);margin-bottom:22px;line-height:1.8;max-width:380px;margin-left:auto;margin-right:auto">
-            Doa restu Anda adalah hadiah terbaik bagi kami. Namun jika
-            Anda ingin memberikan tanda kasih, berikut rekening kami:
-        </p>
+        <!-- Header -->
+        <div class="an a1" style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+            <p style="font-size:7.5px;letter-spacing:.45em;color:var(--rose);text-transform:uppercase;font-weight:600">Ucapan &amp; Doa</p>
+            <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--rose-lt),transparent)"></div>
+        </div>
 
-        <div class="gift-grid anim a4" style="display:grid;grid-template-columns:1fr;gap:12px;max-width:440px;margin:0 auto">
-            @foreach($invitation->banks ?? [] as $bank)
-            <div class="scard" style="padding:18px 20px;display:flex;align-items:center;gap:14px;text-align:left">
-                <div style="width:46px;height:46px;border-radius:var(--radius-md);background:linear-gradient(135deg,rgba(212,133,142,.14),rgba(200,149,108,.1));display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(212,133,142,.18)">
-                    <i class="fa-solid fa-building-columns" style="color:var(--rose);font-size:1.15rem"></i>
+        <!-- Chat bubbles list -->
+        <div class="bubble-list an a2" id="wishes-list">
+            @php $altToggle = true; @endphp
+            @foreach($invitation->wishes ?? [] as $wish)
+            <div class="bubble {{ $altToggle ? 'left' : 'right' }}">
+                @if($altToggle)
+                <div class="b-avatar">{{ substr($wish->name, 0, 1) }}</div>
+                @endif
+                <div class="b-body">
+                    <p class="b-name">{{ $wish->name }}</p>
+                    <div class="b-text">"{{ $wish->message }}"</div>
+                    <p class="b-time">{{ $wish->created_at->diffForHumans() }}</p>
                 </div>
-                <div style="flex:1;min-width:0">
-                    <p style="font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);margin-bottom:3px;font-weight:500">{{ $bank->bank_name }}</p>
-                    <p style="font-size:15px;font-weight:600;color:var(--text);letter-spacing:.06em">{{ $bank->account_number }}</p>
-                    <p style="font-size:11.5px;color:var(--text-2);margin-top:1px">a.n. {{ $bank->account_name }}</p>
-                </div>
-                <button onclick="(function(btn){navigator.clipboard.writeText('{{ $bank->account_number }}').then(function(){btn.innerHTML='<i class=\'fa-solid fa-check\' style=\'font-size:13px\'></i>';setTimeout(function(){btn.innerHTML='<i class=\'fa-regular fa-copy\' style=\'font-size:13px\'></i>'},2000)})})(this)"
-                    style="width:38px;height:38px;border-radius:var(--radius-sm);border:1.5px solid rgba(212,133,142,.25);background:transparent;cursor:pointer;color:var(--rose);flex-shrink:0;transition:background .2s"
-                    title="Salin nomor rekening"
-                    onmouseover="this.style.background='rgba(212,133,142,.1)'"
-                    onmouseout="this.style.background='transparent'">
-                    <i class="fa-regular fa-copy" style="font-size:13px"></i>
+                @if(!$altToggle)
+                <div class="b-avatar">{{ substr($wish->name, 0, 1) }}</div>
+                @endif
+            </div>
+            @php $altToggle = !$altToggle; @endphp
+            @endforeach
+        </div>
+
+        <!-- Chat input -->
+        <form onsubmit="submitWish(event)" class="an a3" style="margin-top:12px">
+            <div style="margin-bottom:8px">
+                <input type="text" name="wish_name" class="field" placeholder="Nama Anda" required style="margin-bottom:8px">
+            </div>
+            <div class="chat-input">
+                <input type="text" name="wish_msg" placeholder="Tulis ucapan &amp; doa…" required>
+                <button type="submit" class="chat-send">
+                    <i class="fa-solid fa-paper-plane" style="font-size:12px"></i>
                 </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+{{-- ══ SEC 7 — GIFT: Credit Card Style ══ --}}
+<section class="snap-sec ar" id="sec-7" style="background:var(--cream);display:flex;align-items:center;justify-content:center">
+
+    <div class="sec-num" style="bottom:20px;left:16px;right:auto;font-size:6rem;color:rgba(201,116,125,.055)">07</div>
+
+    <div class="sec-pad-bottom" style="position:relative;z-index:2;width:100%;max-width:460px;padding:36px 32px">
+
+        <!-- Header -->
+        <div class="an a1" style="margin-bottom:28px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <div style="width:28px;height:1.5px;background:var(--gold)"></div>
+                <p style="font-size:8px;letter-spacing:.45em;color:var(--gold);text-transform:uppercase;font-weight:600">Amplop Digital</p>
+            </div>
+            <p style="font-size:13px;color:var(--text-2);line-height:1.8">
+                Doa restu Anda adalah hadiah terbaik. Namun jika ingin memberikan tanda kasih:
+            </p>
+        </div>
+
+        <!-- Credit card style bank accounts -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+            @foreach($invitation->banks ?? [] as $bank)
+            <div class="bank-card an a2" style="background:linear-gradient(135deg, var(--rose-deep) 0%, var(--rose) 60%, #D4858E 100%)">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;position:relative;z-index:1">
+                    <p style="font-size:8.5px;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:500">{{ $bank->bank_name }}</p>
+                    <svg width="32" height="20" viewBox="0 0 32 20" fill="none">
+                        <circle cx="12" cy="10" r="9" fill="rgba(255,255,255,.2)"/>
+                        <circle cx="20" cy="10" r="9" fill="rgba(255,255,255,.15)"/>
+                    </svg>
+                </div>
+                <p style="font-size:15px;letter-spacing:.12em;font-weight:500;color:white;margin-bottom:10px;font-family:'Outfit',monospace;position:relative;z-index:1">
+                    {{ $bank->account_number }}
+                </p>
+                <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1">
+                    <p style="font-size:11px;color:rgba(255,255,255,.75)">a.n. {{ $bank->account_name }}</p>
+                    <button onclick="(function(b){navigator.clipboard.writeText('{{ $bank->account_number }}').then(function(){b.textContent='Tersalin!';b.style.background='rgba(255,255,255,.3)';setTimeout(function(){b.textContent='Salin';b.style.background='rgba(255,255,255,.15)'},2000)})})(this)"
+                        style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:white;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:5px 12px;cursor:pointer;font-weight:500;font-family:'Outfit',sans-serif;transition:background .2s">
+                        Salin
+                    </button>
+                </div>
             </div>
             @endforeach
 
             @if(($invitation->banks ?? collect())->isEmpty())
-            <div style="opacity:.38;padding:28px 0;text-align:center">
+            <div style="text-align:center;padding:32px;opacity:.35">
                 <i class="fa-solid fa-credit-card" style="font-size:2rem;color:var(--rose);display:block;margin-bottom:10px"></i>
-                <p style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-2)">Belum ada rekening ditambahkan</p>
+                <p style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-2)">Belum ada rekening</p>
             </div>
             @endif
         </div>
@@ -1187,73 +1081,66 @@
 </section>
 
 
-{{-- ══════════════════════
-     SEC 8 · CLOSING
-══════════════════════ --}}
-<section class="snap-sec anim-ready" id="sec-8" style="background:linear-gradient(155deg,#FAE8E8 0%,#FFFCF7 40%,#F5D5D8 100%)">
+{{-- ══ SEC 8 — CLOSING: Monogram + Minimal ══ --}}
+<section class="snap-sec ar" id="sec-8" style="background:var(--linen);display:flex;align-items:center;justify-content:center">
 
-    <!-- Background cover blurred -->
+    <!-- Cover photo blurred -->
     @if($invitation->cover?->file_path)
-    <div style="position:absolute;inset:0;background-image:url('{{ asset('storage/'.$invitation->cover->file_path) }}');background-size:cover;background-position:center;opacity:.07;filter:blur(5px);pointer-events:none"></div>
+    <div style="position:absolute;inset:0;background-image:url('{{ asset('storage/'.$invitation->cover->file_path) }}');background-size:cover;background-position:center;opacity:.06;filter:blur(6px);pointer-events:none"></div>
     @endif
 
-    <!-- Wreath SVG -->
-    <svg style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.09;pointer-events:none;z-index:0" width="min(360px,90vw)" height="min(360px,90vw)" viewBox="0 0 360 360" fill="none">
-        <circle cx="180" cy="180" r="168" stroke="#D4858E" stroke-width=".7" stroke-dasharray="3 5"/>
-        <circle cx="180" cy="180" r="156" stroke="#D4858E" stroke-width=".4" opacity=".5"/>
-        <circle cx="180" cy="180" r="132" stroke="#C8956C" stroke-width=".4" opacity=".45"/>
-        <g fill="#D4858E">
-            <path d="M180,12 C172,34 172,58 180,70 C188,58 188,34 180,12Z"/>
-            <path d="M180,348 C172,326 172,302 180,290 C188,302 188,326 180,348Z"/>
-            <path d="M12,180 C34,172 58,172 70,180 C58,188 34,188 12,180Z"/>
-            <path d="M348,180 C326,172 302,172 290,180 C302,188 326,188 348,180Z"/>
-            <path d="M44,44 C58,63 63,84 57,94 C40,78 36,57 44,44Z"/>
-            <path d="M316,44 C302,63 297,84 303,94 C320,78 324,57 316,44Z"/>
-            <path d="M44,316 C58,297 63,276 57,266 C40,282 36,303 44,316Z"/>
-            <path d="M316,316 C302,297 297,276 303,266 C320,282 324,303 316,316Z"/>
-        </g>
-        <circle cx="180" cy="180" r="100" stroke="#D4858E" stroke-width=".3" opacity=".3"/>
-    </svg>
+    <!-- Giant monogram background -->
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-weight:700;font-style:italic;font-size:min(40vw,300px);color:rgba(201,116,125,.055);white-space:nowrap;user-select:none;pointer-events:none;line-height:1;letter-spacing:-.02em">
+        {{ substr($invitation->profile->first_name,0,1) }}&amp;{{ substr($invitation->profile->second_name,0,1) }}
+    </div>
 
-    <div class="sec-inner" style="position:relative;z-index:2;padding:32px 24px;text-align:center;max-width:500px;width:100%">
+    <!-- Top thin bar -->
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rose-pale),var(--rose),var(--gold),var(--rose-pale))"></div>
+
+    <!-- Corners -->
+    <div style="position:absolute;top:16px;left:16px;width:32px;height:32px;border-top:1.5px solid rgba(201,116,125,.3);border-left:1.5px solid rgba(201,116,125,.3)"></div>
+    <div style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-top:1.5px solid rgba(201,116,125,.3);border-right:1.5px solid rgba(201,116,125,.3)"></div>
+    <div style="position:absolute;bottom:16px;left:16px;width:32px;height:32px;border-bottom:1.5px solid rgba(201,116,125,.3);border-left:1.5px solid rgba(201,116,125,.3)"></div>
+    <div style="position:absolute;bottom:16px;right:16px;width:32px;height:32px;border-bottom:1.5px solid rgba(201,116,125,.3);border-right:1.5px solid rgba(201,116,125,.3)"></div>
+
+    <div style="position:relative;z-index:2;text-align:center;padding:32px 40px;max-width:460px">
 
         <!-- Floating heart -->
-        <div class="anim a1" style="margin:0 auto 20px;animation:float 3.5s ease-in-out infinite">
-            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                <path d="M32,54 C32,54 6,38 6,21 C6,13.5 11.5,8 19,8 C23.5,8 27.5,10.5 32,15 C36.5,10.5 40.5,8 45,8 C52.5,8 58,13.5 58,21 C58,38 32,54 32,54Z"
-                      fill="rgba(212,133,142,.14)" stroke="#D4858E" stroke-width=".9"/>
-                <path d="M32,47 C32,47 13,33 13,22 C13,17 16.5,12.5 21,12.5 C25,12.5 28.5,15 32,19.5 C35.5,15 39,12.5 43,12.5 C47.5,12.5 51,17 51,22 C51,33 32,47 32,47Z"
-                      fill="rgba(212,133,142,.07)"/>
+        <div class="an a1" style="margin:0 auto 20px;animation:float 3.5s ease-in-out infinite;width:fit-content">
+            <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+                <path d="M26,46 C26,46 4,32 4,18 C4,11 9.5,6 17,6 C21.5,6 25,8.5 26,12 C27,8.5 30.5,6 35,6 C42.5,6 48,11 48,18 C48,32 26,46 26,46Z" stroke="#C9747D" stroke-width=".9" fill="rgba(201,116,125,.1)"/>
+                <path d="M26,39 C26,39 10,28 10,19 C10,15 13,11.5 17,11.5 C20.5,11.5 23.5,14 26,18 C28.5,14 31.5,11.5 35,11.5 C39,11.5 42,15 42,19 C42,28 26,39 26,39Z" fill="rgba(201,116,125,.07)"/>
             </svg>
         </div>
 
-        <p class="anim a2" style="font-size:8px;letter-spacing:.55em;color:var(--rose);text-transform:uppercase;margin-bottom:16px;font-weight:500">
-            With Love
-        </p>
+        <p class="an a2" style="font-size:8px;letter-spacing:.55em;color:var(--rose);text-transform:uppercase;font-weight:600;margin-bottom:16px">With Love</p>
 
-        <h2 class="fp anim a3 shimmer-text cls-name" style="font-size:clamp(2.2rem,9vw,4.4rem);font-weight:400;line-height:1.08;margin-bottom:5px">
+        <h2 class="fp shimmer-rose an a3" style="font-size:clamp(2.2rem,9vw,4rem);font-weight:400;line-height:1.1;margin-bottom:4px">
             {{ $invitation->profile->first_name }}
         </h2>
-        <p class="fi anim a3" style="font-size:1.9rem;color:var(--rose);line-height:1;margin-bottom:5px">&amp;</p>
-        <h2 class="fp anim a4 shimmer-text cls-name" style="font-size:clamp(2.2rem,9vw,4.4rem);font-weight:400;line-height:1.08;margin-bottom:24px">
+        <p class="fc an a3" style="font-size:1.8rem;color:var(--rose);line-height:1;margin-bottom:4px">&amp;</p>
+        <h2 class="fp shimmer-rose an a4" style="font-size:clamp(2.2rem,9vw,4rem);font-weight:400;line-height:1.1;margin-bottom:28px">
             {{ $invitation->profile->second_name }}
         </h2>
 
-        <div class="rdiv anim a5" style="max-width:320px;margin:0 auto 20px">Terima Kasih</div>
+        <div class="an a5" style="display:flex;align-items:center;gap:12px;margin-bottom:20px;max-width:300px;margin-left:auto;margin-right:auto">
+            <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--rose-lt))"></div>
+            <p style="font-size:8px;letter-spacing:.3em;color:var(--text-3);text-transform:uppercase">Terima Kasih</p>
+            <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--rose-lt),transparent)"></div>
+        </div>
 
-        <p class="anim a5" style="font-size:12px;color:var(--text-2);line-height:2;max-width:360px;margin:0 auto">
-            Merupakan suatu kehormatan dan kebahagiaan bagi kami
-            apabila Bapak/Ibu/Saudara/i berkenan hadir untuk
-            memberikan doa dan restu kepada kami berdua.
+        <p class="an a5" style="font-size:12.5px;color:var(--text-2);line-height:2;max-width:360px;margin:0 auto">
+            Merupakan suatu kehormatan bagi kami apabila
+            Bapak/Ibu/Saudara/i berkenan hadir memberikan
+            doa dan restu.
         </p>
     </div>
 </section>
 
+
 </div>{{-- /scroll-container --}}
 
 <script>
-// ════════════════════════════════════════════════
-//  CONFIG
 // ════════════════════════════════════════════════
 const FIRST_EVENT_DATE = "{{ $invitation->events->isNotEmpty() ? $invitation->events->first()->event_date : optional($invitation->event_date)->format('Y-m-d') }}";
 
@@ -1261,53 +1148,51 @@ let curSec = 0;
 const secs = [...document.querySelectorAll('.snap-sec')];
 const N    = secs.length;
 
-// ════════════════════════════════════════════════
-//  PETAL RAIN (envelope background)
-// ════════════════════════════════════════════════
-(function spawnPetals() {
-    const container = document.getElementById('env-petals');
-    if (!container) return;
-    const petals = [
-        'M0,-14 C-4,-10 -4,-5 0,-3 C4,-5 4,-10 0,-14Z',  // petal
-        'M0,-12 C-6,-8 -5,-3 0,-2 C5,-3 6,-8 0,-12Z',     // round petal
-        'M0,-10 C-7,-7 -6,-2 0,-1 C6,-2 7,-7 0,-10Z',     // wide petal
+// ─── PETAL RAIN (envelope) ───
+(function() {
+    const wrap = document.getElementById('env-petals');
+    if (!wrap) return;
+    const colors = ['#C9747D','#E0A0A8','#C4906A','#F2D2D6','#88A885'];
+    const shapes = [
+        'M0,-14 C-4,-9 -4,-4 0,-2 C4,-4 4,-9 0,-14Z',
+        'M0,-12 C-6,-8 -5,-2 0,-1 C5,-2 6,-8 0,-12Z',
+        'M0,-10 C-7,-6 -6,-1 0,-0.5 C6,-1 7,-6 0,-10Z',
     ];
-    const colors = ['#D4858E','#E8A8B0','#C8956C','#F0C8CC','#EBB8BC','#C07080'];
-    for (let i = 0; i < 18; i++) {
-        const size = 10 + Math.random() * 14;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const pShape = petals[Math.floor(Math.random() * petals.length)];
-        const delay = Math.random() * 6;
-        const dur   = 7 + Math.random() * 9;
-        const tx    = (Math.random() - 0.5) * 80;
-        const rot   = 360 + Math.random() * 360;
+    for (let i = 0; i < 20; i++) {
+        const size  = 8 + Math.random() * 14;
+        const color = colors[i % colors.length];
+        const shape = shapes[i % shapes.length];
+        const delay = Math.random() * 7;
+        const dur   = 8 + Math.random() * 10;
+        const px    = (Math.random() - .5) * 90;
+        const pr    = 280 + Math.random() * 360;
         const div   = document.createElement('div');
         div.style.cssText = `
-            position:absolute;
-            left:${Math.random() * 100}%;
-            top:${60 + Math.random() * 40}%;
-            --tx:${tx}px; --rot:${rot}deg;
-            animation:petalFall ${dur}s ease-in ${delay}s infinite;
+            position:absolute;left:${Math.random()*100}%;top:${50+Math.random()*50}%;
+            --px:${px}px;--pr:${pr}deg;
+            animation:petalSpin ${dur}s ease-in ${delay}s infinite;pointer-events:none;
         `;
-        div.innerHTML = `<svg width="${size}" height="${size}" viewBox="-15 -15 30 30" fill="none">
-            <path d="${pShape}" fill="${color}" opacity=".55" transform="rotate(${Math.random()*360})"/>
+        div.innerHTML = `<svg width="${size}" height="${size}" viewBox="-15 -15 30 30">
+            <path d="${shape}" fill="${color}" opacity=".6" transform="rotate(${Math.random()*360})"/>
         </svg>`;
-        container.appendChild(div);
+        wrap.appendChild(div);
     }
 })();
 
-// ════════════════════════════════════════════════
-//  OPEN INVITATION
-// ════════════════════════════════════════════════
+// ─── OPEN INVITATION ───
 function openInvitation() {
     const env = document.getElementById('envelope');
-    env.style.transform = 'translateY(-100%)';
-    env.style.opacity   = '0';
-    setTimeout(() => { env.style.display = 'none'; }, 980);
+    env.classList.add('closing');
+    setTimeout(() => { env.style.display = 'none'; }, 950);
 
     document.getElementById('flt-music').style.display = 'flex';
     document.getElementById('flt-up').style.display    = 'flex';
     document.getElementById('flt-dn').style.display    = 'flex';
+    document.getElementById('progress-track').style.display = 'block';
+
+    // Set hero divider position
+    const divider = document.getElementById('hero-divider');
+    if (divider) divider.style.left = '58%';
 
     buildDots();
     observeSections();
@@ -1316,28 +1201,46 @@ function openInvitation() {
     document.getElementById('weddingMusic').play().catch(() => {});
 }
 
-// ════════════════════════════════════════════════
-//  SECTION DOTS
-// ════════════════════════════════════════════════
+// ─── DOTS (desktop) ───
 function buildDots() {
     const wrap = document.getElementById('sdots');
     secs.forEach((_, i) => {
         const d = document.createElement('div');
-        d.className = 'sdot' + (i === 0 ? ' on' : '');
-        d.onclick   = () => goToSection(i);
+        d.style.cssText = `width:5px;height:5px;border-radius:50%;background:rgba(201,116,125,.22);cursor:pointer;transition:all .35s`;
+        d.onclick = () => goToSection(i);
+        if (i === 0) { d.style.background='var(--rose)'; d.style.boxShadow='0 0 8px rgba(201,116,125,.5)'; d.style.height='16px'; d.style.borderRadius='3px'; }
         wrap.appendChild(d);
     });
 }
 
 function setActive(idx) {
-    document.querySelectorAll('.sdot').forEach((d, i) => d.classList.toggle('on', i === idx));
-    document.querySelectorAll('.bn-item').forEach(b => b.classList.toggle('active', +b.dataset.sec === idx));
+    const dots  = document.querySelectorAll('#sdots div');
+    const pnBtns = document.querySelectorAll('.pn-btn');
+
+    dots.forEach((d, i) => {
+        if (i === idx) {
+            d.style.background   = 'var(--rose)';
+            d.style.boxShadow    = '0 0 8px rgba(201,116,125,.5)';
+            d.style.height       = '16px';
+            d.style.borderRadius = '3px';
+        } else {
+            d.style.background   = 'rgba(201,116,125,.22)';
+            d.style.boxShadow    = 'none';
+            d.style.height       = '5px';
+            d.style.borderRadius = '50%';
+        }
+    });
+
+    pnBtns.forEach(b => b.classList.toggle('active', +b.dataset.sec === idx));
+
+    // Progress bar
+    const fill = document.getElementById('progress-fill');
+    if (fill) fill.style.width = ((idx + 1) / N * 100) + '%';
+
     curSec = idx;
 }
 
-// ════════════════════════════════════════════════
-//  NAVIGATION
-// ════════════════════════════════════════════════
+// ─── NAVIGATION ───
 function goToSection(idx) {
     if (idx < 0 || idx >= N) return;
     secs[idx].scrollIntoView({ behavior: 'smooth' });
@@ -1350,14 +1253,12 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowUp')   { e.preventDefault(); scrollPrev(); }
 });
 
-// ════════════════════════════════════════════════
-//  INTERSECTION OBSERVER (animasi + dots)
-// ════════════════════════════════════════════════
+// ─── INTERSECTION OBSERVER ───
 function observeSections() {
     const io = new IntersectionObserver(entries => {
         entries.forEach(e => {
             if (e.isIntersecting && e.intersectionRatio >= 0.45) {
-                e.target.classList.add('in-view');
+                e.target.classList.add('iv');
                 setActive(secs.indexOf(e.target));
             }
         });
@@ -1365,30 +1266,23 @@ function observeSections() {
     secs.forEach(s => io.observe(s));
 }
 
-// ════════════════════════════════════════════════
-//  MUSIC
-// ════════════════════════════════════════════════
+// ─── MUSIC ───
 const audio     = document.getElementById('weddingMusic');
 const musicIcon = document.getElementById('music-icon');
-let   musicOn   = true;
 
 function toggleMusic() {
     if (audio.paused) {
         audio.play();
         musicIcon.className = 'fa-solid fa-music';
         musicIcon.style.animation = 'spin-slow 4s linear infinite';
-        musicOn = true;
     } else {
         audio.pause();
         musicIcon.className = 'fa-solid fa-pause';
         musicIcon.style.animation = 'none';
-        musicOn = false;
     }
 }
 
-// ════════════════════════════════════════════════
-//  HERO SLIDESHOW
-// ════════════════════════════════════════════════
+// ─── SLIDESHOW ───
 function startSlideshow() {
     const slides = document.querySelectorAll('.h-slide');
     if (slides.length < 1) return;
@@ -1402,12 +1296,10 @@ function startSlideshow() {
     }, 5000);
 }
 
-// ════════════════════════════════════════════════
-//  COUNTDOWN (NaN-safe)
-// ════════════════════════════════════════════════
+// ─── COUNTDOWN ───
 function startCountdown() {
     const ids = ['cd-d','cd-h','cd-m','cd-s'];
-    if (!FIRST_EVENT_DATE || FIRST_EVENT_DATE.trim() === '') {
+    if (!FIRST_EVENT_DATE || !FIRST_EVENT_DATE.trim()) {
         ids.forEach(id => { document.getElementById(id).textContent = '00'; });
         return;
     }
@@ -1418,36 +1310,21 @@ function startCountdown() {
     }
     function tick() {
         const diff = target - new Date();
-        if (diff <= 0) {
-            ids.forEach(id => { document.getElementById(id).textContent = '00'; });
-            return;
-        }
-        const vals = [
-            Math.floor(diff / 86400000),
-            Math.floor((diff % 86400000) / 3600000),
-            Math.floor((diff % 3600000)  / 60000),
-            Math.floor((diff % 60000)    / 1000),
-        ];
-        ids.forEach((id, i) => {
-            document.getElementById(id).textContent = String(vals[i]).padStart(2, '0');
-        });
+        if (diff <= 0) { ids.forEach(id => { document.getElementById(id).textContent = '00'; }); return; }
+        [Math.floor(diff/86400000), Math.floor((diff%86400000)/3600000),
+         Math.floor((diff%3600000)/60000), Math.floor((diff%60000)/1000)]
+        .forEach((v, i) => { document.getElementById(ids[i]).textContent = String(v).padStart(2,'0'); });
     }
-    tick();
-    setInterval(tick, 1000);
+    tick(); setInterval(tick, 1000);
 }
 
-// ════════════════════════════════════════════════
-//  ADD TO CALENDAR
-// ════════════════════════════════════════════════
+// ─── CALENDAR ───
 function addToCalendar(name, date, loc) {
-    const d   = date.replace(/-/g, '');
-    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Tunangan: ' + name)}&dates=${d}/${d}&location=${encodeURIComponent(loc)}`;
-    window.open(url, '_blank');
+    const d = date.replace(/-/g,'');
+    window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Tunangan: '+name)}&dates=${d}/${d}&location=${encodeURIComponent(loc)}`,'_blank');
 }
 
-// ════════════════════════════════════════════════
-//  RSVP
-// ════════════════════════════════════════════════
+// ─── RSVP ───
 function submitRsvp(e) {
     e.preventDefault();
     // TODO: fetch('/rsvp', { method:'POST', headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}, body: new FormData(e.target) })
@@ -1455,39 +1332,34 @@ function submitRsvp(e) {
     document.getElementById('rsvp-ok').style.display   = 'block';
 }
 
-// ════════════════════════════════════════════════
-//  WISHES
-// ════════════════════════════════════════════════
+// ─── WISHES (chat bubble style) ───
 function submitWish(e) {
     e.preventDefault();
     const f    = e.target;
     const name = f.wish_name.value.trim();
     const msg  = f.wish_msg.value.trim();
     if (!name || !msg) return;
-    const list = document.getElementById('wishes-list');
-    const card = document.createElement('div');
-    card.className = 'wcard';
-    card.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
-            <p style="font-size:12.5px;font-weight:500;color:var(--text)">${name}</p>
-            <p style="font-size:8.5px;color:var(--text-3)">Baru saja</p>
+
+    const list    = document.getElementById('wishes-list');
+    const isRight = list.children.length % 2 !== 0;
+    const initial = name.charAt(0).toUpperCase();
+
+    const div = document.createElement('div');
+    div.className = `bubble ${isRight ? 'right' : 'left'}`;
+    div.innerHTML = `
+        ${!isRight ? `<div class="b-avatar">${initial}</div>` : ''}
+        <div class="b-body">
+            <p class="b-name">${name}</p>
+            <div class="b-text">"${msg}"</div>
+            <p class="b-time">Baru saja</p>
         </div>
-        <p class="fi" style="font-size:12px;color:var(--text-2);line-height:1.9">"${msg}"</p>
+        ${isRight ? `<div class="b-avatar">${initial}</div>` : ''}
     `;
-    list.prepend(card);
-    f.reset();
-    // TODO: fetch('/wishes', { method:'POST', headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}, body: new FormData(f) })
+    list.prepend(div);
+    f.wish_msg.value = '';
+    f.wish_name.value = '';
+    // TODO: fetch('/wishes', ...)
 }
-
-// ════════════════════════════════════════════════
-//  MOBILE: couple always 2-col
-// ════════════════════════════════════════════════
-function setLayout() {
-    const g = document.getElementById('couple-grid');
-    if (g) g.style.gridTemplateColumns = '1fr 1fr';
-}
-setLayout();
 </script>
-
 </body>
 </html>
