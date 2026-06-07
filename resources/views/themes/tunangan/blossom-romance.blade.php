@@ -499,7 +499,7 @@
 </head>
 <body>
 
-<audio id="weddingMusic" loop preload="none">
+<audio id="bgMusic" loop preload="none">
     @if($invitation->music?->file_path)
         <source src="{{ asset('storage/'.$invitation->music->file_path) }}">
     @endif
@@ -750,7 +750,7 @@
         </div>
         @endif
         <div class="cp-info" style="position:relative;z-index:3">
-            <p style="font-size:7.5px;letter-spacing:.3em;color:rgba(255,255,255,.6);text-transform:uppercase;font-weight:500;margin-bottom:6px">Calon Mempelai Pria</p>
+            <p style="font-size:7.5px;letter-spacing:.3em;color:rgba(255,255,255,.6);text-transform:uppercase;font-weight:500;margin-bottom:6px">Pihak Pria</p>
             <h2 class="an ar1" style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:white;margin-bottom:4px;line-height:1.15">
                 {{ $invitation->profile->first_name }}
             </h2>
@@ -782,7 +782,7 @@
         </div>
         @endif
         <div class="cp-info">
-            <p style="font-size:7.5px;letter-spacing:.3em;color:rgba(255,255,255,.6);text-transform:uppercase;font-weight:500;margin-bottom:6px">Calon Mempelai Wanita</p>
+            <p style="font-size:7.5px;letter-spacing:.3em;color:rgba(255,255,255,.6);text-transform:uppercase;font-weight:500;margin-bottom:6px">Pihak Wanita</p>
             <h2 class="an al1" style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:white;margin-bottom:4px;line-height:1.15">
                 {{ $invitation->profile->second_name }}
             </h2>
@@ -1201,7 +1201,7 @@ function openInvitation() {
     observeSections();
     startSlideshow();
     startCountdown();
-    document.getElementById('weddingMusic').play().catch(() => {});
+    document.getElementById('bgMusic').play().catch(() => {});
 }
 
 // ─── DOTS (desktop) ───
@@ -1270,7 +1270,7 @@ function observeSections() {
 }
 
 // ─── MUSIC ───
-const audio     = document.getElementById('weddingMusic');
+const audio     = document.getElementById('bgMusic');
 const musicIcon = document.getElementById('music-icon');
 
 function toggleMusic() {
