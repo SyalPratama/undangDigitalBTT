@@ -17,8 +17,8 @@
         @verbatim
 
             /* ═══════════════════════════════
-           TOKENS
-        ═══════════════════════════════ */
+       TOKENS
+    ═══════════════════════════════ */
             :root {
                 --sky: #38BDF8;
                 --grass: #16A34A;
@@ -53,8 +53,8 @@
             }
 
             /* ═══════════════════════════════
-           BASE
-        ═══════════════════════════════ */
+       BASE
+    ═══════════════════════════════ */
             *,
             *::before,
             *::after {
@@ -78,8 +78,8 @@
             }
 
             /* ═══════════════════════════════
-           SCROLLER
-        ═══════════════════════════════ */
+       SCROLLER
+    ═══════════════════════════════ */
             #scroller {
                 height: var(--sh);
                 overflow-y: scroll;
@@ -108,8 +108,8 @@
             }
 
             /* ═══════════════════════════════
-           SHARED DECO HELPERS
-        ═══════════════════════════════ */
+       SHARED DECO HELPERS
+    ═══════════════════════════════ */
             .deco {
                 position: absolute;
                 pointer-events: none;
@@ -173,8 +173,8 @@
             }
 
             /* ═══════════════════════════════
-           COVER SCREEN — Night Sky
-        ═══════════════════════════════ */
+       COVER SCREEN — Night Sky
+    ═══════════════════════════════ */
             #cover {
                 position: fixed;
                 inset: 0;
@@ -313,8 +313,8 @@
             }
 
             /* ═══════════════════════════════
-           § 1  HERO — Sunrise Sky
-        ═══════════════════════════════ */
+       § 1  HERO — Sunrise Sky
+    ═══════════════════════════════ */
             #s-hero {
                 background: linear-gradient(180deg,
                         #1e1b4b 0%,
@@ -456,8 +456,8 @@
             }
 
             /* ═══════════════════════════════
-           § 2  PROFILE — Green Meadow
-        ═══════════════════════════════ */
+       § 2  PROFILE — Green Meadow
+    ═══════════════════════════════ */
             #s-about {
                 background: linear-gradient(160deg, #ECFDF5 0%, #D1FAE5 50%, #A7F3D0 100%);
                 padding: 1.5rem;
@@ -614,8 +614,8 @@
             }
 
             /* ═══════════════════════════════
-           § 3  EVENTS — Warm Cream
-        ═══════════════════════════════ */
+       § 3  EVENTS — Warm Cream
+    ═══════════════════════════════ */
             #s-events {
                 background: var(--cream);
                 padding: 1.5rem;
@@ -837,8 +837,8 @@
             }
 
             /* ═══════════════════════════════
-           § 4  GALLERY — Twilight Meadow
-        ═══════════════════════════════ */
+       § 4  GALLERY — Twilight Meadow
+    ═══════════════════════════════ */
             #s-gallery {
                 background: linear-gradient(160deg, #0c2a1c 0%, #14532D 40%, #0c1a2e 100%);
                 flex-direction: column;
@@ -969,8 +969,8 @@
             }
 
             /* ═══════════════════════════════
-           § 5  RSVP — Clean White
-        ═══════════════════════════════ */
+       § 5  RSVP — Clean White
+    ═══════════════════════════════ */
             #s-rsvp {
                 background: white;
                 padding: 1.2rem 1.5rem;
@@ -1212,8 +1212,8 @@
             }
 
             /* ═══════════════════════════════
-           § 6  CLOSING — Golden Dawn
-        ═══════════════════════════════ */
+       § 6  CLOSING — Golden Dawn
+    ═══════════════════════════════ */
             #s-closing {
                 background: linear-gradient(145deg, #14532D 0%, #16A34A 30%, #EAB308 70%, #FB923C 100%);
                 background-size: 200% 200%;
@@ -1319,8 +1319,8 @@
             }
 
             /* ═══════════════════════════════
-           FLOATING PILL NAV
-        ═══════════════════════════════ */
+       FLOATING PILL NAV
+    ═══════════════════════════════ */
             #bottom-nav {
                 position: fixed;
                 bottom: 12px;
@@ -1398,8 +1398,8 @@
             }
 
             /* ═══════════════════════════════
-           MUSIC BUTTON
-        ═══════════════════════════════ */
+       MUSIC BUTTON
+    ═══════════════════════════════ */
             #musicBtn {
                 position: fixed;
                 top: 1rem;
@@ -1438,8 +1438,8 @@
             }
 
             /* ═══════════════════════════════
-           KEYFRAMES
-        ═══════════════════════════════ */
+       KEYFRAMES
+    ═══════════════════════════════ */
             @keyframes twinkle {
                 from {
                     opacity: .08;
@@ -1601,8 +1601,8 @@
 
 
         <!-- ════════════════════════════════
-             COVER — Malam Berbintang
-        ════════════════════════════════ -->
+         COVER — Malam Berbintang
+    ════════════════════════════════ -->
         <div id="cover">
             <div class="cv-bg" id="cvBg"></div>
 
@@ -1643,8 +1643,8 @@
 
 
         <!-- ════════════════════════════════
-             SCROLLER
-        ════════════════════════════════ -->
+         SCROLLER
+    ════════════════════════════════ -->
         <div id="scroller">
 
             <!-- §1 · HERO — Sunrise -->
@@ -1779,7 +1779,7 @@
 
                 <div class="ev-wrap">
                     <div class="ev-header">
-                        <p class="ev-kicker">🌿 Jadwal Acara</p>
+                        <p class="ev-kicker">Jadwal Acara</p>
                         <h2 class="ev-title">Rangkaian<br>Kegiatan Aqiqah</h2>
                     </div>
 
@@ -1804,7 +1804,6 @@
                                 </div>
                                 <div class="ec-body">
                                     <div class="ec-row">
-                                        <div class="ec-ic ic-d">📅</div>
                                         <div>
                                             <div class="l">Tanggal</div>
                                             <div class="v">
@@ -1813,14 +1812,12 @@
                                         </div>
                                     </div>
                                     <div class="ec-row">
-                                        <div class="ec-ic ic-t">⏰</div>
                                         <div>
                                             <div class="l">Waktu</div>
                                             <div class="v">{{ $event->start_time }} WIB – Selesai</div>
                                         </div>
                                     </div>
                                     <div class="ec-row">
-                                        <div class="ec-ic ic-p">📍</div>
                                         <div>
                                             <div class="l">Tempat</div>
                                             <div class="v">{{ $event->venue_name }}</div>
@@ -1853,7 +1850,7 @@
 
                 <div class="gal-top">
                     <div>
-                        <p class="gal-kicker">📸 Kenangan Indah</p>
+                        <p class="gal-kicker">Kenangan Indah</p>
                         <h2 class="gal-title">Galeri Foto</h2>
                     </div>
                     @php $galCount = $invitation->galleries->count() ?: 6; @endphp
@@ -1891,7 +1888,7 @@
 
                 <div class="rsvp-inner">
                     <div class="rsvp-header" id="rsvpHeader">
-                        <p class="rsvp-kicker">🤲 Konfirmasi</p>
+                        <p class="rsvp-kicker">Konfirmasi</p>
                         <h2 class="rsvp-title">Apakah Bapak/Ibu<br>Bisa Hadir?</h2>
                     </div>
 
@@ -1907,9 +1904,9 @@
                             <label class="rf-label">Konfirmasi Kehadiran</label>
                             <div class="rf-pills">
                                 <label class="rf-pill-label"><input type="radio" name="attendance" value="hadir"
-                                        checked><span class="rf-pill-btn">✅ Hadir</span></label>
+                                        checked><span class="rf-pill-btn">Hadir</span></label>
                                 <label class="rf-pill-label"><input type="radio" name="attendance"
-                                        value="tidak_hadir"><span class="rf-pill-btn">❌ Tidak Hadir</span></label>
+                                        value="tidak_hadir"><span class="rf-pill-btn">Tidak Hadir</span></label>
                             </div>
                         </div>
                         <div class="rf-group" id="guestCountGroup">
@@ -1935,8 +1932,7 @@
                         <span class="success-icon">🐑</span>
                         <div class="success-title">Jazakumullah Khairan!</div>
                         <div class="success-text">Konfirmasi sudah kami terima.<br>Mohon doanya untuk
-                            <strong>{{ $invitation->profile->first_name }}</strong> 🤲
-                        </div>
+                            <strong>{{ $invitation->profile->first_name }}</strong></div>
                     </div>
                 </div>
             </section>
@@ -1964,8 +1960,8 @@
                     style="position:absolute;bottom:calc(var(--nav-pb) + 15px);right:7%;font-size:2rem;opacity:.4;pointer-events:none;animation:twinkle 3.5s .5s ease-in-out infinite alternate;">⭐</span>
 
                 <div class="cl-body">
-                    <span class="cl-dua">— Alhamdulillahi Rabbil 'Alamin —</span>
-                    <span class="cl-emoji">🐑 🌿 🤲</span>
+                    <span class="cl-dua">— Alhamdulillahi Rabbil 'Alamin</span>
+                    <span class="cl-emoji">🐑</span>
                     <h2 class="cl-title">Mohon Doa<br>Restu</h2>
                     <p class="cl-text">
                         Semoga Allah SWT memberikan keberkahan,<br>
@@ -1987,30 +1983,18 @@
 
         <!-- BOTTOM NAV — floating pill (mobile only) -->
         <nav id="bottom-nav" aria-label="Navigasi">
-            <button class="n-btn active" data-target="s-hero" onclick="navTo(this)">
-                <span class="n-ico"><i class="bi bi-house-door"></i></span>
-                <span class="n-lbl">Home</span>
-            </button>
-            <button class="n-btn" data-target="s-about" onclick="navTo(this)">
-                <span class="n-ico"><i class="bi bi-person"></i></span>
-                <span class="n-lbl">Profil</span>
-            </button>
-            <button class="n-btn" data-target="s-events" onclick="navTo(this)">
-                <span class="n-ico"><i class="bi bi-calendar-event"></i></span>
-                <span class="n-lbl">Acara</span>
-            </button>
-            <button class="n-btn" data-target="s-gallery" onclick="navTo(this)">
-                <span class="n-ico"><i class="bi bi-images"></i></span>
-                <span class="n-lbl">Galeri</span>
-            </button>
-            <button class="n-btn" data-target="s-rsvp" onclick="navTo(this)">
-                <span class="n-ico"><i class="bi bi-envelope-check"></i></span>
-                <span class="n-lbl">RSVP</span>
-            </button>
-            <button class="n-btn" data-target="s-closing" onclick="navTo(this)">
-                <span class="n-ico"><i class="bi bi-door-closed"></i></span>
-                <span class="n-lbl">Penutup</span>
-            </button>
+            <button class="n-btn active" data-target="s-hero" onclick="navTo(this)"><span class="n-ico">🏠︎</span><span
+                    class="n-lbl">Home</span></button>
+            <button class="n-btn" data-target="s-about" onclick="navTo(this)"><span class="n-ico">🙎🏻</span><span
+                    class="n-lbl">Profil</span></button>
+            <button class="n-btn" data-target="s-events" onclick="navTo(this)"><span class="n-ico">📅</span><span
+                    class="n-lbl">Acara</span></button>
+            <button class="n-btn" data-target="s-gallery" onclick="navTo(this)"><span class="n-ico">📸</span><span
+                    class="n-lbl">Galeri</span></button>
+            <button class="n-btn" data-target="s-rsvp" onclick="navTo(this)"><span class="n-ico">🤲</span><span
+                    class="n-lbl">RSVP</span></button>
+            <button class="n-btn" data-target="s-closing" onclick="navTo(this)"><span class="n-ico">🌿</span><span
+                    class="n-lbl">Penutup</span></button>
         </nav>
 
 

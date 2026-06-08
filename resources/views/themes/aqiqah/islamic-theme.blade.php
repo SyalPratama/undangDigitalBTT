@@ -10,9 +10,7 @@
 
     <style>
         /* ══════════════════════════════════════════════════
-           TAMAN JANNAH  ·  Undangan Aqiqah
            Tema: Luxury Botanical Emerald & Gold
-           Gaya: Editorial Mewah, Simetri Keanggunan Islam
         ══════════════════════════════════════════════════ */
         :root {
             --ivory:     #FAF7F0;
@@ -842,7 +840,7 @@
         <div class="an a1" style="margin-bottom:20px">
             <span class="sec-label">Ucapan & Doa</span>
             <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,6.5vw,2.5rem);color:var(--emerald);font-weight:700;line-height:1.1">Sampaikan<br>Doa Terbaik</h2>
-            <p style="font-family:'Outfit',sans-serif;font-size:12px;color:var(--faint);margin-top:7px">Doa Anda adalah hadiah terindah 🤲</p>
+            <p style="font-family:'Outfit',sans-serif;font-size:12px;color:var(--faint);margin-top:7px">Doa Anda adalah hadiah terindah</p>
         </div>
 
         <form onsubmit="submitWish(event)" class="an a2">
