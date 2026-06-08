@@ -1125,11 +1125,6 @@
                 {{ $invitation->profile->first_name ?? '' }}
             </h1>
             <p class="febi op-and"
-                style="font-size:1.5rem;color:rgba(201,162,39,.55);line-height:1;margin-bottom:3px">dan</p>
-            <h1 class="feb op-n2"
-                style="font-size:clamp(1.8rem,6vw,2.7rem);font-weight:600;color:var(--cream);line-height:1.1;margin-bottom:22px">
-                {{ $invitation->profile->second_name ?? '' }}
-            </h1>
 
             <div class="op-sep"
                 style="height:1px;background:linear-gradient(90deg,transparent,var(--gold-bdr),transparent);margin:0 auto 18px;transform-origin:center">
