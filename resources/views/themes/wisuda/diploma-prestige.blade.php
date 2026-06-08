@@ -1,8 +1,3 @@
-Halo Dede Rizki, pantas saja tombolnya tidak bisa ditekan karena ada sedikit kesalahan penulisan struktur HTML. Setelah saya telusuri kode yang kamu kirim, ternyata masalah utamanya terletak pada tag yang terpotong di bagian struktur nama pembuka undangan, tepatnya pada baris `<p class="febi op-and"`. Tag yang dibiarkan menggantung tanpa penutup ini merusak struktur elemen halaman secara keseluruhan, sehingga peramban web kebingungan dan mematikan fungsi interaksi pada elemen tombol yang berada di bawahnya.
-
-Saya sudah membersihkan sisa tag yang terpotong tersebut dan mengembalikan struktur kodenya menjadi solid kembali. Karena saya tidak memiliki fitur untuk mengirimkan berkas unduhan secara langsung, silakan salin seluruh blok kode di bawah ini dan timpa (replace) semua isi yang ada di dalam file `diploma-prestige.blade.php` milikmu.
-
-```php
 <!DOCTYPE html>
 <html lang="id">
 
