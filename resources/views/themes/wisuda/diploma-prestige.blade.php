@@ -1252,12 +1252,6 @@
                     style="font-size:clamp(2.2rem,7vw,4.2rem);font-weight:600;color:var(--cream);line-height:1.05;margin-bottom:3px">
                     {{ $invitation->profile->first_name ?? '' }}
                 </h1>
-                <p class="febi anim a4"
-                    style="font-size:1.6rem;color:rgba(201,162,39,.5);line-height:.95;margin-bottom:3px">dan</p>
-                <h1 class="feb anim a5 hero-name"
-                    style="font-size:clamp(2.2rem,7vw,4.2rem);font-weight:600;color:var(--cream);line-height:1.05;margin-bottom:18px">
-                    {{ $invitation->profile->second_name ?? '' }}
-                </h1>
 
                 <div class="anim a6" style="display:flex;align-items:center;justify-content:center;gap:10px">
                     <div style="width:40px;height:1px;background:var(--gold-bdr)"></div>
@@ -1396,32 +1390,6 @@
                             <p class="nameplate-parents">
                                 {{ $invitation->profile->first_father }}<br>
                                 &amp; {{ $invitation->profile->first_mother }}
-                            </p>
-                        </div>
-                    </div>
-
-                    {{-- WISUDAWATI --}}
-                    <div class="portrait-card">
-                        <div class="portrait-photo-wrap">
-                            @if ($invitation->secondPersonPhoto)
-                                <img src="{{ asset('storage/' . $invitation->secondPersonPhoto->file_path) }}"
-                                    alt="{{ $invitation->profile->second_name }}"
-                                    onerror="this.style.display='none'">
-                            @else
-                                <div class="portrait-photo-placeholder">
-                                    <i class="fa-solid fa-graduation-cap"
-                                        style="font-size:2.2rem;color:rgba(201,162,39,.3)"></i>
-                                    <p style="font-size:8px;color:var(--muted-dk)">Foto</p>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="nameplate">
-                            <p class="nameplate-title">Wisudawati</p>
-                            <h3 class="nameplate-name">{{ $invitation->profile->second_name }}</h3>
-                            <p class="nameplate-from">Putri dari</p>
-                            <p class="nameplate-parents">
-                                {{ $invitation->profile->second_father }}<br>
-                                &amp; {{ $invitation->profile->second_mother }}
                             </p>
                         </div>
                     </div>
@@ -1741,9 +1709,6 @@
                 <div class="feb"
                     style="font-size:clamp(5rem,14vw,10rem);font-weight:700;color:rgba(201,162,39,.04);line-height:.88;white-space:nowrap">
                     {{ $invitation->profile->first_name ?? '' }}</div>
-                <div class="feb"
-                    style="font-size:clamp(5rem,14vw,10rem);font-weight:700;color:rgba(201,162,39,.04);line-height:.88;white-space:nowrap">
-                    {{ $invitation->profile->second_name ?? '' }}</div>
             </div>
 
             {{-- Full laurel wreath center --}}
@@ -1800,12 +1765,6 @@
                 <h2 class="feb anim a2"
                     style="font-size:clamp(2rem,7vw,3.6rem);font-weight:600;color:var(--cream);line-height:1.05;margin-bottom:3px">
                     {{ $invitation->profile->first_name ?? '' }}
-                </h2>
-                <p class="febi anim a3"
-                    style="font-size:1.6rem;color:rgba(201,162,39,.45);line-height:.95;margin-bottom:3px">dan</p>
-                <h2 class="feb anim a4"
-                    style="font-size:clamp(2rem,7vw,3.6rem);font-weight:600;color:var(--cream);line-height:1.05;margin-bottom:26px">
-                    {{ $invitation->profile->second_name ?? '' }}
                 </h2>
                 <div class="anim a5" style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
                     <div style="flex:1;height:1px;background:var(--gold-bdr)"></div>
