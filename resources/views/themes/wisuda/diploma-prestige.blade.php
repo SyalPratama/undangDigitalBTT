@@ -1,3 +1,8 @@
+Halo Dede Rizki, pantas saja tombolnya tidak bisa ditekan karena ada sedikit kesalahan penulisan struktur HTML. Setelah saya telusuri kode yang kamu kirim, ternyata masalah utamanya terletak pada tag yang terpotong di bagian struktur nama pembuka undangan, tepatnya pada baris `<p class="febi op-and"`. Tag yang dibiarkan menggantung tanpa penutup ini merusak struktur elemen halaman secara keseluruhan, sehingga peramban web kebingungan dan mematikan fungsi interaksi pada elemen tombol yang berada di bawahnya.
+
+Saya sudah membersihkan sisa tag yang terpotong tersebut dan mengembalikan struktur kodenya menjadi solid kembali. Karena saya tidak memiliki fitur untuk mengirimkan berkas unduhan secara langsung, silakan salin seluruh blok kode di bawah ini dan timpa (replace) semua isi yang ada di dalam file `diploma-prestige.blade.php` milikmu.
+
+```php
 <!DOCTYPE html>
 <html lang="id">
 
@@ -1117,14 +1122,13 @@
 
             <p class="fcin op-pre"
                 style="font-size:8px;letter-spacing:.55em;color:rgba(201,162,39,.65);margin-bottom:14px">
-                — &nbsp; Undangan Wisuda &nbsp; —
+                —   Undangan Wisuda   —
             </p>
 
             <h1 class="feb op-n1"
                 style="font-size:clamp(1.8rem,6vw,2.7rem);font-weight:600;color:var(--cream);line-height:1.1;margin-bottom:3px">
                 {{ $invitation->profile->first_name ?? '' }}
             </h1>
-            <p class="febi op-and"
 
             <div class="op-sep"
                 style="height:1px;background:linear-gradient(90deg,transparent,var(--gold-bdr),transparent);margin:0 auto 18px;transform-origin:center">
@@ -1140,7 +1144,7 @@
             </div>
 
             <button class="op-btn btn-gold" onclick="openInvitation()">
-                <i class="fa-solid fa-envelope-open" style="font-size:11px"></i>&nbsp; Buka Undangan
+                <i class="fa-solid fa-envelope-open" style="font-size:11px"></i>  Buka Undangan
             </button>
         </div>
     </div>
@@ -1236,7 +1240,7 @@
 
                 <p class="fcin anim a1"
                     style="font-size:7.5px;letter-spacing:.55em;color:rgba(201,162,39,.6);margin-bottom:16px">
-                    U N D A N G A N &nbsp; W I S U D A
+                    U N D A N G A N   W I S U D A
                 </p>
 
                 <div class="anim a2"
@@ -1364,7 +1368,7 @@
                 style="max-width:660px;margin:0 auto;padding:20px 22px;width:100%;position:relative;z-index:2">
 
                 <div class="gdiv dk anim a1" style="margin-bottom:22px;color:rgba(14,26,56,.55)">
-                    <span>Wisudawan &amp; Wisudawati</span>
+                    <span>Wisudawan & Wisudawati</span>
                 </div>
 
                 <div class="grad-grid anim a2" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
@@ -1389,7 +1393,7 @@
                             <p class="nameplate-from">Putra dari</p>
                             <p class="nameplate-parents">
                                 {{ $invitation->profile->first_father }}<br>
-                                &amp; {{ $invitation->profile->first_mother }}
+                                & {{ $invitation->profile->first_mother }}
                             </p>
                         </div>
                     </div>
@@ -1558,8 +1562,8 @@
                             class="inv-inp">
                         <select name="attending" class="inv-inp" style="appearance:none" required>
                             <option value="" disabled selected>Konfirmasi kehadiran</option>
-                            <option value="yes">✓ &nbsp; Ya, saya akan hadir</option>
-                            <option value="no">✗ &nbsp; Mohon maaf, tidak bisa hadir</option>
+                            <option value="yes">✓   Ya, saya akan hadir</option>
+                            <option value="no">✗   Mohon maaf, tidak bisa hadir</option>
                         </select>
                         <div style="display:flex;gap:10px;align-items:center">
                             <span style="font-size:12px;color:var(--muted-lt);white-space:nowrap;flex-shrink:0">Jumlah
@@ -1599,7 +1603,7 @@
             <div class="sec-inner wish-inner"
                 style="max-width:700px;margin:0 auto;padding:24px 24px;width:100%;position:relative;z-index:3">
                 <div class="gdiv lt anim a1" style="margin-bottom:20px;color:rgba(201,162,39,.5)">
-                    <span>Ucapan &amp; Doa</span>
+                    <span>Ucapan & Doa</span>
                 </div>
                 <form id="wish-form" onsubmit="submitWish(event)" class="anim a2" style="margin-bottom:18px">
                     <div style="display:flex;flex-direction:column;gap:10px">
@@ -1760,7 +1764,7 @@
             <div class="cls-inner"
                 style="position:relative;z-index:4;max-width:500px;margin:0 auto;padding:28px 28px;text-align:center">
                 <div class="gdiv lt anim a1" style="margin-bottom:22px;color:rgba(201,162,39,.5)">
-                    <span>Selamat &amp; Sukses</span>
+                    <span>Selamat & Sukses</span>
                 </div>
                 <h2 class="feb anim a2"
                     style="font-size:clamp(2rem,7vw,3.6rem);font-weight:600;color:var(--cream);line-height:1.05;margin-bottom:3px">
@@ -1976,3 +1980,5 @@
 </body>
 
 </html>
+
+```
