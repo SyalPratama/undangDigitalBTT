@@ -3,9 +3,8 @@
 @section('title', isset($invitation) ? 'Edit Undangan' : 'Tambah Undangan')
 
 @section('content')
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div
-            class="bg-white rounded-2xl border border-slate-100 shadow-xs p-6 h-[calc(100vh-2rem)] flex flex-col overflow-y-auto">
+    <div class="space-y-6">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-xs p-6">
 
             <div class="mb-6">
                 <h3 class="text-lg font-bold text-slate-800">
@@ -16,7 +15,7 @@
                 </p>
             </div>
 
-            <form id="auto-save-form"
+            <form
                 action="{{ isset($invitation->id) ? route('customer.kelola-undangan.save', $invitation->id) : route('customer.kelola-undangan.save') }}"
                 method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
@@ -346,33 +345,16 @@
                     </div>
                 </div>
 
-                {{-- <div class="flex justify-end gap-2 pt-4 border-t border-slate-50">
+                <div class="flex justify-end gap-2 pt-4 border-t border-slate-50">
                     <a href="{{ route('customer.kelola-undangan.index') }}"
                         class="px-4 py-2.5 text-sm font-medium text-slate-500 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">Batal</a>
                     <button type="submit"
                         class="px-4 py-2.5 text-sm font-medium text-white bg-sky-500 hover:bg-sky-600 rounded-xl shadow-sm transition-all">
                         {{ isset($invitation) ? 'Perbarui Undangan' : 'Simpan Undangan' }}
                     </button>
-                </div> --}}
+                </div>
             </form>
         </div>
-
-        {{-- BAGIAN KANAN: LIVE PREVIEW --}}
-        <div class="sticky top-6 h-[calc(100vh-2rem)]">
-            <div class="bg-slate-900 rounded-2xl shadow-2xl overflow-hidden h-full flex flex-col">
-                <div class="px-4 py-3 bg-slate-800 flex items-center justify-between">
-                    <span class="text-xs text-slate-400 font-medium">Live Preview</span>
-                    <button onclick="refreshPreview()" class="text-slate-400 hover:text-white transition">
-                        <i class="fa-solid fa-rotate-right text-xs"></i>
-                    </button>
-                </div>
-                <iframe id="preview-frame"
-                    src="{{ $invitation->exists ? route('invitation.show', $invitation->slug) : '#' }}"
-                    class="w-full flex-grow border-0 bg-white">
-                </iframe>
-            </div>
-        </div>
-
     </div>
 
     <script>
@@ -514,77 +496,5 @@
             if (checkbox.checked) wrapper.classList.remove('hidden');
             else wrapper.classList.add('hidden');
         }
-    </script>
-    <script>
-        const autoSaveForm = document.getElementById('auto-save-form');
-        const previewFrame = document.getElementById('preview-frame');
-        let saveTimeout = null;
-
-        /**
-         * Memaksa iframe untuk memuat ulang dengan menambahkan parameter timestamp.
-         * Metode ini paling efektif untuk melewati cache browser.
-         */
-        function refreshPreview() {
-            if (!previewFrame || previewFrame.src === '#' || previewFrame.src.includes('#')) {
-                console.log("Preview tidak tersedia atau belum bisa dimuat.");
-                return;
-            }
-
-            // Ambil URL saat ini dan buang query string lama (jika ada)
-            let baseUrl = previewFrame.src.split('?')[0];
-
-            // Tambahkan timestamp unik untuk memaksa reload konten terbaru dari server
-            previewFrame.src = baseUrl + '?t=' + new Date().getTime();
-
-            console.log("Preview dipaksa refresh dengan timestamp");
-        }
-
-        /**
-         * Mengirim data form via AJAX (Fetch API) ke server.
-         */
-        function triggerAutoSave() {
-            const formData = new FormData(autoSaveForm);
-
-            fetch(autoSaveForm.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Gagal menyimpan ke server');
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Auto-saved successfully');
-                    // Refresh preview setelah data berhasil tersimpan
-                    refreshPreview();
-                })
-                .catch(error => {
-                    console.error('Auto-save error:', error);
-                });
-        }
-
-        /**
-         * Event Listener: Input (Debounce)
-         * Menunda eksekusi simpan 1.5 detik setelah user selesai mengetik.
-         */
-        autoSaveForm.addEventListener('input', (e) => {
-            if (e.target.type === 'file') return;
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(triggerAutoSave, 1500);
-        });
-
-        /**
-         * Event Listener: Change (File Upload)
-         * Simpan langsung tanpa delay saat user memilih file gambar/media.
-         */
-        autoSaveForm.addEventListener('change', (e) => {
-            if (e.target.type === 'file') {
-                triggerAutoSave();
-            }
-        });
     </script>
 @endsection

@@ -1,18 +1,27 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+
+// SUPERADMIN
 use App\Http\Controllers\Superadmin\DashboardController;
 use App\Http\Controllers\Superadmin\KelolaUserController;
 use App\Http\Controllers\Superadmin\KelolaUndanganController;
 use App\Http\Controllers\Superadmin\ThemeController;
 
+// RESELLER
+use App\Http\Controllers\Reseller\ResDashboardController;
+use App\Http\Controllers\Reseller\ResKelolaUndanganController;
+use App\Http\Controllers\Reseller\ResKelolaUserController;
 
+// CUSTOMER
 use App\Http\Controllers\Customer\CusDashboardController;
 use App\Http\Controllers\Customer\CusKelolaUndanganController;
 
-
+// GLOBAL
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\BuilderController;
 use App\Http\Controllers\HomeController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,6 +38,15 @@ Route::get('/themes/{id}/preview', [HomeController::class, 'preview'])->name('th
 Route::get('/undangan/{slug}', [InvitationController::class, 'show'])
     ->name('invitation.show');
     
+ Route::get(
+    '/builder/{invitation}',
+    [BuilderController::class, 'index']
+);
+
+Route::post(
+    '/builder/{invitation}/save',
+    [BuilderController::class, 'save']
+);   
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -66,9 +84,22 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware(['role:reseller'])->prefix('reseller')->name('reseller.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('reseller.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [ResDashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/kelola-user', [ResKelolaUserController::class, 'index'])->name('user.index');
+        Route::post('/kelola-user', [ResKelolaUserController::class, 'store'])->name('user.store');
+        Route::put('/kelola-user/{id}', [ResKelolaUserController::class, 'update'])->name('user.update');
+        Route::delete('/kelola-user/{id}', [ResKelolaUserController::class, 'destroy'])->name('user.destroy');
+
+        Route::get('kelola-undangan', [ResKelolaUndanganController::class, 'index'])->name('kelola-undangan.index');
+        Route::get('kelola-undangan/create', [ResKelolaUndanganController::class, 'create'])->name('kelola-undangan.create');
+        Route::get('kelola-undangan/{id}/edit', [ResKelolaUndanganController::class, 'edit'])->name('kelola-undangan.edit');
+        Route::post('kelola-undangan/save/{id?}', [ResKelolaUndanganController::class, 'save'])->name('kelola-undangan.save');
+        Route::delete('kelola-undangan/{id}', [ResKelolaUndanganController::class, 'destroy'])->name('kelola-undangan.destroy');
+        Route::post('kelola-undangan/{id}/toggle-status', [ResKelolaUndanganController::class, 'toggleStatus'])
+        ->name('kelola-undangan.toggle-status');
+
+        Route::get('/themes/{id}/preview', [CusDashboardController::class, 'preview'])->name('themes.preview');
     });
 
     Route::middleware(['role:customer'])->prefix('customer')->name('customer.')->group(function () {
@@ -77,8 +108,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('kelola-undangan', [CusKelolaUndanganController::class, 'index'])->name('kelola-undangan.index');
         Route::get('kelola-undangan/create', [CusKelolaUndanganController::class, 'create'])->name('kelola-undangan.create');
         Route::get('kelola-undangan/{id}/edit', [CusKelolaUndanganController::class, 'edit'])->name('kelola-undangan.edit');
-        
-        // SATU METHOD UNTUK TAMBAH & EDIT (Gunakan POST agar aman saat upload file/media)
         Route::post('kelola-undangan/save/{id?}', [CusKelolaUndanganController::class, 'save'])->name('kelola-undangan.save');
         Route::delete('kelola-undangan/{id}', [CusKelolaUndanganController::class, 'destroy'])->name('kelola-undangan.destroy');
         Route::post('kelola-undangan/{id}/toggle-status', [CusKelolaUndanganController::class, 'toggleStatus'])

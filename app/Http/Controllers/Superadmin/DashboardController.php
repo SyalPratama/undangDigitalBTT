@@ -13,17 +13,17 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        // 1. Hitung total user yang memiliki role 'customer'
+        // Hitung total user yang memiliki role 'customer'
         $totalCustomer = User::whereHas('roles', function ($query) {
             $query->where('name', 'customer');
         })->count();
 
-        // 2. Hitung total user yang memiliki role 'reseller'
+        // Hitung total user yang memiliki role 'reseller'
         $totalReseller = User::whereHas('roles', function ($query) {
             $query->where('name', 'reseller');
         })->count();
 
-        // 3. Masukkan data real dari DB ke dalam array stats
+        // Masukkan data real dari DB ke dalam array stats
         $stats = [
             'total_users' => $totalCustomer,
             'active_invitations' => 3420, // Nanti ini bisa disesuaikan saat model Invitation dibuat

@@ -334,7 +334,7 @@
                 @foreach ($invitation->galleries as $gallery)
                     <div
                         class="overflow-hidden bg-white p-3 shadow-sm transition-all duration-500 hover:shadow-lg group">
-                        <img src="{{ asset('storage/' . $gallery->file_path) }}"
+                        <img src="{{ asset($gallery->file_path) }}"
                             class="w-full h-80 object-cover transition-all duration-700 filter contrast-[95%] group-hover:contrast-100 scale-100 group-hover:scale-102">
                     </div>
                 @endforeach
