@@ -1,3 +1,57 @@
+@php
+    $projectData = [];
+    if(isset($invitation->builder->project_data)) {
+        $projectData = is_string($invitation->builder->project_data) ? json_decode($invitation->builder->project_data, true) : $invitation->builder->project_data;
+    }
+    
+    $musicMedia = $invitation->media->where('type', 'music')->first();
+    $musicPath = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+    if ($musicMedia) {
+        $musicPath = file_exists(public_path($musicMedia->file_path)) ? asset($musicMedia->file_path) . '?t=' . time() : asset('storage/' . $musicMedia->file_path) . '?t=' . time();
+    }
+    
+    $showParents = isset($projectData['show_parents']) ? filter_var($projectData['show_parents'], FILTER_VALIDATE_BOOLEAN) : true;
+    $primaryColor = !empty($projectData['primary_color']) ? $projectData['primary_color'] : '#D97706';
+
+    $coverMedia = $invitation->media->where('type', 'cover')->first();
+    $coverImage = ($coverMedia && file_exists(public_path($coverMedia->file_path))) 
+        ? asset($coverMedia->file_path) . '?t=' . time() 
+        : (($coverMedia && str_starts_with($coverMedia->file_path, 'http')) ? $coverMedia->file_path : (isset($coverMedia) ? asset('storage/' . $coverMedia->file_path) . '?t=' . time() : null));
+
+    $defaultOrder = [
+        ['id' => 'cover', 'visible' => true],
+        ['id' => 'quote', 'visible' => true],
+        ['id' => 'profile', 'visible' => true],
+        ['id' => 'event', 'visible' => true],
+        ['id' => 'gallery', 'visible' => true],
+        ['id' => 'closing', 'visible' => true]
+    ];
+
+    $sectionOrder = $defaultOrder;
+    if(!empty($projectData['section_order'])) {
+        $savedOrder = is_string($projectData['section_order']) ? json_decode($projectData['section_order'], true) : $projectData['section_order'];
+        $savedIds = array_column($savedOrder, 'id');
+        $sectionOrder = $savedOrder;
+        foreach ($defaultOrder as $def) {
+            if (!in_array($def['id'], $savedIds)) {
+                $sectionOrder[] = $def;
+            }
+        }
+    }
+
+    $quoteSection = collect($sectionOrder)->firstWhere('id', 'quote');
+    $showQuote = $quoteSection ? $quoteSection['visible'] : true;
+
+    $firstPersonPhoto = $invitation->firstPersonPhoto;
+    $firstPersonPhotoPath = null;
+    if ($firstPersonPhoto && file_exists(public_path($firstPersonPhoto->file_path))) {
+        $firstPersonPhotoPath = asset($firstPersonPhoto->file_path);
+    } elseif ($coverImage) {
+        $firstPersonPhotoPath = $coverImage;
+    } elseif ($invitation->galleries->isNotEmpty()) {
+        $firstPersonPhotoPath = asset($invitation->galleries->first()->file_path);
+    }
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -13,13 +67,11 @@
     <style>
 @verbatim
 
-/* ═══════════════════════════════
-   TOKENS
-═══════════════════════════════ */
 :root {
     --board:   #0E1A14;
     --chalk:   #EDE8DC;
-    --amber:   #D97706;
+    --primary-color: @endverbatim{{ $primaryColor }}@verbatim;
+    --amber:   var(--primary-color);
     --rust:    #C2410C;
     --mustard: #CA8A04;
     --navy:    #1E3A5F;
@@ -37,9 +89,6 @@
     #bottom-nav { display: none !important; }
 }
 
-/* ═══════════════════════════════
-   BASE
-═══════════════════════════════ */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { height: 100%; -webkit-tap-highlight-color: transparent; }
 body {
@@ -49,9 +98,6 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* ═══════════════════════════════
-   SCROLLER
-═══════════════════════════════ */
 #scroller {
     height: var(--sh); overflow-y: scroll; overflow-x: hidden;
     scroll-snap-type: y mandatory; scroll-behavior: smooth;
@@ -67,17 +113,14 @@ body {
     align-items: center; justify-content: center;
 }
 
-/* ── Shared helpers ── */
 .blob { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
 .deco { position: absolute; pointer-events: none; user-select: none; }
 
-/* ── Chalk noise overlay ── */
 .chalk-noise {
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
 }
 
-/* ── Chalkboard ruled lines ── */
 .ruled {
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
     background-image: repeating-linear-gradient(
@@ -86,9 +129,6 @@ body {
     );
 }
 
-/* ═══════════════════════════════
-   COVER — Malam di Papan Tulis
-═══════════════════════════════ */
 #cover {
     position: fixed; inset: 0; z-index: 800;
     background: var(--board);
@@ -157,9 +197,6 @@ body {
 .cv-btn:hover  { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 rgba(0,0,0,.35); }
 .cv-btn:active { transform: translate(0,0); box-shadow: 2px 2px 0 rgba(0,0,0,.3); }
 
-/* ═══════════════════════════════
-   § 1  HERO — Papan Tulis
-═══════════════════════════════ */
 #s-hero {
     background:
         linear-gradient(135deg, #0f1f18 0%, #162b20 50%, #1a3228 100%);
@@ -168,7 +205,6 @@ body {
 #s-hero .chalk-noise { opacity: .06; }
 #s-hero .ruled { opacity: 1; }
 
-/* Corner chalk drawings */
 .corner-deco {
     position: absolute; font-family: 'Special Elite', cursive;
     color: rgba(237,232,220,.06); pointer-events: none; line-height: 1;
@@ -210,7 +246,6 @@ body {
     animation: fadeUp .5s 2.5s both;
 }
 
-/* ── Countdown Timer ── */
 .countdown {
     display: inline-flex; align-items: center; gap: .5rem;
     animation: fadeUp .5s 2.7s both;
@@ -260,9 +295,6 @@ body {
     animation: hintPulse 2.5s ease-in-out infinite;
 }
 
-/* ═══════════════════════════════
-   § 2  PROFILE — Yearbook Page
-═══════════════════════════════ */
 #s-about {
     background: var(--paper);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
@@ -281,7 +313,6 @@ body {
 }
 .ab-photo-wrap { display: flex; justify-content: center; flex-shrink: 0; }
 
-/* Yearbook photo frame */
 .yearbook-frame {
     position: relative; width: min(170px, 42vw);
     aspect-ratio: 3/4;
@@ -338,9 +369,6 @@ body {
 .cb-name { font-weight: 700; font-size: .9rem; color: var(--navy); }
 .cb-role { font-family: 'Special Elite', cursive; font-size: .62rem; color: #aaa; margin-left: auto; }
 
-/* ═══════════════════════════════
-   § 3  EVENTS — Notice Board
-═══════════════════════════════ */
 #s-events {
     background: #EFF6FF;
     background-image:
@@ -349,7 +377,6 @@ body {
     background-size: 30px 30px;
     padding: 1.5rem;
 }
-/* Red margin line */
 #s-events::before {
     content: ''; position: absolute;
     top: 0; bottom: 0; left: 72px; width: 2px;
@@ -439,14 +466,10 @@ body {
 }
 .ec-maps:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(30,58,95,.3); }
 
-/* ═══════════════════════════════
-   § 4  GALLERY — Film Strip
-═══════════════════════════════ */
 #s-gallery {
     background: var(--film);
     flex-direction: column; align-items: flex-start; justify-content: flex-start;
 }
-/* Film perforations - top & bottom */
 .film-perf {
     width: 100%; height: 28px; flex-shrink: 0;
     position: relative; z-index: 2;
@@ -509,7 +532,6 @@ body {
 .gal-card:hover { transform: rotate(0) scale(1.04) translateY(-8px) !important; z-index: 5; }
 .gal-card img { flex: 1; width: 100%; min-height: 0; object-fit: cover; display: block; filter: sepia(.15) contrast(1.05); }
 
-/* Film frame number overlay */
 .gal-card::before {
     content: attr(data-frame); position: absolute; top: 6px; right: 8px;
     font-family: 'Special Elite', cursive; font-size: .55rem; color: rgba(255,230,100,.5);
@@ -523,14 +545,9 @@ body {
     color: rgba(237,232,220,.4); letter-spacing: 1px;
 }
 
-/* ═══════════════════════════════
-   § 5  RSVP — Notebook Paper
-═══════════════════════════════ */
 #s-rsvp {
     background:
-        /* Red margin line */
         linear-gradient(90deg, transparent 71px, rgba(239,68,68,.15) 71px, rgba(239,68,68,.15) 73px, transparent 73px),
-        /* Blue ruled lines */
         repeating-linear-gradient(transparent, transparent 32px, rgba(59,130,246,.12) 32px, rgba(59,130,246,.12) 33px),
         white;
     padding: 1.2rem 1.5rem 1.2rem 80px;
@@ -615,9 +632,6 @@ body {
 .success-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .06em; color: var(--navy); }
 .success-text  { font-size: .88rem; color: #999; line-height: 1.7; }
 
-/* ═══════════════════════════════
-   § 6  CLOSING — Sunset
-═══════════════════════════════ */
 #s-closing {
     background: linear-gradient(145deg, #1C2B20 0%, #78350F 35%, #C2410C 65%, #D97706 100%);
     background-size: 200% 200%;
@@ -650,9 +664,6 @@ body {
 .cl-name   { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem,7vw,3.5rem); letter-spacing: .06em; color: #FDE68A; line-height: 1; text-shadow: 3px 3px 0 rgba(0,0,0,.15); }
 .cl-parents{ font-family: 'Special Elite', cursive; font-size: .82rem; color: rgba(237,232,220,.5); margin-top: .35rem; }
 
-/* ═══════════════════════════════
-   BOTTOM NAV — Amber pill
-═══════════════════════════════ */
 #bottom-nav {
     position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
     width: min(calc(100% - 24px), 440px); height: 58px;
@@ -675,9 +686,6 @@ body {
 .n-lbl { font-family: 'Nunito', sans-serif; font-size: .7rem; font-weight: 800; color: white; white-space: nowrap; max-width: 0; opacity: 0; transition: max-width .35s cubic-bezier(.34,1.56,.64,1), opacity .25s; overflow: hidden; }
 .n-btn.active .n-lbl { max-width: 70px; opacity: 1; }
 
-/* ═══════════════════════════════
-   MUSIC BUTTON
-═══════════════════════════════ */
 #musicBtn {
     position: fixed; top: 1rem; right: 1rem; z-index: 710;
     width: 38px; height: 38px; border-radius: 50%;
@@ -692,9 +700,6 @@ body {
 .disc { display: inline-block; animation: discSpin 3s linear infinite; }
 #musicBtn.paused .disc { animation-play-state: paused; }
 
-/* ═══════════════════════════════
-   KEYFRAMES
-═══════════════════════════════ */
 @keyframes floatUp {
     from { transform: translateY(0) rotate(-2deg); opacity: .8; }
     to   { transform: translateY(-20px) rotate(2deg); opacity: .4; }
@@ -733,29 +738,24 @@ body {
     100% { transform: translateY(-80px) translateX(var(--dx)) rotate(360deg); opacity: 0; }
 }
 
+@verbatim
 @endverbatim
     </style>
 </head>
 <body>
 
-<audio id="bgAudio" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+<audio id="weddingMusic" loop>
+    <source src="{{ $musicPath }}" type="audio/mpeg">
 </audio>
 <button id="musicBtn" onclick="toggleMusic()" aria-label="Toggle music">
     <span class="disc"><i class="fa-solid fa-compact-disc"></i></span>
 </button>
 
-
-<!-- ════════════════════════════════════
-     COVER — Papan Tulis Malam
-════════════════════════════════════ -->
 <div id="cover">
-    <!-- Giant chalk background words -->
     <div class="cv-chalk-deco" style="top:-5%;left:-5%;transform:rotate(-8deg);opacity:.04;">ALUMNI</div>
     <div class="cv-chalk-deco" style="bottom:-5%;right:-5%;transform:rotate(5deg);opacity:.04;">REUNION</div>
     <div class="cv-chalk-deco" style="top:40%;left:-8%;transform:rotate(-90deg);font-size:6rem;opacity:.03;">MEMORIES</div>
 
-    <!-- Floating school icons -->
     <span class="cv-float" style="top:8%;left:8%;font-size:2rem;animation-duration:3.5s;animation-delay:0s;">🎓</span>
     <span class="cv-float" style="top:12%;right:10%;font-size:1.8rem;animation-duration:4s;animation-delay:.5s;">📚</span>
     <span class="cv-float" style="top:40%;left:4%;font-size:1.5rem;animation-duration:3s;animation-delay:1s;">✏️</span>
@@ -768,342 +768,435 @@ body {
     <div class="cv-body">
         <div class="cv-badge">✦ Undangan Resmi ✦</div>
         <h2 class="cv-headline">SELAMAT<br>DATANG <span>KEMBALI</span></h2>
-        <p class="cv-sub">— Reunian Alumni Sekolah —</p>
+        <p class="cv-sub">— <span data-preview="headline">{{ !empty($invitation->profile->headline) ? $invitation->profile->headline : 'Reunian Alumni Sekolah' }}</span> —</p>
         <div class="cv-guest">{{ request()->get('to') ?? 'Sahabat Lama ✦' }}</div>
-        <p class="cv-from">Dari panitia reunian: <strong>{{ $invitation->profile->first_name }}</strong></p>
+        @if($coverImage)
+            <div class="cover-photo-wrap" style="margin: 1.5rem auto; max-width: 180px; transform: rotate(-2deg);">
+                <img src="{{ $coverImage }}" class="hero-bg" style="width: 100%; height: auto; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-radius: 2px; object-fit: cover; aspect-ratio: 4/3;">
+            </div>
+        @else
+            <div class="hero-bg" style="display:none;"></div>
+        @endif
+        <p class="cv-from">Dari panitia reunian: <strong data-preview="first_name">{{ $invitation->profile->first_name }}</strong></p>
         <button class="cv-btn" onclick="openInvitation()">
             <i class="fa-solid fa-door-open"></i>&nbsp;BUKA UNDANGAN
         </button>
     </div>
 </div>
 
-
-<!-- ════════════════════════════════════
-     SCROLLER
-════════════════════════════════════ -->
 <div id="scroller">
+    @php
+        $sectIndex = 0;
+        $rsvpRendered = false;
+    @endphp
+    @foreach ($sectionOrder as $section)
+        @if ($section['visible'])
+            
+            @if ($section['id'] == 'cover')
+                <section class="snap" id="s-hero" data-section="{{ $sectIndex++ }}">
+                    <div class="chalk-noise"></div>
+                    <div class="ruled"></div>
 
-    <!-- §1 · HERO — Chalkboard -->
-    <section class="snap" id="s-hero" data-section="0">
-        <div class="chalk-noise"></div>
-        <div class="ruled"></div>
+                    <div class="corner-deco" style="top:2%;left:1%;font-size:4rem;transform:rotate(-5deg);">★</div>
+                    <div class="corner-deco" style="top:2%;right:1%;font-size:4rem;transform:rotate(5deg);">★</div>
+                    <div class="corner-deco" style="bottom:calc(var(--nav-pb) + 1rem);left:1%;font-size:3rem;transform:rotate(-3deg);">✎</div>
+                    <div class="corner-deco" style="bottom:calc(var(--nav-pb) + 1rem);right:1%;font-size:3rem;transform:rotate(3deg);">✎</div>
 
-        <!-- Corner chalk doodles -->
-        <div class="corner-deco" style="top:2%;left:1%;font-size:4rem;transform:rotate(-5deg);">★</div>
-        <div class="corner-deco" style="top:2%;right:1%;font-size:4rem;transform:rotate(5deg);">★</div>
-        <div class="corner-deco" style="bottom:calc(var(--nav-pb) + 1rem);left:1%;font-size:3rem;transform:rotate(-3deg);">✎</div>
-        <div class="corner-deco" style="bottom:calc(var(--nav-pb) + 1rem);right:1%;font-size:3rem;transform:rotate(3deg);">✎</div>
+                    <span class="deco" style="top:9%;left:5%;font-size:clamp(1.8rem,5vw,3rem);opacity:.18;z-index:2;animation:floatUp 3.5s ease-in-out infinite alternate;">🎓</span>
+                    <span class="deco" style="top:11%;right:6%;font-size:clamp(1.5rem,4vw,2.5rem);opacity:.18;z-index:2;animation:floatUp 4s .5s ease-in-out infinite alternate;">📚</span>
 
-        <!-- Floating school items -->
-        <span class="deco" style="top:9%;left:5%;font-size:clamp(1.8rem,5vw,3rem);opacity:.18;z-index:2;animation:floatUp 3.5s ease-in-out infinite alternate;">🎓</span>
-        <span class="deco" style="top:11%;right:6%;font-size:clamp(1.5rem,4vw,2.5rem);opacity:.18;z-index:2;animation:floatUp 4s .5s ease-in-out infinite alternate;">📚</span>
+                    <div class="h-body">
+                        <div class="h-pre"><span class="h-pre-line"></span><span data-preview="headline">{{ !empty($invitation->profile->headline) ? $invitation->profile->headline : 'Reunian Alumni' }}</span><span class="h-pre-line"></span></div>
+                        <div class="h-clip">
+                            <span class="h-name" data-preview="first_name">{{ $invitation->profile->first_name }}</span>
+                        </div>
+                        <div class="h-divider"></div>
+                        <p class="h-tagline">📸 &nbsp; Kenangan Tak Pernah Usang &nbsp; 📸</p>
 
-        <div class="h-body">
-            <div class="h-pre"><span class="h-pre-line"></span>Reunian Alumni<span class="h-pre-line"></span></div>
-            <div class="h-clip">
-                <span class="h-name">{{ $invitation->profile->first_name }}</span>
-            </div>
-            <div class="h-divider"></div>
-            <p class="h-tagline">📸 &nbsp; Kenangan Tak Pernah Usang &nbsp; 📸</p>
+                        @if ($invitation->events->count() > 0)
+                            @php $fe = $invitation->events->first(); @endphp
+                            <div class="countdown" id="countdown"
+                                 data-target="{{ $fe->event_date }}T{{ $fe->start_time }}">
+                                <div class="cd-box"><span class="cd-num" id="cd-days">00</span><span class="cd-lbl">Hari</span></div>
+                                <span class="cd-colon">:</span>
+                                <div class="cd-box"><span class="cd-num" id="cd-hours">00</span><span class="cd-lbl">Jam</span></div>
+                                <span class="cd-colon">:</span>
+                                <div class="cd-box"><span class="cd-num" id="cd-mins">00</span><span class="cd-lbl">Menit</span></div>
+                                <span class="cd-colon">:</span>
+                                <div class="cd-box"><span class="cd-num" id="cd-secs">00</span><span class="cd-lbl">Detik</span></div>
+                            </div>
 
-            <!-- COUNTDOWN TIMER -->
-            @if ($invitation->events->count() > 0)
-                @php $fe = $invitation->events->first(); @endphp
-                <div class="countdown" id="countdown"
-                     data-target="{{ $fe->event_date }}T{{ $fe->start_time }}">
-                    <div class="cd-box"><span class="cd-num" id="cd-days">00</span><span class="cd-lbl">Hari</span></div>
-                    <span class="cd-colon">:</span>
-                    <div class="cd-box"><span class="cd-num" id="cd-hours">00</span><span class="cd-lbl">Jam</span></div>
-                    <span class="cd-colon">:</span>
-                    <div class="cd-box"><span class="cd-num" id="cd-mins">00</span><span class="cd-lbl">Menit</span></div>
-                    <span class="cd-colon">:</span>
-                    <div class="cd-box"><span class="cd-num" id="cd-secs">00</span><span class="cd-lbl">Detik</span></div>
-                </div>
+                            <div class="h-strip" style="margin-top:1rem;">
+                                <div class="hs-cell"><div class="l">📅 Tanggal</div><div class="v" data-preview="event_date">{{ \Carbon\Carbon::parse($fe->event_date)->translatedFormat('d M Y') }}</div></div>
+                                <div class="hs-sep"></div>
+                                <div class="hs-cell"><div class="l">⏰ Waktu</div><div class="v" data-event-preview="start_time_0">{{ $fe->start_time }} WIB</div></div>
+                                <div class="hs-sep"></div>
+                                <div class="hs-cell"><div class="l">📍 Tempat</div><div class="v" data-event-preview="venue_name_0">{{ $fe->venue_name }}</div></div>
+                            </div>
+                        @endif
+                    </div>
 
-                <div class="h-strip" style="margin-top:1rem;">
-                    <div class="hs-cell"><div class="l">📅 Tanggal</div><div class="v">{{ \Carbon\Carbon::parse($fe->event_date)->translatedFormat('d M Y') }}</div></div>
-                    <div class="hs-sep"></div>
-                    <div class="hs-cell"><div class="l">⏰ Waktu</div><div class="v">{{ $fe->start_time }} WIB</div></div>
-                    <div class="hs-sep"></div>
-                    <div class="hs-cell"><div class="l">📍 Tempat</div><div class="v">{{ $fe->venue_name }}</div></div>
-                </div>
+                    <div class="h-hint"><i class="fa-solid fa-chevron-down" style="font-size:.85rem;"></i>Scroll</div>
+                </section>
             @endif
-        </div>
 
-        <div class="h-hint"><i class="fa-solid fa-chevron-down" style="font-size:.85rem;"></i>Scroll</div>
-    </section>
+            @if ($section['id'] == 'profile')
+                <section class="snap" id="s-about" data-section="{{ $sectIndex++ }}">
+                    <span class="deco" style="top:5%;right:4%;font-size:2rem;opacity:.2;animation:floatUp 4s ease-in-out infinite alternate;z-index:0;">🎓</span>
+                    <span class="deco" style="bottom:calc(var(--nav-pb) + 5px);left:5%;font-size:1.5rem;opacity:.18;animation:floatUp 3.5s ease-in-out infinite alternate;z-index:0;">✏️</span>
+                    <span class="deco" style="top:15%;left:4%;font-size:1.2rem;opacity:.15;animation:floatUp 5s ease-in-out infinite alternate;z-index:0;">⭐</span>
+                    <span class="deco" style="bottom:calc(var(--nav-pb) + 10px);right:4%;font-size:1.5rem;opacity:.15;animation:floatUp 4.5s ease-in-out infinite alternate;z-index:0;">📸</span>
 
+                    <div class="ab-inner">
+                        <div class="ab-photo-wrap" style="margin-bottom:2rem;">
+                            <div class="yearbook-frame">
+                                @if ($firstPersonPhotoPath)
+                                    <img src="{{ $firstPersonPhotoPath }}"
+                                         alt="{{ $invitation->profile->first_name }}">
+                                @else
+                                    <div class="yb-ph">🎓</div>
+                                @endif
+                            </div>
+                        </div>
 
-    <!-- §2 · PROFIL — Yearbook -->
-    <section class="snap" id="s-about" data-section="1">
-        <!-- Retro decorative floaters -->
-        <span class="deco" style="top:5%;right:4%;font-size:2rem;opacity:.2;animation:floatUp 4s ease-in-out infinite alternate;z-index:0;">🎓</span>
-        <span class="deco" style="bottom:calc(var(--nav-pb) + 5px);left:5%;font-size:1.5rem;opacity:.18;animation:floatUp 3.5s ease-in-out infinite alternate;z-index:0;">✏️</span>
-        <span class="deco" style="top:15%;left:4%;font-size:1.2rem;opacity:.15;animation:floatUp 5s ease-in-out infinite alternate;z-index:0;">⭐</span>
-        <span class="deco" style="bottom:calc(var(--nav-pb) + 10px);right:4%;font-size:1.5rem;opacity:.15;animation:floatUp 4.5s ease-in-out infinite alternate;z-index:0;">📸</span>
+                        <div class="ab-text">
+                            <p class="ab-kicker">Penyelenggara</p>
+                            <h2 class="ab-name" data-preview="first_name">{{ $invitation->profile->first_name }}</h2>
+                            @if ($showQuote && $invitation->profile->quote)
+                                <p class="ab-quote">"<span data-preview="quote">{{ $invitation->profile->quote }}</span>"</p>
+                            @endif
+                            
+                            @if ($showParents)
+                            <div class="committee-block">
+                                <div class="cb-head">Panitia Pelaksana</div>
+                                <div class="cb-row">
+                                    <span class="cb-star">★</span>
+                                    <span class="cb-name" data-preview="first_father">{{ $invitation->profile->first_father }}</span>
+                                    <span class="cb-role">Ketua</span>
+                                </div>
+                                <div class="cb-row">
+                                    <span class="cb-star">★</span>
+                                    <span class="cb-name" data-preview="first_mother">{{ $invitation->profile->first_mother }}</span>
+                                    <span class="cb-role">Wakil Ketua</span>
+                                </div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </section>
+            @endif
 
-        <div class="ab-inner">
-            <div class="ab-photo-wrap" style="margin-bottom:2rem;">
-                <div class="yearbook-frame">
-                    @if ($invitation->firstPersonPhoto)
-                        <img src="{{ asset('storage/'.$invitation->firstPersonPhoto->file_path) }}"
-                             alt="{{ $invitation->profile->first_name }}">
-                    @else
-                        <div class="yb-ph">🎓</div>
-                    @endif
-                </div>
-            </div>
+            @if ($section['id'] == 'event')
+                <section class="snap" id="s-events" data-section="{{ $sectIndex++ }}">
+                    <span class="deco" style="top:6%;right:3%;font-size:2rem;opacity:.1;z-index:0;animation:floatUp 4s ease-in-out infinite alternate;">📌</span>
+                    <span class="deco" style="bottom:calc(var(--nav-pb) + 5px);left:3%;font-size:1.5rem;opacity:.1;z-index:0;animation:floatUp 3.5s ease-in-out infinite alternate;">📝</span>
 
-            <div class="ab-text">
-                <p class="ab-kicker">Penyelenggara</p>
-                <h2 class="ab-name">{{ $invitation->profile->first_name }}</h2>
-                @if ($invitation->profile->quote)
-                    <p class="ab-quote">"{{ $invitation->profile->quote }}"</p>
+                    <div class="ev-wrap">
+                           <div class="ev-header">
+                               <p class="ev-kicker">✦ Pengumuman ✦</p>
+                               <h2 class="ev-title">Rangkaian<br>Acara Reunian</h2>
+                           </div>
+
+                        <div class="ev-cards {{ $invitation->events->count() > 1 ? 'multi' : '' }}">
+                            @foreach ($invitation->events as $event)
+                                @php
+                                    $heads = [
+                                        'linear-gradient(135deg,#1E3A5F,#2563EB)',
+                                        'linear-gradient(135deg,#78350F,#D97706)',
+                                        'linear-gradient(135deg,#14532D,#16A34A)',
+                                    ];
+                                    $icons = ['🎓','🏆','📸'];
+                                    $stamps = ['HADIR','JOIN','YES'];
+                                    $i = $loop->index % 3;
+                                    $idx = $loop->index;
+                                @endphp
+                                <div class="ev-card" style="position:relative;">
+                                    <div class="ec-head" style="background:{{ $heads[$i] }};">
+                                        <div class="ec-icon-box">{{ $icons[$i] }}</div>
+                                        <div class="ec-name" data-event-preview="name_{{ $idx }}">{{ $event->name }}</div>
+                                        <div class="ec-stamp">{{ $stamps[$i] }}</div>
+                                    </div>
+                                    <div class="ec-perf"><div class="ec-dash"></div></div>
+                                    <div class="ec-body">
+                                        <div class="ec-row">
+                                            <div class="ec-ic ic-d">📅</div>
+                                            <div>
+                                                <div class="l">Tanggal</div>
+                                                <div class="v" data-event-preview="event_date_{{ $idx }}">{{ \Carbon\Carbon::parse($event->event_date)->translatedFormat('l, d F Y') }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="ec-row">
+                                            <div class="ec-ic ic-t">⏰</div>
+                                            <div>
+                                                <div class="l">Waktu</div>
+                                                <div class="v">
+                                                    <span data-event-preview="start_time_{{ $idx }}">{{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }}</span> WIB – 
+                                                    <span data-event-preview="end_time_{{ $idx }}">{{ $event->end_time ? \Carbon\Carbon::parse($event->end_time)->format('H:i') : 'Selesai' }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ec-row">
+                                            <div class="ec-ic ic-p">📍</div>
+                                            <div>
+                                                <div class="l">Tempat</div>
+                                                <div class="v" data-event-preview="venue_name_{{ $idx }}">{{ $event->venue_name }}</div>
+                                                <div class="s" data-event-preview="address_{{ $idx }}">{{ $event->address }}</div>
+                                            </div>
+                                        </div>
+                                        <a href="https://maps.google.com?q={{ urlencode($event->address) }}"
+                                           target="_blank" rel="noopener" class="ec-maps">
+                                            <i class="fa-solid fa-map-location-dot"></i> Lihat di Maps
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
+            @endif
+
+            @if ($section['id'] == 'gallery')
+                <section class="snap" id="s-gallery" data-section="{{ $sectIndex++ }}"
+                         style="align-items:flex-start;justify-content:flex-start;">
+
+                    <div class="film-perf" id="filmTop"></div>
+
+                    <div class="gal-top">
+                        <div>
+                            <p class="gal-kicker">◈ Momen yang Tersimpan</p>
+                            <h2 class="gal-title">GALERI FOTO</h2>
+                        </div>
+                        @php $galCount = $invitation->galleries->count() ?: 6; @endphp
+                        <div class="gal-count">{{ $galCount }} frames →</div>
+                    </div>
+
+                    <div class="gal-strip">
+                        @forelse ($invitation->galleries as $idx => $gallery)
+                            @php
+                                $galleryPath = ($gallery && file_exists(public_path($gallery->file_path)))
+                                    ? asset($gallery->file_path)
+                                    : (($gallery && str_starts_with($gallery->file_path, 'http')) ? $gallery->file_path : asset('storage/' . $gallery->file_path));
+                            @endphp
+                            <div class="gal-card" data-frame="{{ str_pad($idx + 1, 3, '0', STR_PAD_LEFT) }}A">
+                                <img src="{{ $galleryPath }}" alt="Foto">
+                                <div class="gal-cap">FRAME {{ $loop->index + 1 }}</div>
+                            </div>
+                        @empty
+                            @for ($p = 0; $p < 6; $p++)
+                                <div class="gal-card" data-frame="{{ str_pad($p + 1, 3, '0', STR_PAD_LEFT) }}A">
+                                    <div style="flex:1;background:linear-gradient(135deg,#1a1408,#2d2208);display:flex;align-items:center;justify-content:center;font-size:2.5rem;filter:sepia(.3);">📷</div>
+                                    <div class="gal-cap">FRAME {{ $p + 1 }}</div>
+                                </div>
+                            @endfor
+                        @endforelse
+                    </div>
+
+                    <div class="film-perf" id="filmBottom"></div>
+                </section>
+            @endif
+
+            @if ($section['id'] == 'closing')
+                @if (!$rsvpRendered)
+                    <section class="snap" id="s-rsvp" data-section="{{ $sectIndex++ }}">
+                        <div style="position:absolute;left:20px;top:20%;width:16px;height:16px;border-radius:50%;background:rgba(59,130,246,.08);border:1.5px solid rgba(59,130,246,.12);z-index:0;"></div>
+                        <div style="position:absolute;left:20px;top:45%;width:16px;height:16px;border-radius:50%;background:rgba(59,130,246,.08);border:1.5px solid rgba(59,130,246,.12);z-index:0;"></div>
+                        <div style="position:absolute;left:20px;top:70%;width:16px;height:16px;border-radius:50%;background:rgba(59,130,246,.08);border:1.5px solid rgba(59,130,246,.12);z-index:0;"></div>
+
+                        <div class="rsvp-inner">
+                            <div class="rsvp-header" id="rsvpHeader">
+                                <p class="rsvp-kicker">✦ Konfirmasi Kehadiran</p>
+                                <h2 class="rsvp-title">APAKAH ANDA<br>AKAN HADIR?</h2>
+                            </div>
+
+                            <form class="rsvp-form" id="rsvpForm"
+                                  method="POST" action="{{ url('/invitation/rsvp') }}"
+                                  onsubmit="submitRsvp(event)">
+                                @csrf
+                                <div class="rf-group">
+                                    <label class="rf-label">Nama Alumni</label>
+                                    <input type="text" name="name" class="rf-input"
+                                           value="{{ request()->get('to') ?? '' }}"
+                                           placeholder="Tulis nama lengkap kamu…" required>
+                                </div>
+                                <div class="rf-group">
+                                    <label class="rf-label">Konfirmasi</label>
+                                    <div class="rf-pills">
+                                        <label class="rf-pill-label"><input type="radio" name="attendance" value="hadir" checked><span class="rf-pill-btn">✅ Hadir</span></label>
+                                        <label class="rf-pill-label"><input type="radio" name="attendance" value="tidak_hadir"><span class="rf-pill-btn">❌ Tidak Hadir</span></label>
+                                    </div>
+                                </div>
+                                <div class="rf-group" id="guestCountGroup">
+                                    <label class="rf-label">Jumlah Orang</label>
+                                    <div class="rf-counter">
+                                        <button type="button" class="rc-btn" onclick="changeCount(-1)">−</button>
+                                        <span class="rc-val" id="countDisplay">1</span>
+                                        <button type="button" class="rc-btn" onclick="changeCount(1)">+</button>
+                                        <input type="hidden" name="guest_count" id="guestCountInput" value="1">
+                                    </div>
+                                </div>
+                                <div class="rf-group">
+                                    <label class="rf-label">Pesan / Kenangan</label>
+                                    <textarea name="message" class="rf-textarea"
+                                              placeholder="Tulis kenangan atau pesan untuk teman-teman…"></textarea>
+                                </div>
+                                <button type="submit" class="rf-submit">
+                                    <i class="fa-solid fa-paper-plane"></i> KIRIM KONFIRMASI
+                                </button>
+                            </form>
+
+                            <div class="rsvp-success" id="rsvpSuccess">
+                                <span class="success-icon">🎓</span>
+                                <div class="success-title">SAMPAI JUMPA!</div>
+                                <div class="success-text">Konfirmasi sudah kami catat.<br>Senang bisa bertemu kembali dengan <strong data-preview="first_name">{{ $invitation->profile->first_name }}</strong>! 📸</div>
+                            </div>
+                        </div>
+                    </section>
+                    @php $rsvpRendered = true; @endphp
                 @endif
-                <div class="committee-block">
-                    <div class="cb-head">Panitia Pelaksana</div>
-                    <div class="cb-row">
-                        <span class="cb-star">★</span>
-                        <span class="cb-name">{{ $invitation->profile->first_father }}</span>
-                        <span class="cb-role">Ketua</span>
+
+                <section class="snap" id="s-closing" data-section="{{ $sectIndex++ }}">
+                    <div class="cl-chalk-lines"></div>
+                    <div class="cl-rings">
+                        <div class="cl-ring" style="width:500px;height:500px;top:-180px;left:50%;transform:translateX(-50%);"></div>
+                        <div class="cl-ring" style="width:320px;height:320px;bottom:-100px;left:50%;transform:translateX(-50%);"></div>
+                        <div class="cl-ring" style="width:220px;height:220px;top:30%;right:-70px;"></div>
                     </div>
-                    <div class="cb-row">
-                        <span class="cb-star">★</span>
-                        <span class="cb-name">{{ $invitation->profile->first_mother }}</span>
-                        <span class="cb-role">Wakil Ketua</span>
+
+                    <span style="position:absolute;top:7%;left:5%;font-size:clamp(1.8rem,5vw,3rem);opacity:.35;pointer-events:none;animation:floatUp 3.5s ease-in-out infinite alternate;">🎓</span>
+                    <span style="position:absolute;top:9%;right:5%;font-size:clamp(1.5rem,4vw,2.5rem);opacity:.35;pointer-events:none;animation:floatUp 4s .5s ease-in-out infinite alternate;">📸</span>
+                    <span style="position:absolute;bottom:calc(var(--nav-pb) + 10px);left:8%;font-size:2rem;opacity:.3;pointer-events:none;animation:floatUp 4.5s .8s ease-in-out infinite alternate;">🏆</span>
+                    <span style="position:absolute;bottom:calc(var(--nav-pb) + 15px);right:7%;font-size:1.8rem;opacity:.3;pointer-events:none;animation:floatUp 3.8s 1.2s ease-in-out infinite alternate;">⭐</span>
+
+                    <div class="cl-body">
+                        <p class="cl-pre">✦ TERIMA KASIH ✦</p>
+                        <span class="cl-emoji">🎓 📸 🏆</span>
+                        <h2 class="cl-title">SAMPAI JUMPA<br>DI SANA!</h2>
+                        <p class="cl-text" data-preview="closing_text">
+                            {{ !empty($invitation->profile->closing_text) ? $invitation->profile->closing_text : 'Karena persahabatan sejati tidak mengenal jarak dan waktu. Kami sangat menantikan kehadiran kalian untuk merajut kembali kenangan indah yang tak terlupakan.' }}
+                        </p>
+                        <div class="cl-divider"></div>
+                        <p class="cl-from">Salam hangat dari</p>
+                        <div class="cl-name" data-preview="first_name">{{ $invitation->profile->first_name }}</div>
+                        @if ($showParents)
+                        <p class="cl-parents">
+                            <span data-preview="first_father">{{ $invitation->profile->first_father }}</span> &amp; <span data-preview="first_mother">{{ $invitation->profile->first_mother }}</span>
+                        </p>
+                        @endif
                     </div>
+                </section>
+            @endif
+        @endif
+    @endforeach
+
+    @if (!$rsvpRendered)
+        <section class="snap" id="s-rsvp" data-section="{{ $sectIndex++ }}">
+            <div style="position:absolute;left:20px;top:20%;width:16px;height:16px;border-radius:50%;background:rgba(59,130,246,.08);border:1.5px solid rgba(59,130,246,.12);z-index:0;"></div>
+            <div style="position:absolute;left:20px;top:45%;width:16px;height:16px;border-radius:50%;background:rgba(59,130,246,.08);border:1.5px solid rgba(59,130,246,.12);z-index:0;"></div>
+            <div style="position:absolute;left:20px;top:70%;width:16px;height:16px;border-radius:50%;background:rgba(59,130,246,.08);border:1.5px solid rgba(59,130,246,.12);z-index:0;"></div>
+
+            <div class="rsvp-inner">
+                <div class="rsvp-header" id="rsvpHeader">
+                    <p class="rsvp-kicker">✦ Konfirmasi Kehadiran</p>
+                    <h2 class="rsvp-title">APAKAH ANDA<br>AKAN HADIR?</h2>
                 </div>
-            </div>
-        </div>
-    </section>
 
-
-    <!-- §3 · ACARA — Notice Board -->
-    <section class="snap" id="s-events" data-section="2">
-        <span class="deco" style="top:6%;right:3%;font-size:2rem;opacity:.1;z-index:0;animation:floatUp 4s ease-in-out infinite alternate;">📌</span>
-        <span class="deco" style="bottom:calc(var(--nav-pb) + 5px);left:3%;font-size:1.5rem;opacity:.1;z-index:0;animation:floatUp 3.5s ease-in-out infinite alternate;">📝</span>
-
-        <div class="ev-wrap">
-            <div class="ev-header">
-                <p class="ev-kicker">✦ Pengumuman ✦</p>
-                <h2 class="ev-title">Rangkaian<br>Acara Reunian</h2>
-            </div>
-
-            <div class="ev-cards {{ $invitation->events->count() > 1 ? 'multi' : '' }}">
-                @foreach ($invitation->events as $event)
-                    @php
-                        $heads = [
-                            'linear-gradient(135deg,#1E3A5F,#2563EB)',
-                            'linear-gradient(135deg,#78350F,#D97706)',
-                            'linear-gradient(135deg,#14532D,#16A34A)',
-                        ];
-                        $icons = ['🎓','🏆','📸'];
-                        $stamps = ['HADIR','JOIN','YES'];
-                        $i = $loop->index % 3;
-                    @endphp
-                    <div class="ev-card" style="position:relative;">
-                        <div class="ec-head" style="background:{{ $heads[$i] }};">
-                            <div class="ec-icon-box">{{ $icons[$i] }}</div>
-                            <div class="ec-name">{{ $event->name }}</div>
-                            <div class="ec-stamp">{{ $stamps[$i] }}</div>
-                        </div>
-                        <div class="ec-perf"><div class="ec-dash"></div></div>
-                        <div class="ec-body">
-                            <div class="ec-row">
-                                <div class="ec-ic ic-d">📅</div>
-                                <div>
-                                    <div class="l">Tanggal</div>
-                                    <div class="v">{{ \Carbon\Carbon::parse($event->event_date)->translatedFormat('l, d F Y') }}</div>
-                                </div>
-                            </div>
-                            <div class="ec-row">
-                                <div class="ec-ic ic-t">⏰</div>
-                                <div>
-                                    <div class="l">Waktu</div>
-                                    <div class="v">{{ $event->start_time }} WIB – Selesai</div>
-                                </div>
-                            </div>
-                            <div class="ec-row">
-                                <div class="ec-ic ic-p">📍</div>
-                                <div>
-                                    <div class="l">Tempat</div>
-                                    <div class="v">{{ $event->venue_name }}</div>
-                                    <div class="s">{{ $event->address }}</div>
-                                </div>
-                            </div>
-                            <a href="https://maps.google.com?q={{ urlencode($event->address) }}"
-                               target="_blank" rel="noopener" class="ec-maps">
-                                <i class="fa-solid fa-map-location-dot"></i> Lihat di Maps
-                            </a>
+                <form class="rsvp-form" id="rsvpForm"
+                      method="POST" action="{{ url('/invitation/rsvp') }}"
+                      onsubmit="submitRsvp(event)">
+                    @csrf
+                    <div class="rf-group">
+                        <label class="rf-label">Nama Alumni</label>
+                        <input type="text" name="name" class="rf-input"
+                               value="{{ request()->get('to') ?? '' }}"
+                               placeholder="Tulis nama lengkap kamu…" required>
+                    </div>
+                    <div class="rf-group">
+                        <label class="rf-label">Konfirmasi</label>
+                        <div class="rf-pills">
+                            <label class="rf-pill-label"><input type="radio" name="attendance" value="hadir" checked><span class="rf-pill-btn">✅ Hadir</span></label>
+                            <label class="rf-pill-label"><input type="radio" name="attendance" value="tidak_hadir"><span class="rf-pill-btn">❌ Tidak Hadir</span></label>
                         </div>
                     </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-
-
-    <!-- §4 · GALERI — Film Strip -->
-    <section class="snap" id="s-gallery" data-section="3"
-             style="align-items:flex-start;justify-content:flex-start;">
-
-        <!-- Film perforations top -->
-        <div class="film-perf" id="filmTop"></div>
-
-        <div class="gal-top">
-            <div>
-                <p class="gal-kicker">◈ Momen yang Tersimpan</p>
-                <h2 class="gal-title">GALERI FOTO</h2>
-            </div>
-            @php $galCount = $invitation->galleries->count() ?: 6; @endphp
-            <div class="gal-count">{{ $galCount }} frames →</div>
-        </div>
-
-        <div class="gal-strip">
-            @forelse ($invitation->galleries as $idx => $gallery)
-                <div class="gal-card" data-frame="{{ str_pad($idx + 1, 3, '0', STR_PAD_LEFT) }}A">
-                    <img src="{{ asset('storage/'.$gallery->file_path) }}" alt="Foto">
-                    <div class="gal-cap">FRAME {{ $loop->index + 1 }}</div>
-                </div>
-            @empty
-                @for ($p = 0; $p < 6; $p++)
-                    <div class="gal-card" data-frame="{{ str_pad($p + 1, 3, '0', STR_PAD_LEFT) }}A">
-                        <div style="flex:1;background:linear-gradient(135deg,#1a1408,#2d2208);display:flex;align-items:center;justify-content:center;font-size:2.5rem;filter:sepia(.3);">📷</div>
-                        <div class="gal-cap">FRAME {{ $p + 1 }}</div>
+                    <div class="rf-group" id="guestCountGroup">
+                        <label class="rf-label">Jumlah Orang</label>
+                        <div class="rf-counter">
+                            <button type="button" class="rc-btn" onclick="changeCount(-1)">−</button>
+                            <span class="rc-val" id="countDisplay">1</span>
+                            <button type="button" class="rc-btn" onclick="changeCount(1)">+</button>
+                            <input type="hidden" name="guest_count" id="guestCountInput" value="1">
+                        </div>
                     </div>
-                @endfor
-            @endforelse
-        </div>
-
-        <!-- Film perforations bottom -->
-        <div class="film-perf" id="filmBottom"></div>
-    </section>
-
-
-    <!-- §5 · RSVP — Notebook -->
-    <section class="snap" id="s-rsvp" data-section="4">
-        <!-- Hole punches -->
-        <div style="position:absolute;left:20px;top:20%;width:16px;height:16px;border-radius:50%;background:rgba(59,130,246,.08);border:1.5px solid rgba(59,130,246,.12);z-index:0;"></div>
-        <div style="position:absolute;left:20px;top:45%;width:16px;height:16px;border-radius:50%;background:rgba(59,130,246,.08);border:1.5px solid rgba(59,130,246,.12);z-index:0;"></div>
-        <div style="position:absolute;left:20px;top:70%;width:16px;height:16px;border-radius:50%;background:rgba(59,130,246,.08);border:1.5px solid rgba(59,130,246,.12);z-index:0;"></div>
-
-        <div class="rsvp-inner">
-            <div class="rsvp-header" id="rsvpHeader">
-                <p class="rsvp-kicker">✦ Konfirmasi Kehadiran</p>
-                <h2 class="rsvp-title">APAKAH ANDA<br>AKAN HADIR?</h2>
-            </div>
-
-            <form class="rsvp-form" id="rsvpForm"
-                  method="POST" action="{{ url('/invitation/rsvp') }}"
-                  onsubmit="submitRsvp(event)">
-                @csrf
-                <div class="rf-group">
-                    <label class="rf-label">Nama Alumni</label>
-                    <input type="text" name="name" class="rf-input"
-                           value="{{ request()->get('to') ?? '' }}"
-                           placeholder="Tulis nama lengkap kamu…" required>
-                </div>
-                <div class="rf-group">
-                    <label class="rf-label">Konfirmasi</label>
-                    <div class="rf-pills">
-                        <label class="rf-pill-label"><input type="radio" name="attendance" value="hadir" checked><span class="rf-pill-btn">✅ Hadir</span></label>
-                        <label class="rf-pill-label"><input type="radio" name="attendance" value="tidak_hadir"><span class="rf-pill-btn">❌ Tidak Hadir</span></label>
+                    <div class="rf-group">
+                        <label class="rf-label">Pesan / Kenangan</label>
+                        <textarea name="message" class="rf-textarea"
+                                  placeholder="Tulis kenangan atau pesan untuk teman-teman…"></textarea>
                     </div>
-                </div>
-                <div class="rf-group" id="guestCountGroup">
-                    <label class="rf-label">Jumlah Orang</label>
-                    <div class="rf-counter">
-                        <button type="button" class="rc-btn" onclick="changeCount(-1)">−</button>
-                        <span class="rc-val" id="countDisplay">1</span>
-                        <button type="button" class="rc-btn" onclick="changeCount(1)">+</button>
-                        <input type="hidden" name="guest_count" id="guestCountInput" value="1">
-                    </div>
-                </div>
-                <div class="rf-group">
-                    <label class="rf-label">Pesan / Kenangan</label>
-                    <textarea name="message" class="rf-textarea"
-                              placeholder="Tulis kenangan atau pesan untuk teman-teman…"></textarea>
-                </div>
-                <button type="submit" class="rf-submit">
-                    <i class="fa-solid fa-paper-plane"></i> KIRIM KONFIRMASI
-                </button>
-            </form>
+                    <button type="submit" class="rf-submit">
+                        <i class="fa-solid fa-paper-plane"></i> KIRIM KONFIRMASI
+                    </button>
+                </form>
 
-            <div class="rsvp-success" id="rsvpSuccess">
-                <span class="success-icon">🎓</span>
-                <div class="success-title">SAMPAI JUMPA!</div>
-                <div class="success-text">Konfirmasi sudah kami catat.<br>Senang bisa bertemu kembali dengan <strong>{{ $invitation->profile->first_name }}</strong>! 📸</div>
+                <div class="rsvp-success" id="rsvpSuccess">
+                    <span class="success-icon">🎓</span>
+                    <div class="success-title">SAMPAI JUMPA!</div>
+                    <div class="success-text">Konfirmasi sudah kami catat.<br>Senang bisa bertemu kembali dengan <strong data-preview="first_name">{{ $invitation->profile->first_name }}</strong>! 📸</div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+        @php $rsvpRendered = true; @endphp
+    @endif
+</div>
 
-
-    <!-- §6 · CLOSING — Sunset -->
-    <section class="snap" id="s-closing" data-section="5">
-        <div class="cl-chalk-lines"></div>
-        <div class="cl-rings">
-            <div class="cl-ring" style="width:500px;height:500px;top:-180px;left:50%;transform:translateX(-50%);"></div>
-            <div class="cl-ring" style="width:320px;height:320px;bottom:-100px;left:50%;transform:translateX(-50%);"></div>
-            <div class="cl-ring" style="width:220px;height:220px;top:30%;right:-70px;"></div>
-        </div>
-
-        <!-- Floating school stuff on closing -->
-        <span style="position:absolute;top:7%;left:5%;font-size:clamp(1.8rem,5vw,3rem);opacity:.35;pointer-events:none;animation:floatUp 3.5s ease-in-out infinite alternate;">🎓</span>
-        <span style="position:absolute;top:9%;right:5%;font-size:clamp(1.5rem,4vw,2.5rem);opacity:.35;pointer-events:none;animation:floatUp 4s .5s ease-in-out infinite alternate;">📸</span>
-        <span style="position:absolute;bottom:calc(var(--nav-pb) + 10px);left:8%;font-size:2rem;opacity:.3;pointer-events:none;animation:floatUp 4.5s .8s ease-in-out infinite alternate;">🏆</span>
-        <span style="position:absolute;bottom:calc(var(--nav-pb) + 15px);right:7%;font-size:1.8rem;opacity:.3;pointer-events:none;animation:floatUp 3.8s 1.2s ease-in-out infinite alternate;">⭐</span>
-
-        <div class="cl-body">
-            <p class="cl-pre">✦ TERIMA KASIH ✦</p>
-            <span class="cl-emoji">🎓 📸 🏆</span>
-            <h2 class="cl-title">SAMPAI JUMPA<br>DI SANA!</h2>
-            <p class="cl-text">
-                Karena persahabatan sejati tidak mengenal jarak dan waktu.<br>
-                Kami sangat menantikan kehadiran kalian untuk merajut<br>
-                kembali kenangan indah yang tak terlupakan.
-            </p>
-            <div class="cl-divider"></div>
-            <p class="cl-from">Salam hangat dari</p>
-            <div class="cl-name">{{ $invitation->profile->first_name }}</div>
-            <p class="cl-parents">
-                {{ $invitation->profile->first_father }} &amp; {{ $invitation->profile->first_mother }}
-            </p>
-        </div>
-    </section>
-
-</div><!-- #scroller -->
-
-
-<!-- BOTTOM NAV -->
 <nav id="bottom-nav" aria-label="Navigasi">
-    <button class="n-btn active" data-target="s-hero"    onclick="navTo(this)"><span class="n-ico">🏠</span><span class="n-lbl">Home</span></button>
-    <button class="n-btn"       data-target="s-about"   onclick="navTo(this)"><span class="n-ico">🎓</span><span class="n-lbl">Profil</span></button>
-    <button class="n-btn"       data-target="s-events"  onclick="navTo(this)"><span class="n-ico">📅</span><span class="n-lbl">Acara</span></button>
-    <button class="n-btn"       data-target="s-gallery" onclick="navTo(this)"><span class="n-ico">📸</span><span class="n-lbl">Galeri</span></button>
-    <button class="n-btn"       data-target="s-rsvp"    onclick="navTo(this)"><span class="n-ico">✏️</span><span class="n-lbl">RSVP</span></button>
-    <button class="n-btn"       data-target="s-closing" onclick="navTo(this)"><span class="n-ico">⭐</span><span class="n-lbl">Penutup</span></button>
+    @php $navIndex = 0; @endphp
+    @foreach ($sectionOrder as $section)
+        @if ($section['visible'])
+            @if ($section['id'] == 'cover')
+                <button class="n-btn {{ $navIndex == 0 ? 'active' : '' }}" data-target="s-hero" onclick="navTo(this)"><span class="n-ico">🏠</span><span class="n-lbl">Home</span></button>
+                @php $navIndex++; @endphp
+            @endif
+            @if ($section['id'] == 'profile')
+                <button class="n-btn {{ $navIndex == 0 ? 'active' : '' }}" data-target="s-about" onclick="navTo(this)"><span class="n-ico">🎓</span><span class="n-lbl">Profil</span></button>
+                @php $navIndex++; @endphp
+            @endif
+            @if ($section['id'] == 'event')
+                <button class="n-btn {{ $navIndex == 0 ? 'active' : '' }}" data-target="s-events" onclick="navTo(this)"><span class="n-ico">📅</span><span class="n-lbl">Acara</span></button>
+                @php $navIndex++; @endphp
+            @endif
+            @if ($section['id'] == 'gallery')
+                <button class="n-btn {{ $navIndex == 0 ? 'active' : '' }}" data-target="s-gallery" onclick="navTo(this)"><span class="n-ico">📸</span><span class="n-lbl">Galeri</span></button>
+                @php $navIndex++; @endphp
+            @endif
+        @endif
+    @endforeach
+    
+    <button class="n-btn {{ $navIndex == 0 ? 'active' : '' }}" data-target="s-rsvp" onclick="navTo(this)"><span class="n-ico">✏️</span><span class="n-lbl">RSVP</span></button>
+    @php $navIndex++; @endphp
+
+    @foreach ($sectionOrder as $section)
+        @if ($section['visible'] && $section['id'] == 'closing')
+            <button class="n-btn {{ $navIndex == 0 ? 'active' : '' }}" data-target="s-closing" onclick="navTo(this)"><span class="n-ico">⭐</span><span class="n-lbl">Penutup</span></button>
+            @php $navIndex++; @endphp
+        @endif
+    @endforeach
 </nav>
 
-
 <script>
-/* ── OPEN ── */
 function openInvitation() {
     document.getElementById('cover').classList.add('hide');
     document.getElementById('bottom-nav').classList.add('show');
     document.getElementById('musicBtn').classList.add('show');
-    document.getElementById('bgAudio').play().catch(() => {});
+    document.getElementById('weddingMusic').play().catch(() => {});
     burstChalk();
     startCountdown();
     setTimeout(() => { const c = document.getElementById('cover'); if(c) c.remove(); }, 950);
 }
 
-/* ── MUSIC ── */
 function toggleMusic() {
-    const a = document.getElementById('bgAudio'), b = document.getElementById('musicBtn');
+    const a = document.getElementById('weddingMusic'), b = document.getElementById('musicBtn');
     if(a.paused){a.play();b.classList.remove('paused');}else{a.pause();b.classList.add('paused');}
 }
 
-/* ── NAV ── */
 function navTo(btn){ const el=document.getElementById(btn.dataset.target); if(el) el.scrollIntoView({behavior:'smooth'}); }
 (function(){
     const sections=document.querySelectorAll('.snap[data-section]');
@@ -1119,7 +1212,6 @@ function navTo(btn){ const el=document.getElementById(btn.dataset.target); if(el
     sections.forEach(s=>obs.observe(s));
 })();
 
-/* ── COUNTDOWN ── */
 function startCountdown(){
     const el=document.getElementById('countdown');
     if(!el) return;
@@ -1135,7 +1227,6 @@ function startCountdown(){
     tick(); setInterval(tick, 1000);
 }
 
-/* ── RSVP ── */
 document.querySelectorAll('input[name="attendance"]').forEach(r=>{
     r.addEventListener('change',()=>{
         const g=document.getElementById('guestCountGroup');
@@ -1147,7 +1238,6 @@ function changeCount(d){ guestCount=Math.max(1,Math.min(20,guestCount+d)); docum
 function submitRsvp(e){ e.preventDefault(); showRsvpSuccess(); }
 function showRsvpSuccess(){ document.getElementById('rsvpHeader').classList.add('hide'); document.getElementById('rsvpForm').classList.add('hide'); document.getElementById('rsvpSuccess').classList.add('show'); }
 
-/* ── CHALK BURST ── */
 function burstChalk(){
     const cv=document.createElement('canvas');
     cv.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
@@ -1156,7 +1246,6 @@ function burstChalk(){
     const sz=()=>{cv.width=innerWidth;cv.height=innerHeight;};
     sz(); window.addEventListener('resize',sz,{once:true});
 
-    /* Chalk + school palette */
     const pal=['#EDE8DC','#D97706','#C2410C','#1E3A5F','#CA8A04','#FDE68A','#BFDBFE','#FCA5A5'];
     const bits=Array.from({length:110},()=>({
         x:Math.random()*cv.width,
@@ -1190,7 +1279,6 @@ function burstChalk(){
     })();
 }
 
-/* ── COVER CHALK PARTICLES ── */
 (function(){
     const c=document.getElementById('cvParticles'); if(!c) return;
     const cols=['rgba(237,232,220,.4)','rgba(217,119,6,.35)','rgba(194,65,12,.3)','rgba(237,232,220,.2)'];
@@ -1211,7 +1299,6 @@ function burstChalk(){
     }
 })();
 
-/* ── FILM STRIP HOLES ── */
 (function(){
     ['filmTop','filmBottom'].forEach(id=>{
         const el=document.getElementById(id); if(!el) return;
