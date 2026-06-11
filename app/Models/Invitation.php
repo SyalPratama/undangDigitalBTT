@@ -161,4 +161,12 @@ class Invitation extends Model
         )->orderBy('event_date')
         ->orderBy('start_time');
     }
+
+    public function builder()
+    {
+        return $this->hasOne(
+            InvitationBuilder::class,
+            'invitation_id'
+        );
+    }
 }

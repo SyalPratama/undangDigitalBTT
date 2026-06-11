@@ -3,22 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invitation;
+use Illuminate\Http\Request;
 
 class InvitationController extends Controller
 {
-    public function show(string $slug)
+    // Tambahkan parameter Request $request untuk membaca parameter URL
+    public function show(Request $request, string $slug)
     {
-        $invitation = Invitation::with([
+        $query = Invitation::with([
             'type',
             'theme',
             'profile',
             'cover',
             'galleries',
             'events',
-        ])
-        ->active()
-        ->bySlug($slug)
-        ->firstOrFail();
+        ])->bySlug($slug);
+
+        if (!$request->has('preview')) {
+            $query->active();
+        }
+
+        $invitation = $query->firstOrFail();
 
         if (!$invitation->theme) {
             abort(404, 'Theme tidak ditemukan.');

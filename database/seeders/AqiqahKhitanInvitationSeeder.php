@@ -3,16 +3,23 @@
 namespace Database\Seeders;
 
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use App\Models\Invitation;
 use App\Models\InvitationMedia;
 use App\Models\InvitationProfile;
+use Illuminate\Support\Facades\DB;
 
 class AqiqahKhitanInvitationSeeder extends Seeder
 {
     public function run(): void
     {
+        // Mengambil data referensi dari database agar ID-nya valid (dinamis)
+        $user = User::where('email', 'siti@ngajak.com')->firstOrFail();
+        $theme = DB::table('themes')->first();
+        $invitationType = DB::table('invitation_types')->first();
+
         /*
         |--------------------------------------------------------------------------
         | Aqiqah
@@ -21,9 +28,9 @@ class AqiqahKhitanInvitationSeeder extends Seeder
 
         $aqiqah = Invitation::create([
             'id' => (string) Str::uuid(),
-            'user_id' => 'c42d87e7-2af3-4bb3-a53c-3ed3d19a7f9c',
-            'invitation_type_id' => '96fdec40-9c56-4372-a16a-6f86d900b0a1',
-            'theme_id' => 'cc7f7361-dd18-4286-8cc9-b6698fcd2acf',
+            'user_id' => $user->id,
+            'invitation_type_id' => $invitationType->id,
+            'theme_id' => $theme->id,
             'slug' => 'aqiqah-muhammad-zayn',
             'title' => 'Tasyakuran Aqiqah Muhammad Zayn',
             'is_active' => true,
@@ -85,9 +92,9 @@ class AqiqahKhitanInvitationSeeder extends Seeder
 
         $khitan = Invitation::create([
             'id' => (string) Str::uuid(),
-            'user_id' => 'c42d87e7-2af3-4bb3-a53c-3ed3d19a7f9c',
-            'invitation_type_id' => 'fbc03458-eaf9-4014-89a2-4233dca38a7e',
-            'theme_id' => 'f10aa73c-4588-44a4-8e78-936064d5de1f',
+            'user_id' => $user->id,
+            'invitation_type_id' => $invitationType->id,
+            'theme_id' => $theme->id,
             'slug' => 'khitanan-ahmad-farhan',
             'title' => 'Walimatul Khitan Ahmad Farhan',
             'is_active' => true,
