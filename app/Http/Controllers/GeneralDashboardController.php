@@ -9,13 +9,33 @@ class GeneralDashboardController extends Controller
 {
     public function index()
     {
-        // Hitung total undangan dan aktif milik user yang login
-        $userId = Auth::id();
-        $totalInvitations = Invitation::where('user_id', $userId)->count();
-        $activeInvitations = Invitation::where('user_id', $userId)
-                                       ->where('status', 'active')
+        $user = Auth::user();
+
+        if ($user->hasRole('superadmin')) {
+            return redirect()->route('superadmin.dashboard');
+        }
+
+        if ($user->hasRole('reseller')) {
+            return redirect()->route('reseller.dashboard');
+        }
+
+        if ($user->hasRole('customer')) {
+            return redirect()->route('customer.dashboard');
+        }
+
+        $totalInvitations = Invitation::where('user_id', $user->id)->count();
+        $activeInvitations = Invitation::where('user_id', $user->id)
+                                       ->where('is_active', true)
                                        ->count();
 
-        return view('dashboard', compact('totalInvitations', 'activeInvitations'));
+        $totalCustomers = 0;
+        $recentInvitations = collect();
+
+        return view('dashboard', compact(
+            'totalInvitations',
+            'activeInvitations',
+            'totalCustomers',
+            'recentInvitations'
+        ));
     }
 }

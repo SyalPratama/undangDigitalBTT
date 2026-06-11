@@ -125,7 +125,7 @@ class CusKelolaUndanganController extends Controller
         $destinationPath = public_path("assets/{$folderName}");
 
         try {
-            DB::transaction(function () use ($request, $isEdit, $folderName, $destinationPath, &$invitation) {
+            DB::transaction(function () use ($request, $isEdit, $folderName, $destinationPath, &$invitation, $invitationType) {
                 
                 $invitationData = [
                     'theme_id'           => $request->theme_id,
@@ -140,7 +140,9 @@ class CusKelolaUndanganController extends Controller
                     $invitationData['password'] = bcrypt($request->password);
                 }
 
+                $oldThemeId = null;
                 if ($isEdit) {
+                    $oldThemeId = $invitation->theme_id;
                     $invitation->update($invitationData);
                 } else {
                     $invitationData['user_id'] = Auth::id();
@@ -148,17 +150,19 @@ class CusKelolaUndanganController extends Controller
                     $invitation = Invitation::create($invitationData);
                 }
 
+                $isDoubleParty = in_array($invitationType->slug, ['wedding', 'pernikahan', 'engagement']);
+
                 $profileData = [
                     'headline'        => $request->headline,
                     'quote'           => $request->quote,
                     'first_name'      => $request->first_name,
                     'first_nickname'  => $request->first_nickname,
-                    'second_name'     => $request->second_name,
-                    'second_nickname' => $request->second_nickname,
+                    'second_name'     => $isDoubleParty ? $request->second_name : null,
+                    'second_nickname' => $isDoubleParty ? $request->second_nickname : null,
                     'first_father'    => $request->first_father,
                     'first_mother'    => $request->first_mother,
-                    'second_father'   => $request->second_father,
-                    'second_mother'   => $request->second_mother,
+                    'second_father'   => $isDoubleParty ? $request->second_father : null,
+                    'second_mother'   => $isDoubleParty ? $request->second_mother : null,
                     'description'     => $request->description,
                     'address'         => $request->address,
                     'closing_text'    => $request->closing_text,
@@ -171,11 +175,9 @@ class CusKelolaUndanganController extends Controller
                     $invitation->profile()->create($profileData);
                 }
 
-                // ====== PENANGANAN SAVE BUILDER SETTING (JSON) ======
                 if ($request->has('builder')) {
                     $rawShowParents = $request->input('builder.show_parents', true);
                     
-                    // PERBAIKAN: Antisipasi jika terkirim double array [0, 1], ambil nilai terakhirnya saja
                     if (is_array($rawShowParents)) {
                         $rawShowParents = end($rawShowParents);
                     }
@@ -186,21 +188,44 @@ class CusKelolaUndanganController extends Controller
                         'show_parents'  => filter_var($rawShowParents, FILTER_VALIDATE_BOOLEAN),
                     ];
 
+                    if ($request->has('builder.program_studi')) {
+                        $builderDataArray['program_studi'] = $request->input('builder.program_studi');
+                    }
+                    if ($request->has('builder.universitas')) {
+                        $builderDataArray['universitas'] = $request->input('builder.universitas');
+                    }
+
                     $existingProjectData = [];
                     if ($isEdit && $invitation->builder && $invitation->builder->project_data) {
-                        $existingProjectData = is_string($invitation->builder->project_data) 
-                            ? json_decode($invitation->builder->project_data, true) 
-                            : $invitation->builder->project_data;
+                        if ($oldThemeId == $request->theme_id) {
+                            $existingProjectData = is_string($invitation->builder->project_data) 
+                                ? json_decode($invitation->builder->project_data, true) 
+                                : $invitation->builder->project_data;
+                        }
                     }
                     
                     $mergedProjectData = array_merge($existingProjectData, $builderDataArray);
                     $builderPayload = ['project_data' => json_encode($mergedProjectData)];
+
+                    if ($isEdit && $oldThemeId != $request->theme_id) {
+                        $builderPayload['html'] = null;
+                        $builderPayload['css'] = null;
+                    }
 
                     if ($isEdit && $invitation->builder) {
                         $invitation->builder()->update($builderPayload);
                     } else {
                         $builderPayload['id'] = (string) Str::uuid();
                         $invitation->builder()->create($builderPayload);
+                    }
+                } else {
+                    if ($isEdit && $oldThemeId != $request->theme_id) {
+                        if ($invitation->builder) {
+                            $invitation->builder()->update([
+                                'html' => null,
+                                'css' => null,
+                            ]);
+                        }
                     }
                 }
 
