@@ -9,20 +9,13 @@ use Illuminate\Http\Request;
 
 class CusDashboardController extends Controller
 {
-    /**
-     * Menampilkan halaman dashboard utama customer (Hanya Daftar Tema)
-     */
     public function index()
     {
-        // Mengambil semua tema untuk ditampilkan dalam bentuk card ke customer
         $themes = Theme::with('category')->get();
 
         return view('customer.dashboard', compact('themes'));
     }
 
-    /**
-     * Memproses preview tema berdasarkan UUID dummy masing-masing kategori.
-     */
     public function preview(string $id)
     {
         $theme = Theme::with('category')->findOrFail($id);
@@ -31,14 +24,22 @@ class CusDashboardController extends Controller
             return response()->view('errors.invalid-theme', compact('theme'), 422);
         }
 
-        $invitationId = '770a3144-67d7-4275-8765-dc802adc0520'; // Default Wedding
+        $invitationId = '770a3144-67d7-4275-8765-dc802adc0520';
 
         if ($theme->category->slug === 'birthday') {
-            $invitationId = '01e8d4a6-2968-4b0a-875a-5001090f89a3'; // Birthday
+            $invitationId = '01e8d4a6-2968-4b0a-875a-5001090f89a3';
         } elseif ($theme->category->slug === 'aqiqah') {
-            $invitationId = 'b1c67de7-0edf-48f9-ae34-a9423f3832ca'; // Aqiqah
+            $invitationId = 'b1c67de7-0edf-48f9-ae34-a9423f3832ca';
         } elseif ($theme->category->slug === 'khitan') {
-            $invitationId = '5719d911-f884-4f32-9bea-d7914b01d08a'; // Khitan
+            $invitationId = '5719d911-f884-4f32-9bea-d7914b01d08a';
+        } elseif ($theme->category->slug === 'engagement') {
+            $invitationId = 'd09be7a2-1111-4444-8888-c7c30c5a1111';
+        } elseif ($theme->category->slug === 'graduation') {
+            $invitationId = 'd09be7a2-2222-4444-8888-c7c30c5a2222';
+        } elseif ($theme->category->slug === 'reuni') {
+            $invitationId = 'd09be7a2-3333-4444-8888-c7c30c5a3333';
+        } elseif ($theme->category->slug === 'syukuran') {
+            $invitationId = 'd09be7a2-4444-4444-8888-c7c30c5a4444';
         }
 
         $invitation = Invitation::with([

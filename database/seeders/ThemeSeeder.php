@@ -128,7 +128,7 @@ class ThemeSeeder extends Seeder
                 'view_name' => 'themes.wedding.soft-blue',
                 'price' => 0,
                 'is_premium' => false,
-                'theme_category_id' => 1, // KUNCI UTAMANYA ADA DI SINI
+                'theme_category_id' => 1,
             ],
             [
                 'name' => 'Minimalist Sage Green',
@@ -136,7 +136,7 @@ class ThemeSeeder extends Seeder
                 'view_name' => 'themes.wedding.minimalist-sage',
                 'price' => 85000,
                 'is_premium' => true,
-                'theme_category_id' => 1, // KUNCI UTAMANYA ADA DI SINI
+                'theme_category_id' => 1,
             ],
             [
                 'name' => 'Dreamy Blue Aqiqah',
@@ -144,7 +144,7 @@ class ThemeSeeder extends Seeder
                 'view_name' => 'themes.aqiqah.dreamy-blue',
                 'price' => 0,
                 'is_premium' => false,
-                'theme_category_id' => 3, // ID Kategori Aqiqah
+                'theme_category_id' => 3,
             ],
             [
                 'name' => 'Earthy Boho Aqiqah',
@@ -153,6 +153,54 @@ class ThemeSeeder extends Seeder
                 'price' => 50000,
                 'is_premium' => true,
                 'theme_category_id' => 3,
+            ],
+            [
+                'name' => 'Golden Milestone',
+                'slug' => 'golden-milestone',
+                'view_name' => 'themes.birthday.golden-milestone',
+                'theme_category_id' => 2,
+                'price' => 0,
+                'is_premium' => false,
+            ],
+            [
+                'name' => 'Pastel Floral Birthday',
+                'slug' => 'pastel-floral-bday',
+                'view_name' => 'themes.birthday.pastel-floral-bday',
+                'theme_category_id' => 2,
+                'price' => 0,
+                'is_premium' => false,
+            ],
+            [
+                'name' => 'Classic Monochrome',
+                'slug' => 'classic-monochrome',
+                'view_name' => 'themes.tunangan.classic-monochrome',
+                'theme_category_id' => 5,
+                'price' => 0,
+                'is_premium' => false,
+            ],
+            [
+                'name' => 'Rustic Journey',
+                'slug' => 'rustic-journey',
+                'view_name' => 'themes.tunangan.rustic-journey',
+                'theme_category_id' => 5,
+                'price' => 0,
+                'is_premium' => false,
+            ],
+            [
+                'name' => 'Modern Graduate',
+                'slug' => 'modern-graduate',
+                'view_name' => 'themes.wisuda.modern-graduate',
+                'theme_category_id' => 6,
+                'price' => 0,
+                'is_premium' => false,
+            ],
+            [
+                'name' => 'Vintage Academic',
+                'slug' => 'vintage-academic',
+                'view_name' => 'themes.wisuda.vintage-academic',
+                'theme_category_id' => 6,
+                'price' => 0,
+                'is_premium' => false,
             ],
         ];
 
