@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserRoleSeeder::class,
             InvitationTypeSeeder::class,
+            ThemeCategorySeeder::class,
             ThemeSeeder::class,
             InvitationSeeder::class,
             AqiqahKhitanInvitationSeeder::class,

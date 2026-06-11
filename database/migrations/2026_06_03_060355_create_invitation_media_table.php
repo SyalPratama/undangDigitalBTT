@@ -20,7 +20,8 @@ return new class extends Migration
                 'gallery',
                 'first_person',
                 'second_person',
-                'video'
+                'video',
+                'music'
             ]);
 
             $table->string('file_path');
