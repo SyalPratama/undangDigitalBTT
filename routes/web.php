@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController; // Tambahan
+use App\Http\Controllers\GeneralDashboardController;
 
 // SUPERADMIN
 use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboard;
@@ -43,7 +43,7 @@ Route::get('/builder/{invitation}', [BuilderController::class, 'index']);
 Route::post('/builder/{invitation}/save', [BuilderController::class, 'save']);
 
 // RUTE DASHBOARD DIPERBAIKI (Tidak lagi pakai function kosong)
-Route::get('/dashboard', [DashboardController::class, 'index'])
+Route::get('/dashboard', [GeneralDashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -91,16 +91,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/themes/{id}/preview', [CusDashboardController::class, 'preview'])->name('themes.preview');
     });
 
-    // CUSTOMER
     Route::middleware(['role:customer'])->prefix('customer')->name('customer.')->group(function () {
         Route::get('/dashboard', [CusDashboardController::class, 'index'])->name('dashboard');
-        Route::get('kelola-undangan', [CusKelolaUndanganController::class, 'index'])->name('customer.kelola-undangan.index'); // Nama route saya sesuaikan
-        Route::get('kelola-undangan/create', [CusKelolaUndanganController::class, 'create'])->name('customer.kelola-undangan.create');
-        Route::get('kelola-undangan/{id}/edit', [CusKelolaUndanganController::class, 'edit'])->name('customer.kelola-undangan.edit');
-        Route::post('kelola-undangan/save/{id?}', [CusKelolaUndanganController::class, 'save'])->name('customer.kelola-undangan.save');
-        Route::delete('kelola-undangan/{id}', [CusKelolaUndanganController::class, 'destroy'])->name('customer.kelola-undangan.destroy');
-        Route::post('kelola-undangan/{id}/toggle-status', [CusKelolaUndanganController::class, 'toggleStatus'])->name('customer.kelola-undangan.toggle-status');
-        Route::get('/themes/{id}/preview', [CusDashboardController::class, 'preview'])->name('customer.themes.preview');
+        Route::get('kelola-undangan', [CusKelolaUndanganController::class, 'index'])->name('kelola-undangan.index');
+        Route::get('kelola-undangan/create', [CusKelolaUndanganController::class, 'create'])->name('kelola-undangan.create');
+        Route::get('kelola-undangan/{id}/edit', [CusKelolaUndanganController::class, 'edit'])->name('kelola-undangan.edit');
+        Route::post('kelola-undangan/save/{id?}', [CusKelolaUndanganController::class, 'save'])->name('kelola-undangan.save');
+        Route::delete('kelola-undangan/{id}', [CusKelolaUndanganController::class, 'destroy'])->name('kelola-undangan.destroy');
+        Route::post('kelola-undangan/{id}/toggle-status', [CusKelolaUndanganController::class, 'toggleStatus'])->name('kelola-undangan.toggle-status');
+        Route::get('/themes/{id}/preview', [CusDashboardController::class, 'preview'])->name('themes.preview');
     });
 });
 
