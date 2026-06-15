@@ -1,15 +1,13 @@
 @php
-    // ── Parse project_data dari builder ──────────────────────────────────────
+
     $projectData = [];
     if (isset($invitation->builder->project_data)) {
         $raw = $invitation->builder->project_data;
         $projectData = is_string($raw) ? json_decode($raw, true) : (array) $raw;
     }
 
-    // ── Warna aksen ──────────────────────────────────────────────────────────
     $primaryColor = !empty($projectData['primary_color']) ? $projectData['primary_color'] : '#4D96FF';
 
-    // ── Media: musik ─────────────────────────────────────────────────────────
     $musicMedia = $invitation->media->where('type', 'music')->first();
     $musicPath  = null;
     if ($musicMedia) {
@@ -18,7 +16,6 @@
             : asset('storage/' . $musicMedia->file_path) . '?t=' . time();
     }
 
-    // ── Media: cover ─────────────────────────────────────────────────────────
     $coverMedia = $invitation->media->where('type', 'cover')->first();
     $coverImage = null;
     if ($coverMedia) {
@@ -31,34 +28,29 @@
         }
     }
 
-    // ── Media: galeri ────────────────────────────────────────────────────────
     $galleries = $invitation->media->where('type', 'gallery')->sortBy('sort_order')->values();
 
-    // ── Profil ───────────────────────────────────────────────────────────────
     $profile    = $invitation->profile;
     $firstName  = $profile->first_name  ?? 'NAMA';
-    $lastName   = $profile->last_name   ?? '';
-    $nickname   = !empty($projectData['nickname']) ? $projectData['nickname'] : ($profile->nickname ?? $firstName);
+    $nickname   = $profile->first_nickname ?? '';
     $showParents = isset($projectData['show_parents'])
         ? filter_var($projectData['show_parents'], FILTER_VALIDATE_BOOLEAN)
         : false;
-    $fatherName = $profile->father_name ?? '';
-    $motherName = $profile->mother_name ?? '';
+    $fatherName = $profile->first_father ?? '';
+    $motherName = $profile->first_mother ?? '';
 
-    // ── Teks konten ──────────────────────────────────────────────────────────
-    $headline   = !empty($projectData['headline'])     ? $projectData['headline']     : 'YEAAY, AKU ULANG TAHUN!';
-    $quote      = !empty($projectData['quote'])        ? $projectData['quote']        : 'Teman-teman, datang ya ke pestaku! Kita bakal main seru-seruan bareng! 🥳';
-    $closingText = !empty($projectData['closing_text']) ? $projectData['closing_text'] : 'Merupakan suatu kehormatan bagi kami jika Kakak/Abang/Adik berkenan hadir. Terima kasih! 🎉';
-    $address    = !empty($projectData['address'])      ? $projectData['address']      : ($invitation->events->first()->address ?? '');
+    $headline   = !empty($profile->headline)     ? $profile->headline     : 'YEAAY, AKU ULANG TAHUN!';
+    $quote      = !empty($profile->quote)        ? $profile->quote        : 'Teman-teman, datang ya ke pestaku! Kita bakal main seru-seruan bareng! 🥳';
+    $closingText = !empty($profile->closing_text) ? $profile->closing_text : 'Merupakan suatu kehormatan bagi kami jika Kakak/Abang/Adik berkenan hadir. Terima kasih! 🎉';
+    $description = !empty($profile->description)  ? $profile->description  : '';
 
-    // ── Section order & visibility ───────────────────────────────────────────
     $defaultOrder = [
-        ['id' => 'cover',     'visible' => true],
-        ['id' => 'countdown', 'visible' => true],
-        ['id' => 'event',     'visible' => true],
-        ['id' => 'gallery',   'visible' => true],
-        ['id' => 'rsvp',      'visible' => true],
-        ['id' => 'closing',   'visible' => true],
+        ['id' => 'cover',   'visible' => true],
+        ['id' => 'quote',   'visible' => true],
+        ['id' => 'profile', 'visible' => true],
+        ['id' => 'event',   'visible' => true],
+        ['id' => 'gallery', 'visible' => true],
+        ['id' => 'closing', 'visible' => true],
     ];
     $sectionOrder = $defaultOrder;
     if (!empty($projectData['section_order'])) {
@@ -73,7 +65,7 @@
             }
         }
     }
-    // Helper closure: apakah section visible
+
     $isSectionVisible = function (string $id) use ($sectionOrder): bool {
         foreach ($sectionOrder as $s) {
             if ($s['id'] === $id) return (bool) $s['visible'];
@@ -81,9 +73,10 @@
         return true;
     };
 
-    // ── Event pertama untuk countdown ────────────────────────────────────────
     $firstEvent     = $invitation->events->sortBy('event_date')->first();
-    $countdownDate  = $firstEvent ? $firstEvent->event_date . 'T' . ($firstEvent->start_time ?? '09:00:00') : '2026-08-15T15:00:00';
+    $countdownDate  = $firstEvent 
+        ? \Carbon\Carbon::parse($firstEvent->event_date)->format('Y-m-d') . 'T' . \Carbon\Carbon::parse($firstEvent->start_time ?? '09:00:00')->format('H:i:s')
+        : '2026-08-15T15:00:00';
 @endphp
 <!DOCTYPE html>
 <html lang="id">
@@ -93,15 +86,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ $invitation->title ?? 'Pesta Ulang Tahun Anak' }}</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
 
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
@@ -118,7 +108,7 @@
                             dark:   '#1A1A2E',
                             paper:  '#F9F7F7'
                         },
-                        accent: '{{ $primaryColor }}'
+                        accent: 'var(--primary-color, {{ $primaryColor }})'
                     },
                     fontFamily: {
                         comic: ['Chewy', 'cursive'],
@@ -135,7 +125,7 @@
     </script>
 
     <style>
-        :root { --accent: {{ $primaryColor }}; }
+        :root { --primary-color: {{ $primaryColor }}; }
 
         body {
             font-family: 'Quicksand', sans-serif;
@@ -223,20 +213,17 @@
             display: none; align-items: center; justify-content: center; font-size: 20px;
         }
 
-        /* Gallery grid */
         .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .gallery-item { border-radius: 16px; overflow: hidden; border: 3px solid #1A1A2E; box-shadow: 4px 4px 0 #1A1A2E; aspect-ratio: 1/1; }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
         .gallery-item:hover img { transform: scale(1.05); }
 
-        /* Hero cover image */
         .hero-cover-img { width: 140px; height: 140px; border-radius: 50%; border: 4px solid #1A1A2E; box-shadow: 6px 8px 0 #1A1A2E; overflow: hidden; object-fit: cover; }
     </style>
 </head>
 
 <body class="antialiased relative">
 
-    <!-- ── DEKORASI BACKGROUND ─────────────────────────────────────────────── -->
     <div class="fixed inset-0 pointer-events-none z-0 hidden md:block overflow-hidden">
         <div class="absolute top-[10%] left-[8%]  w-10 h-10 bg-toon-pink   border-[3px] border-toon-dark shadow-toon-sm anim-wiggle"       style="--rot:15deg;  animation-duration:3s;"></div>
         <div class="absolute top-[25%] left-[15%] w-12 h-12 bg-white        border-[4px] border-toon-dark shadow-toon-sm anim-cloud"         style="--rot:-20deg; animation-duration:5s;"></div>
@@ -250,7 +237,6 @@
         <div class="absolute top-[90%] right-[12%] w-10 h-10 bg-toon-purple border-[3px] border-toon-dark shadow-toon-sm anim-cloud"         style="--rot:10deg;  animation-duration:5s;"></div>
     </div>
 
-    <!-- ── AUDIO ──────────────────────────────────────────────────────────── -->
     <audio id="bg-audio" loop preload="auto">
         @if($musicPath)
             <source src="{{ $musicPath }}" type="audio/mpeg">
@@ -259,10 +245,8 @@
         @endif
     </audio>
 
-    <!-- ── CONFETTI CANVAS ────────────────────────────────────────────────── -->
     <canvas id="confetti" class="fixed inset-0 pointer-events-none z-[9000] hidden"></canvas>
 
-    <!-- ── OPENING COVER ──────────────────────────────────────────────────── -->
     <div id="opening-cover">
         <div class="card-toon bg-white p-8 max-w-[340px] w-[90%] text-center flex flex-col items-center">
             <div class="text-7xl mb-4 anim-wiggle">🎁</div>
@@ -277,35 +261,28 @@
         </div>
     </div>
 
-    <!-- ── FLOATING AUDIO TOGGLE ──────────────────────────────────────────── -->
     <button id="audio-control" class="btn-toon bg-toon-pink text-white" onclick="toggleAudio()">
         <i id="audio-icon" class="fa-solid fa-music anim-wiggle"></i>
     </button>
 
-    <!-- ── MAIN CONTAINER ─────────────────────────────────────────────────── -->
     <main class="relative z-10 w-full max-w-md mx-auto bg-toon-paper min-h-screen shadow-2xl border-x-4 border-toon-dark overflow-hidden pb-20">
 
-        <!-- ═══════════════════════════════════════════════════════════════════
-             SECTION: COVER / HERO
-        ═══════════════════════════════════════════════════════════════════ -->
         @if($isSectionVisible('cover'))
-        <section id="section-cover" class="relative pt-16 pb-24 px-6 overflow-hidden border-b-4 border-toon-dark" style="background-color: var(--accent);">
-            <!-- Decorative Clouds -->
+        <section id="section-cover" class="relative pt-16 pb-24 px-6 overflow-hidden border-b-4 border-toon-dark bg-accent transition-colors duration-500">
+            
             <div class="absolute top-10 -left-6 text-5xl anim-cloud opacity-80">☁️</div>
             <div class="absolute top-24 -right-8 text-6xl anim-cloud-reverse opacity-80">☁️</div>
             <div class="absolute bottom-10 left-1/4 text-4xl anim-cloud opacity-60">☁️</div>
-            <!-- Floating Balloons -->
+            
             <div class="absolute top-0 right-4 text-5xl anim-wiggle" style="animation-duration:3s; transform-origin:bottom center;">🎈</div>
             <div class="absolute top-4 left-4 text-4xl anim-wiggle" style="animation-duration:2.5s; transform-origin:bottom center; animation-delay:0.5s;">🎈</div>
 
             <div class="relative z-10 text-center flex flex-col items-center mt-8">
 
-                <!-- Headline Badge -->
                 <div class="bg-toon-yellow border-4 border-toon-dark rounded-full px-6 py-2 mb-6 shadow-toon-sm transform -rotate-3 inline-block">
                     <span data-preview="headline" class="font-comic text-toon-dark text-xl tracking-wide">{{ $headline }}</span>
                 </div>
 
-                <!-- Foto Cover / Avatar -->
                 <div class="mb-4">
                     @if($coverImage)
                         <img src="{{ $coverImage }}" alt="{{ $firstName }}" class="hero-cover-img">
@@ -315,33 +292,38 @@
                     @endif
                 </div>
 
-                <!-- Nama -->
                 <h1 data-preview="first_name" class="font-comic text-white text-5xl md:text-6xl drop-shadow-[4px_4px_0_rgba(26,26,46,1)] leading-tight mb-1" style="-webkit-text-stroke:1px #1A1A2E;">
                     {{ strtoupper($firstName) }}
                 </h1>
-                @if($lastName)
-                <h2 data-preview="last_name" class="font-comic text-toon-yellow text-4xl md:text-5xl drop-shadow-[3px_3px_0_rgba(26,26,46,1)] mb-6" style="-webkit-text-stroke:1px #1A1A2E;">
-                    {{ strtoupper($lastName) }}
+                @if($nickname)
+                <h2 data-preview="first_nickname" class="font-comic text-toon-yellow text-4xl md:text-5xl drop-shadow-[3px_3px_0_rgba(26,26,46,1)] mb-6" style="-webkit-text-stroke:1px #1A1A2E;">
+                    {{ strtoupper($nickname) }}
                 </h2>
                 @endif
 
-                @if($showParents && ($fatherName || $motherName))
-                <p class="font-round font-bold text-white text-sm mb-6 opacity-90">
-                    Putra/i dari <span data-preview="father_name">{{ $fatherName }}</span>
-                    @if($fatherName && $motherName) & @endif
-                    <span data-preview="mother_name">{{ $motherName }}</span>
+                @if($isSectionVisible('profile') && $showParents && ($fatherName || $motherName))
+                <p class="font-round font-bold text-white text-sm mb-6 opacity-90 card-toon p-3 text-toon-dark mx-auto" style="max-width: 250px;">
+                    Putra/i dari <br><span data-preview="first_father">{{ $fatherName }}</span>
+                    @if($fatherName && $motherName) &amp; @endif
+                    <span data-preview="first_mother">{{ $motherName }}</span>
                 </p>
                 @endif
 
-                <!-- Quote Card -->
+                @if($isSectionVisible('quote'))
                 <div class="card-toon bg-white p-4 w-full text-center mt-2 transform rotate-1">
                     <p data-preview="quote" class="font-round font-bold text-toon-dark">
                         "{{ $quote }}"
                     </p>
                 </div>
+                @endif
+
+                @if($description)
+                <div class="card-toon bg-toon-yellow p-3 w-full text-center mt-3 transform -rotate-1">
+                    <p data-preview="description" class="font-round font-bold text-toon-dark text-xs">{{ $description }}</p>
+                </div>
+                @endif
             </div>
 
-            <!-- Bottom Wave -->
             <div class="wave-divider bottom-0 translate-y-[98%] text-toon-paper">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
                     <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,121.32,201.2,112.59,240.76,107.6,281.82,88.4,321.39,56.44Z" fill="currentColor" stroke="#1A1A2E" stroke-width="4"></path>
@@ -350,9 +332,6 @@
         </section>
         @endif
 
-        <!-- ═══════════════════════════════════════════════════════════════════
-             SECTION: COUNTDOWN
-        ═══════════════════════════════════════════════════════════════════ -->
         @if($isSectionVisible('countdown'))
         <section id="section-countdown" class="pt-24 pb-16 px-6 relative reveal">
             <h2 class="font-comic text-3xl text-center text-toon-dark mb-8">PESTA DIMULAI DALAM:</h2>
@@ -377,9 +356,6 @@
         </section>
         @endif
 
-        <!-- ═══════════════════════════════════════════════════════════════════
-             SECTION: EVENT INFO
-        ═══════════════════════════════════════════════════════════════════ -->
         @if($isSectionVisible('event'))
         <section id="section-event" class="py-10 px-6 relative bg-toon-yellow border-y-4 border-toon-dark reveal">
             <div class="absolute top-4 left-4 text-2xl text-white drop-shadow-[2px_2px_0_#1A1A2E] anim-wiggle">⭐</div>
@@ -445,7 +421,7 @@
                     </div>
                 </div>
                 @empty
-                <!-- Fallback jika belum ada event -->
+                
                 <div class="card-toon bg-white p-6 transform rotate-[-1deg]">
                     <div class="flex items-center gap-3 mb-4 border-b-4 border-toon-dark pb-2">
                         <span class="text-3xl">🎂</span>
@@ -458,9 +434,6 @@
         </section>
         @endif
 
-        <!-- ═══════════════════════════════════════════════════════════════════
-             SECTION: GALLERY
-        ═══════════════════════════════════════════════════════════════════ -->
         @if($isSectionVisible('gallery') && $galleries->isNotEmpty())
         <section id="section-gallery" class="py-12 px-6 reveal">
             <h2 class="font-comic text-3xl text-center text-toon-dark mb-6">FOTO-FOTO SERU! 📸</h2>
@@ -481,9 +454,6 @@
         </section>
         @endif
 
-        <!-- ═══════════════════════════════════════════════════════════════════
-             SECTION: RSVP & WISHES
-        ═══════════════════════════════════════════════════════════════════ -->
         @if($isSectionVisible('rsvp'))
         <section id="section-rsvp" class="py-12 px-6 relative reveal">
             <h2 class="font-comic text-3xl text-center text-toon-dark mb-6">BUKU TAMU 📬</h2>
@@ -536,9 +506,6 @@
         </section>
         @endif
 
-        <!-- ═══════════════════════════════════════════════════════════════════
-             SECTION: CLOSING
-        ═══════════════════════════════════════════════════════════════════ -->
         @if($isSectionVisible('closing'))
         <section id="section-closing" class="py-10 px-8 text-center reveal">
             <div class="text-5xl mb-4">🎉🎊🎈</div>
@@ -551,13 +518,11 @@
 
     </main>
 
-    <!-- ── TOAST ──────────────────────────────────────────────────────────── -->
     <div id="toast" class="fixed top-10 left-1/2 -translate-x-1/2 bg-white border-4 border-toon-dark px-6 py-3 rounded-full z-[9999] opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-10 shadow-toon flex items-center gap-3">
         <span class="text-2xl">🔔</span>
         <span id="toast-text" class="font-round font-bold text-toon-dark"></span>
     </div>
 
-    <!-- ── DIGITAL GIFT MODAL ─────────────────────────────────────────────── -->
     <div id="gift-modal" class="fixed inset-0 z-[10000] bg-toon-dark/80 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity">
         <div class="card-toon bg-white w-full max-w-sm p-6 transform scale-90 transition-transform duration-300" id="gift-card">
             <button onclick="closeGiftModal()" class="absolute -top-4 -right-4 w-10 h-10 bg-toon-pink border-4 border-toon-dark rounded-full text-white font-black text-xl flex items-center justify-center btn-toon shadow-toon-sm z-10">X</button>
@@ -588,31 +553,10 @@
     </div>
 
     <script>
-        /* ─── DATA DARI SERVER ─── */
+        
         const targetDateStr = "{{ $countdownDate }}";
         const accentColor   = "{{ $primaryColor }}";
 
-        /* ─── PREVIEW LIVE UPDATE (untuk iframe di dashboard) ─── */
-        window.addEventListener('message', function(e) {
-            if (!e.data || e.data.type !== 'preview-update') return;
-            const { field, value } = e.data;
-            // Update semua elemen yang punya data-preview sesuai field
-            document.querySelectorAll('[data-preview="' + field + '"]').forEach(function(el) {
-                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                    el.value = value;
-                } else {
-                    el.textContent = value;
-                }
-            });
-            // Handle perubahan warna aksen
-            if (field === 'primary_color') {
-                document.documentElement.style.setProperty('--accent', value);
-                const heroSection = document.getElementById('section-cover');
-                if (heroSection) heroSection.style.backgroundColor = value;
-            }
-        });
-
-        /* ─── CORE LOGIC ─── */
         const audio        = document.getElementById('bg-audio');
         const audioControl = document.getElementById('audio-control');
         const audioIcon    = document.getElementById('audio-icon');
@@ -646,14 +590,12 @@
             }
         }
 
-        /* Scroll Reveal */
         const reveals = document.querySelectorAll('.reveal');
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
         }, { threshold: 0.1 });
         reveals.forEach(el => revealObserver.observe(el));
 
-        /* Countdown */
         function initCountdown() {
             const targetTime = new Date(targetDateStr).getTime();
             if (isNaN(targetTime)) return;
@@ -671,7 +613,6 @@
             }, 1000);
         }
 
-        /* Toast */
         function showToast(msg) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-text').textContent = msg;
@@ -683,7 +624,6 @@
             }, 3000);
         }
 
-        /* RSVP Submit */
         function submitRsvp(e) {
             e.preventDefault();
             const name   = document.getElementById('rsvp-name').value.trim();
@@ -709,7 +649,6 @@
             document.getElementById('form-rsvp').reset();
         }
 
-        /* Gift Modal */
         function openGiftModal() {
             const modal = document.getElementById('gift-modal');
             const card  = document.getElementById('gift-card');
@@ -729,7 +668,6 @@
             showToast('Nomor berhasil disalin! 📋');
         }
 
-        /* Big Cartoon Confetti */
         const canvas = document.getElementById('confetti');
         const ctx    = canvas.getContext('2d');
         let confettis = [];
