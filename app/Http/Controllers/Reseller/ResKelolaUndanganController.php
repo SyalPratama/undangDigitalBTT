@@ -198,6 +198,8 @@ class ResKelolaUndanganController extends Controller
                     $invitation = Invitation::create($invitationData);
                 }
 
+                $isDoubleParty = in_array($invitationType->slug, ['wedding', 'pernikahan', 'engagement']);
+
                 $profileData = [
                     'headline'        => $request->headline,
                     'quote'           => $request->quote,
