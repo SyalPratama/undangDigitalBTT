@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Invitation extends Model
 {
@@ -168,5 +169,10 @@ class Invitation extends Model
             InvitationBuilder::class,
             'invitation_id'
         );
+    }
+
+    public function design()
+    {
+        return $this->hasOne(InvitationDesign::class);
     }
 }

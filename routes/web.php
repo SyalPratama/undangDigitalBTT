@@ -25,6 +25,7 @@ use App\Http\Controllers\Customer\CusResellerController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\BuilderController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ThemeBuildController;
 use Illuminate\Support\Facades\Route;
 
 // OTP
@@ -123,6 +124,14 @@ Route::middleware('guest')->group(function () {
     Route::post('/register/verify-otp', [RegisterOtpController::class, 'verify'])->name('register.verify-otp');
 });
 
+Route::prefix('theme-builder')->middleware(['auth'])->group(function(){
+    Route::get('/{invitation}', [ThemeBuildController::class, 'edit'])->name('theme-builder.edit');
+    
+    // Change to {invitation} to leverage Route Model Binding
+    Route::put('/{invitation}', [ThemeBuildController::class, 'update'])->name('theme-builder.update');
+    Route::post('/{invitation}/sections', [ThemeBuildController::class, 'updateSections'])->name('theme-builder.sections');
+    Route::get('/{invitation}/preview', [ThemeBuildController::class, 'preview'])->name('theme-builder.preview');
+});
 
 
 require __DIR__.'/auth.php';
