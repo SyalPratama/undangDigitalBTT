@@ -37,10 +37,10 @@
             --primary: {{ $design->primary_color ?? '#000000' }};
             --bg: {{ $design->background_color ?? '#ffffff' }};
             --text: {{ $design->text_color ?? '#333333' }};
+            --bg-opacity: {{ ($design->settings['bg_opacity'] ?? 30) / 100 }};
         }
 
         body {
-            background: var(--bg);
             color: var(--text);
             font-family: '{{ $bodyFont }}', sans-serif;
         }
@@ -57,14 +57,30 @@
             background: var(--primary);
         }
 
-        .template-background {
-            @if ($design && $design->background_image)
+        @if ($design && $design->background_image)
+            .template-background::before {
+                content: "";
+                position: fixed;
+                top: 0; left: 0; width: 100%; height: 100%;
                 background-image: url('{{ asset($design->background_image) }}');
-            @endif
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                z-index: -2;
+            }
+            .template-background::after {
+                content: "";
+                position: fixed;
+                top: 0; left: 0; width: 100%; height: 100%;
+                background-color: var(--bg);
+                opacity: var(--bg-opacity);
+                z-index: -1;
+            }
+        @else
+            body {
+                background-color: var(--bg);
+            }
+        @endif
 
         @media (max-width: 768px) {
             .heading {

@@ -44,7 +44,7 @@ class ThemeBuildController extends Controller
         ]);
 
         // 1. Logika Hapus Gambar jika flag dikirim dari JavaScript
-        if ($request->has('remove_background')) {
+        if ($request->has('remove_background') || $request->has('remove_background_image')) {
             $design = $invitation->design;
             if ($design && $design->background_image && file_exists(public_path($design->background_image))) {
                 unlink(public_path($design->background_image));
@@ -77,10 +77,20 @@ class ThemeBuildController extends Controller
             $data['sections'] = $invitation->design->sections ?? [];
         }
 
+        // 4. Merge Settings
+        if (isset($data['settings']) && is_array($data['settings'])) {
+            $existingSettings = $invitation->design->settings ?? [];
+            $data['settings'] = array_merge($existingSettings, $data['settings']);
+        }
+
         $invitation->design()->updateOrCreate(
             ['invitation_id' => $invitation->id],
             $data
         );
+
+        if ($request->wantsJson()) {
+            return response()->json(['status' => 'success']);
+        }
 
         return back()->with('success', 'Design berhasil diperbarui');
     }

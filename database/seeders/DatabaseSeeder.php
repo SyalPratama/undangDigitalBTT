@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
             ThemeSeeder::class,
             InvitationSeeder::class,
             AqiqahKhitanInvitationSeeder::class,
+            ThemeBuildSeeder::class,
+            InvitationDesignSeeder::class,
         ]);
     }
 }

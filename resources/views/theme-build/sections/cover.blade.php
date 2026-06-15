@@ -7,16 +7,16 @@
             </div>
         @endif
 
-        <p class="primary tracking-[0.2em] uppercase text-xs md:text-sm font-semibold">
+        <p id="preview-headline" class="primary tracking-[0.2em] uppercase text-xs md:text-sm font-semibold">
             {{ $invitation->profile->headline ?? 'Invitation' }}
         </p>
 
         {{-- Ukuran font menyesuaikan layar --}}
         <h1 class="heading text-4xl md:text-6xl mt-4 leading-tight">
-            {{ $invitation->profile->first_name }}
+            <span data-preview="first_name">{{ $invitation->profile->first_name }}</span>
             @if ($invitation->profile->second_name)
                 <span class="primary block md:inline my-2">&</span>
-                {{ $invitation->profile->second_name }}
+                <span data-preview="second_name">{{ $invitation->profile->second_name }}</span>
             @endif
         </h1>
     </div>
