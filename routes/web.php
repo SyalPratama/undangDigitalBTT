@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\GeneralDashboardController;
 
 // SUPERADMIN
-use App\Http\Controllers\Superadmin\DashboardController;
+use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboard;
 use App\Http\Controllers\Superadmin\KelolaUserController;
 use App\Http\Controllers\Superadmin\KelolaUndanganController;
 use App\Http\Controllers\Superadmin\ThemeController;
@@ -31,35 +32,23 @@ use App\Http\Controllers\Auth\RegisterOtpController;
 
 Route::get('/', function () {
     return view('welcome');
-
 });
-
 
 Route::get('/pricing', function () {
     return view('pricing');
 })->name('pricing');
 
-
-
 Route::get('/themes', [HomeController::class, 'index'])->name('themes.index');
 Route::get('/themes/{id}/preview', [HomeController::class, 'preview'])->name('themes.preview');
-Route::get('/undangan/{slug}', [InvitationController::class, 'show'])
-    ->name('invitation.show');
- Route::get(
-    '/builder/{invitation}',
-    [BuilderController::class, 'index']
-);
+Route::get('/undangan/{slug}', [InvitationController::class, 'show'])->name('invitation.show');
 
+Route::get('/builder/{invitation}', [BuilderController::class, 'index']);
+Route::post('/builder/{invitation}/save', [BuilderController::class, 'save']);
 
-
-Route::post(
-    '/builder/{invitation}/save',
-    [BuilderController::class, 'save']
-);
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// RUTE DASHBOARD DIPERBAIKI (Tidak lagi pakai function kosong)
+Route::get('/dashboard', [GeneralDashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -67,11 +56,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-
 Route::middleware(['auth'])->group(function () {
+    // SUPERADMIN
     Route::middleware(['role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [SuperadminDashboard::class, 'index'])->name('dashboard');
         Route::get('/kelola-user', [KelolaUserController::class, 'index'])->name('user.index');
         Route::post('/kelola-user', [KelolaUserController::class, 'store'])->name('user.store');
         Route::put('/kelola-user/{id}', [KelolaUserController::class, 'update'])->name('user.update');
@@ -90,8 +78,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('themes/{id}/preview', [ThemeController::class, 'preview'])->name('themes.preview');
     });
 
-
-
+    // RESELLER
     Route::middleware(['role:reseller'])->prefix('reseller')->name('reseller.')->group(function () {
         Route::get('/dashboard', [ResDashboardController::class, 'index'])->name('dashboard');
         Route::get('/templates', [ResDashboardController::class, 'templates'])->name('templates.index');
@@ -104,8 +91,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('kelola-undangan/{id}/edit', [ResKelolaUndanganController::class, 'edit'])->name('kelola-undangan.edit');
         Route::post('kelola-undangan/save/{id?}', [ResKelolaUndanganController::class, 'save'])->name('kelola-undangan.save');
         Route::delete('kelola-undangan/{id}', [ResKelolaUndanganController::class, 'destroy'])->name('kelola-undangan.destroy');
-        Route::post('kelola-undangan/{id}/toggle-status', [ResKelolaUndanganController::class, 'toggleStatus'])
-        ->name('kelola-undangan.toggle-status');
+        Route::post('kelola-undangan/{id}/toggle-status', [ResKelolaUndanganController::class, 'toggleStatus'])->name('kelola-undangan.toggle-status');
         Route::get('/themes/{id}/preview', [CusDashboardController::class, 'preview'])->name('themes.preview');
         Route::get('/kontributor', [\App\Http\Controllers\Reseller\ResContributorController::class, 'index'])->name('kontributor.index');
         Route::post('/kontributor', [\App\Http\Controllers\Reseller\ResContributorController::class, 'store'])->name('kontributor.store');
@@ -120,8 +106,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('kelola-undangan/{id}/edit', [CusKelolaUndanganController::class, 'edit'])->name('kelola-undangan.edit');
         Route::post('kelola-undangan/save/{id?}', [CusKelolaUndanganController::class, 'save'])->name('kelola-undangan.save');
         Route::delete('kelola-undangan/{id}', [CusKelolaUndanganController::class, 'destroy'])->name('kelola-undangan.destroy');
-        Route::post('kelola-undangan/{id}/toggle-status', [CusKelolaUndanganController::class, 'toggleStatus'])
-        ->name('kelola-undangan.toggle-status');
+        Route::post('kelola-undangan/{id}/toggle-status', [CusKelolaUndanganController::class, 'toggleStatus'])->name('kelola-undangan.toggle-status');
         Route::get('/themes/{id}/preview', [CusDashboardController::class, 'preview'])->name('themes.preview');
         
         Route::get('/paket', [CusPaketController::class, 'index'])->name('paket.index');
@@ -134,11 +119,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware('guest')->group(function () {
-    Route::post('/register/send-otp',   [RegisterOtpController::class, 'send'])
-        ->name('register.send-otp');
-    Route::post('/register/verify-otp', [RegisterOtpController::class, 'verify'])
-        ->name('register.verify-otp');
-
+    Route::post('/register/send-otp', [RegisterOtpController::class, 'send'])->name('register.send-otp');
+    Route::post('/register/verify-otp', [RegisterOtpController::class, 'verify'])->name('register.verify-otp');
 });
 
 

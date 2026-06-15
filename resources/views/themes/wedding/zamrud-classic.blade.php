@@ -1,9 +1,57 @@
+@php
+
+    $projectData = [];
+    if(isset($invitation->builder->project_data)) {
+        $projectData = is_string($invitation->builder->project_data) ? json_decode($invitation->builder->project_data, true) : $invitation->builder->project_data;
+    }
+
+    $musicMedia = $invitation->media->where('type', 'music')->first();
+
+    $musicPath = $musicMedia ? asset($musicMedia->file_path) . '?t=' . time() : 'https://assets.mixkit.co/music/preview/mixkit-beautiful-dream-493.mp3';
+
+    $showParents = isset($projectData['show_parents']) ? filter_var($projectData['show_parents'], FILTER_VALIDATE_BOOLEAN) : true;
+    $primaryColor = !empty($projectData['primary_color']) ? $projectData['primary_color'] : '#c8a46a';
+
+    $coverMedia = $invitation->media->where('type', 'cover')->first();
+    $coverImage = $coverMedia ? asset($coverMedia->file_path) . '?t=' . time() : 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2000';
+
+    $defaultOrder = [
+        ['id' => 'cover', 'visible' => true],
+        ['id' => 'quote', 'visible' => true],
+        ['id' => 'profile', 'visible' => true],
+        ['id' => 'event', 'visible' => true],
+        ['id' => 'gallery', 'visible' => true],
+        ['id' => 'closing', 'visible' => true]
+    ];
+
+    $sectionOrder = $defaultOrder;
+    if(!empty($projectData['section_order'])) {
+        $savedOrder = is_string($projectData['section_order']) ? json_decode($projectData['section_order'], true) : $projectData['section_order'];
+
+        $savedIds = array_column($savedOrder, 'id');
+        $sectionOrder = $savedOrder;
+
+        foreach ($defaultOrder as $def) {
+            if (!in_array($def['id'], $savedIds)) {
+                $sectionOrder[] = $def;
+            }
+        }
+    }
+
+    $hasSecondPerson = !empty($invitation->profile->second_name);
+
+    $eventDate = isset($invitation->event_date) ? $invitation->event_date : '2026-12-25';
+    $timeParts = explode('-', $eventDate);
+    $year = isset($timeParts[0]) ? (int)$timeParts[0] : 2026;
+    $month = isset($timeParts[1]) ? (int)$timeParts[1] : 12;
+    $day = isset($timeParts[2]) ? (int)$timeParts[2] : 25;
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wedding Invitation — Muhamad Nur Salam & Davina Karamoy</title>
+    <title>{{ $invitation->title }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,14 +59,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* =========================================
-           DESIGN TOKENS
-        ========================================= */
+
         :root {
             --forest-deep: #0d201a;
             --forest:      #163228;
             --forest-mid:  #1e4035;
-            --gold:        #c8a46a;
+            --gold:        {{ $primaryColor }};
             --gold-light:  #dfc08a;
             --gold-faint:  rgba(200,164,106,0.10);
             --cream:       #faf6ef;
@@ -26,7 +72,7 @@
             --text:        #1a1816;
             --text-mid:    #50483c;
             --text-light:  #978e82;
-            --ease:        cubic-bezier(0.22,1,0.36,1);
+            --ease:        cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,9 +87,6 @@
         }
         body.unlocked { overflow-y: auto; overflow-x: hidden; }
 
-        /* =========================================
-           UTILITIES
-        ========================================= */
         .eyebrow {
             font-size: 9px;
             font-weight: 500;
@@ -65,9 +108,6 @@
         .reveal.in { opacity: 1; transform: none; }
         @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } }
 
-        /* =========================================
-           ENVELOPE OVERLAY
-        ========================================= */
         #env {
             position: fixed; inset: 0; z-index: 200;
             background: var(--forest-deep);
@@ -76,26 +116,50 @@
         }
         #env.exit { opacity: 0; transform: scale(1.07); pointer-events: none; }
 
-        /* Islamic geometric pattern background */
         .env-pattern {
             position: absolute; inset: 0;
             opacity: 1; pointer-events: none;
         }
 
-        /* Corner borders */
         .corner {
             position: absolute;
             width: 80px; height: 80px;
         }
         @media (min-width: 768px) { .corner { width: 120px; height: 120px; } }
+
         .corner--tl { top: 24px; left: 24px;
-            border-top: 1px solid rgba(200,164,106,.35); border-left: 1px solid rgba(200,164,106,.35); }
+            border-top: 1px solid rgba(200,164,106,.35); border-left: 1px solid rgba(200,164,106,.35);
+            animation: corner-tl 1.5s var(--ease) forwards;
+        }
         .corner--tr { top: 24px; right: 24px;
-            border-top: 1px solid rgba(200,164,106,.35); border-right: 1px solid rgba(200,164,106,.35); }
+            border-top: 1px solid rgba(200,164,106,.35); border-right: 1px solid rgba(200,164,106,.35);
+            animation: corner-tr 1.5s var(--ease) forwards;
+        }
         .corner--bl { bottom: 24px; left: 24px;
-            border-bottom: 1px solid rgba(200,164,106,.35); border-left: 1px solid rgba(200,164,106,.35); }
+            border-bottom: 1px solid rgba(200,164,106,.35); border-left: 1px solid rgba(200,164,106,.35);
+            animation: corner-bl 1.5s var(--ease) forwards;
+        }
         .corner--br { bottom: 24px; right: 24px;
-            border-bottom: 1px solid rgba(200,164,106,.35); border-right: 1px solid rgba(200,164,106,.35); }
+            border-bottom: 1px solid rgba(200,164,106,.35); border-right: 1px solid rgba(200,164,106,.35);
+            animation: corner-br 1.5s var(--ease) forwards;
+        }
+
+        @keyframes corner-tl {
+            from { transform: translate(-25px, -25px); opacity: 0; }
+            to { transform: none; opacity: 1; }
+        }
+        @keyframes corner-tr {
+            from { transform: translate(25px, -25px); opacity: 0; }
+            to { transform: none; opacity: 1; }
+        }
+        @keyframes corner-bl {
+            from { transform: translate(-25px, 25px); opacity: 0; }
+            to { transform: none; opacity: 1; }
+        }
+        @keyframes corner-br {
+            from { transform: translate(25px, 25px); opacity: 0; }
+            to { transform: none; opacity: 1; }
+        }
 
         .env-body {
             text-align: center; padding: 32px;
@@ -104,12 +168,14 @@
         .env-names {
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(28px, 6.5vw, 58px);
-            font-weight: 300; color: var(--cream); line-height: 1;
+            font-weight: 300; color: var(--cream); line-height: 1.1;
         }
         .env-amp {
             font-family: 'Great Vibes', cursive;
-            font-size: clamp(44px, 10vw, 82px);
+            font-size: clamp(40px, 9vw, 76px);
             color: var(--gold); display: block; line-height: 1.2;
+            margin: 12px 0;
+            transition: transform 0.4s var(--ease);
         }
         .env-sep { width: 48px; height: 1px; background: rgba(200,164,106,.3); margin: 24px auto; }
         .env-to {
@@ -132,7 +198,8 @@
             letter-spacing: 0.34em; text-transform: uppercase;
             background: transparent; cursor: pointer;
             position: relative; overflow: hidden;
-            transition: color 0.4s ease;
+            border-radius: 4px;
+            transition: all 0.4s var(--ease);
         }
         .btn-open::after {
             content: ''; position: absolute; inset: 0;
@@ -141,15 +208,23 @@
             transition: transform 0.4s var(--ease);
         }
         .btn-open:hover::after { transform: translateX(0); }
-        .btn-open:hover { color: var(--forest-deep); }
+        .btn-open:hover {
+            color: var(--forest-deep);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(200, 164, 106, 0.3);
+        }
         .btn-open > * { position: relative; z-index: 1; }
 
-        /* =========================================
-           HERO
-        ========================================= */
         #hero {
             min-height: 100vh;
+            @if ($coverMedia && file_exists(public_path($coverMedia->file_path)))
+            background: linear-gradient(rgba(13, 32, 26, 0.75), rgba(13, 32, 26, 0.85)),
+                        url('{{ asset($coverMedia->file_path) }}?t={{ time() }}') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            @else
             background: var(--forest);
+            @endif
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             text-align: center; padding: 80px 24px;
@@ -202,7 +277,6 @@
             letter-spacing: 0.18em;
         }
 
-        /* Countdown */
         .countdown {
             display: flex; gap: 20px;
             margin-top: 36px; position: relative; z-index: 2;
@@ -226,7 +300,6 @@
             padding-top: 4px;
         }
 
-        /* Scroll cue */
         .scroll-cue {
             position: absolute; bottom: 28px; left: 50%;
             transform: translateX(-50%);
@@ -249,9 +322,6 @@
             100% { transform: scaleY(1); opacity: 0; }
         }
 
-        /* =========================================
-           AYAT / QUOTE
-        ========================================= */
         #ayat {
             background: var(--forest-deep);
             padding: 112px 24px; text-align: center;
@@ -289,9 +359,6 @@
             margin-top: 20px; position: relative; z-index: 1;
         }
 
-        /* =========================================
-           COUPLE
-        ========================================= */
         #couple {
             background: var(--cream);
             padding: 112px 24px; overflow: hidden;
@@ -327,6 +394,7 @@
             height: min(360px, 95vw);
             margin: 0 auto 28px;
             position: relative;
+            overflow: visible;
         }
         .portrait::after {
             content: ''; position: absolute;
@@ -334,23 +402,32 @@
             bottom: 10px; left: 10px;
             border: 1px solid rgba(200,164,106,.28);
             pointer-events: none;
-            transition: transform 0.4s ease;
+            transition: transform 0.6s var(--ease), border-color 0.6s var(--ease);
         }
-        .portrait:hover::after { transform: translate(5px,-5px); }
-        .portrait img, .portrait-ph {
+        .portrait img {
             width: 100%; height: 100%; object-fit: cover; display: block;
+            transition: transform 0.8s var(--ease);
         }
         .portrait-ph {
+            width: 100%; height: 100%;
             background: var(--forest);
             display: flex; align-items: center; justify-content: center;
         }
         .portrait-ph i { font-size: 60px; color: rgba(200,164,106,.2); }
 
+        .person-card:hover .portrait img {
+            transform: scale(1.06);
+        }
+        .person-card:hover .portrait::after {
+            transform: translate(6px, -6px) scale(1.01);
+            border-color: var(--gold-light);
+        }
+
         .person-name {
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(30px, 4.5vw, 44px);
             font-weight: 300; color: var(--text);
-            line-height: 1.05; margin-bottom: 6px;
+            line-height: 1.15; margin-bottom: 6px;
         }
         .person-sub {
             font-size: 9px; letter-spacing: 0.3em;
@@ -371,9 +448,6 @@
             line-height: 1; opacity: 0.75;
         }
 
-        /* =========================================
-           EVENTS
-        ========================================= */
         #events {
             background: var(--forest-deep);
             padding: 112px 24px;
@@ -389,9 +463,17 @@
         .event-card {
             background: var(--forest-deep);
             padding: 52px 44px; text-align: center;
-            transition: background 0.3s ease;
+            border: 1px solid transparent;
+            transition: all 0.5s var(--ease);
         }
-        .event-card:hover { background: rgba(200,164,106,.04); }
+
+        .event-card:hover {
+            background: rgba(200,164,106,.03);
+            transform: translateY(-8px);
+            border-color: rgba(200, 164, 106, 0.25);
+            box-shadow: 0 16px 36px rgba(13, 32, 38, 0.5), 0 0 20px rgba(200, 164, 106, 0.1);
+        }
+
         .event-num {
             font-size: 9px; letter-spacing: 0.42em;
             color: rgba(200,164,106,.38); margin-bottom: 20px;
@@ -423,12 +505,9 @@
         }
         .event-address {
             font-size: 11px; font-weight: 300;
-            color: rgba(250,246,239,.3); line-height: 1.9;
+            color: rgba(250,246,239,.35); line-height: 1.9;
         }
 
-        /* =========================================
-           GALLERY
-        ========================================= */
         #gallery {
             background: var(--cream-warm);
             padding: 112px 24px;
@@ -438,7 +517,7 @@
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             grid-auto-rows: 220px;
-            gap: 5px;
+            gap: 8px;
         }
         @media (max-width: 640px) {
             .gallery-grid {
@@ -449,6 +528,9 @@
         }
         .g-item {
             overflow: hidden; position: relative;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            transition: all 0.5s var(--ease);
         }
         .g-item:nth-child(1) { grid-column: span 4; grid-row: span 2; }
         .g-item:nth-child(2) { grid-column: span 2; }
@@ -460,24 +542,26 @@
         .g-item img {
             width: 100%; height: 100%;
             object-fit: cover; display: block;
-            transition: transform 0.7s var(--ease), filter 0.5s ease;
-            filter: contrast(.93) saturate(.88);
+            transition: transform 0.8s var(--ease), filter 0.5s ease;
+            filter: contrast(.94) saturate(.85);
+        }
+
+        .g-item:hover {
+            transform: scale(1.025) translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
         .g-item:hover img {
-            transform: scale(1.06);
+            transform: scale(1.05);
             filter: contrast(1) saturate(1);
         }
-        /* Overlay on hover */
         .g-item::after {
             content: ''; position: absolute; inset: 0;
-            background: rgba(13,32,26,.4);
+            background: rgba(13,32,26,.3);
             opacity: 0; transition: opacity 0.4s ease;
+            pointer-events: none;
         }
         .g-item:hover::after { opacity: 1; }
 
-        /* =========================================
-           CLOSING
-        ========================================= */
         #closing {
             background: var(--forest);
             padding: 128px 24px; text-align: center;
@@ -508,9 +592,10 @@
         }
         .closing-amp {
             font-family: 'Great Vibes', cursive;
-            font-size: clamp(50px, 11vw, 96px);
+            font-size: clamp(48px, 10vw, 88px);
             color: var(--gold); display: block;
             line-height: 1.2;
+            margin: 10px 0;
         }
         .closing-text {
             font-size: 12px; font-weight: 300;
@@ -530,9 +615,6 @@
             background: var(--gold); transform: rotate(45deg);
         }
 
-        /* =========================================
-           MUSIC BUTTON
-        ========================================= */
         #music-btn {
             position: fixed; bottom: 24px; right: 24px; z-index: 99;
             width: 44px; height: 44px;
@@ -541,30 +623,52 @@
             color: var(--gold); border-radius: 50%;
             cursor: pointer; display: none;
             align-items: center; justify-content: center;
-            transition: all 0.3s ease; font-size: 14px;
+            transition: all 0.4s var(--ease); font-size: 14px;
+            animation: goldPulse 2.5s infinite;
         }
         #music-btn.show { display: flex; }
-        #music-btn:hover { background: var(--gold); color: var(--forest-deep); }
+        #music-btn:hover {
+            background: var(--gold);
+            color: var(--forest-deep);
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 0 20px var(--gold);
+        }
+        @keyframes goldPulse {
+            0% { box-shadow: 0 0 0 0 rgba(200, 164, 106, 0.45); }
+            70% { box-shadow: 0 0 0 12px rgba(200, 164, 106, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(200, 164, 106, 0); }
+        }
     </style>
+    <style>
+        body.is-editor #env { display: none !important; }
+        body.is-editor { overflow: auto !important; }
+    </style>
+    <script>
+        if (window.self !== window.top) {
+            document.documentElement.classList.add('is-editor');
+        }
+    </script>
 </head>
 
-<body>
+<body class="selection:bg-[#e5d5b5]">
+    <script>
+        if (window.self !== window.top) {
+            document.body.classList.add('is-editor');
+            document.body.classList.add('unlocked');
+        }
+    </script>
 
-<!-- Audio -->
 <audio id="audio" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    <source src="{{ $musicPath }}" type="audio/mpeg">
 </audio>
 
 <button id="music-btn" onclick="toggleMusic()" aria-label="Toggle music">
     <i id="music-icon" class="fa-solid fa-music"></i>
 </button>
 
-<!-- ============================================================
-     ENVELOPE OVERLAY
-============================================================ -->
+@if(!request()->has('preview'))
 <div id="env" role="dialog" aria-label="Wedding Invitation">
 
-    <!-- Islamic 8-pointed star geometric pattern -->
     <svg class="env-pattern" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice"
          xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -572,10 +676,10 @@
                      patternUnits="userSpaceOnUse">
                 <g transform="translate(25,25)">
                     <rect x="-11" y="-11" width="22" height="22"
-                          fill="none" stroke="rgba(200,164,106,0.13)" stroke-width="0.5"/>
+                           fill="none" stroke="rgba(200,164,106,0.13)" stroke-width="0.5"/>
                     <rect x="-11" y="-11" width="22" height="22"
-                          fill="none" stroke="rgba(200,164,106,0.13)" stroke-width="0.5"
-                          transform="rotate(45)"/>
+                           fill="none" stroke="rgba(200,164,106,0.13)" stroke-width="0.5"
+                           transform="rotate(45)"/>
                     <circle r="4.5" fill="none" stroke="rgba(200,164,106,0.08)" stroke-width="0.5"/>
                 </g>
             </pattern>
@@ -589,29 +693,31 @@
     <div class="corner corner--br"></div>
 
     <div class="env-body">
-        <p class="eyebrow" style="opacity:.55;margin-bottom:28px;">Wedding Invitation</p>
+        <p class="eyebrow" style="opacity:.55;margin-bottom:28px;" data-preview="headline">{{ !empty($invitation->profile->headline) ? $invitation->profile->headline : 'Wedding Invitation' }}</p>
         <div class="env-names">
-            Muhamad Nur Salam
-            <span class="env-amp">& Davina</span>
-            Karamoy
+            <span data-preview="first_name">{{ !empty($invitation->profile->first_name) ? $invitation->profile->first_name : 'Nama Pertama' }}</span>
+            @if($hasSecondPerson)
+                <span class="env-amp">&</span>
+                <span data-preview="second_name">{{ $invitation->profile->second_name }}</span>
+            @endif
         </div>
         <div class="env-sep"></div>
         <p class="env-to">Kepada Yth.</p>
-        <p class="env-guest">Tamu Undangan Terhormat</p>
+        <p class="env-guest">{{ request()->get('to') ?? 'Tamu Undangan Terhormat' }}</p>
         <button class="btn-open" onclick="openInvitation()">
             <i class="fa-solid fa-envelope-open fa-xs"></i>
             <span>Buka Undangan</span>
         </button>
     </div>
 </div>
+@endif
 
+@foreach ($sectionOrder as $section)
+@if ($section['visible'])
 
-<!-- ============================================================
-     HERO
-============================================================ -->
+@if ($section['id'] == 'cover')
 <section id="hero">
 
-    <!-- Hero geometric pattern -->
     <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.045;pointer-events:none;"
          viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice"
          xmlns="http://www.w3.org/2000/svg">
@@ -620,10 +726,10 @@
                      patternUnits="userSpaceOnUse">
                 <g transform="translate(35,35)">
                     <rect x="-17" y="-17" width="34" height="34"
-                          fill="none" stroke="rgba(200,164,106,1)" stroke-width="0.55"/>
+                           fill="none" stroke="rgba(200,164,106,1)" stroke-width="0.55"/>
                     <rect x="-17" y="-17" width="34" height="34"
-                          fill="none" stroke="rgba(200,164,106,1)" stroke-width="0.55"
-                          transform="rotate(45)"/>
+                           fill="none" stroke="rgba(200,164,106,1)" stroke-width="0.55"
+                           transform="rotate(45)"/>
                     <circle r="7.5" fill="none" stroke="rgba(200,164,106,.7)" stroke-width="0.45"/>
                     <circle r="2.2" fill="rgba(200,164,106,.55)"/>
                 </g>
@@ -635,15 +741,19 @@
     <div class="hero-glow"></div>
     <div class="hero-border"></div>
 
-    <p class="hero-eyebrow">The Wedding Celebration Of</p>
+    <p class="hero-eyebrow" data-preview="headline">{{ !empty($invitation->profile->headline) ? $invitation->profile->headline : 'The Wedding Celebration Of' }}</p>
 
-    <h1 class="hero-name">Muhamad Nur Salam</h1>
-    <span class="hero-amp">& Davina</span>
-    <h1 class="hero-name">Karamoy</h1>
+    <h1 class="hero-name" data-preview="first_name">{{ !empty($invitation->profile->first_name) ? $invitation->profile->first_name : 'Nama' }}</h1>
+    @if($hasSecondPerson)
+        <span class="hero-amp">&</span>
+        <h1 class="hero-name" data-preview="second_name">{{ $invitation->profile->second_name }}</h1>
+    @endif
 
     <div class="hero-date-wrap">
         <p class="hero-date-label">Save The Date</p>
-        <p class="hero-date">Kamis · 25 Desember 2025</p>
+        <p class="hero-date" data-preview="event_date">
+            {{ isset($invitation->event_date) ? \Carbon\Carbon::parse($invitation->event_date)->translatedFormat('l · d F Y') : 'Segera' }}
+        </p>
 
         <div class="countdown" id="countdown">
             <div class="cd-unit">
@@ -668,16 +778,19 @@
         </div>
     </div>
 
+    <div style="margin-top: 32px; border: 1px solid rgba(200,164,106,.15); background: rgba(13,32,26,.4); padding: 16px; border-radius: 12px; max-width: 320px; z-index: 2;">
+        <p style="font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(200,164,106,.65); margin-bottom: 4px;">Alamat Utama:</p>
+        <p style="font-size: 11px; font-weight: 300; color: var(--cream); line-height: 1.5; whitespace: pre-wrap;" data-preview="address">{{ !empty($invitation->profile->address) ? $invitation->profile->address : 'Alamat belum diisi...' }}</p>
+    </div>
+
     <div class="scroll-cue">
         <span class="scroll-cue-text">Scroll</span>
         <div class="scroll-cue-bar"></div>
     </div>
 </section>
+@endif
 
-
-<!-- ============================================================
-     AYAT / QUOTE
-============================================================ -->
+@if ($section['id'] == 'quote')
 <section id="ayat">
     <div class="ayat-glow"></div>
     <div style="position:relative;z-index:1;max-width:620px;margin:0 auto;text-align:center;">
@@ -686,19 +799,15 @@
             وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُمْ مِنْ أَنفُسِكُمْ أَزْوَاجًا لِتَسْكُنُوا إِلَيْهَا
         </p>
         <div class="ayat-rule"></div>
-        <p class="ayat-text reveal">
-            "Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu
-            dari jenismu sendiri, agar kamu merasa tenteram kepadanya, dan Dia menjadikan
-            di antaramu rasa kasih dan sayang."
+        <p class="ayat-text reveal" data-preview="quote">
+            {{ !empty($invitation->profile->quote) ? $invitation->profile->quote : '"Dan di antara tanda-tanda kebesaran-Nya..."' }}
         </p>
         <p class="ayat-source" style="margin-top:20px;">— QS. Ar-Rum : 21</p>
     </div>
 </section>
+@endif
 
-
-<!-- ============================================================
-     COUPLE
-============================================================ -->
+@if ($section['id'] == 'profile')
 <section id="couple">
     <div class="section-hdr reveal">
         <span class="eyebrow">Mempelai</span>
@@ -706,84 +815,106 @@
         <div class="gold-rule"></div>
     </div>
 
-    <div class="couple-grid">
-        <!-- Groom -->
+    <div class="couple-grid" style="{{ !$hasSecondPerson ? 'grid-template-columns: 1fr;' : '' }}">
+
         <div class="person-card reveal">
             <div class="portrait">
-                <div class="portrait-ph"><i class="fa-solid fa-user"></i></div>
+                @if ($invitation->firstPersonPhoto && file_exists(public_path($invitation->firstPersonPhoto->file_path)))
+                    <img src="{{ asset($invitation->firstPersonPhoto->file_path) }}" class="w-full h-full object-cover block">
+                @else
+                    <div class="portrait-ph"><i class="fa-solid fa-user"></i></div>
+                @endif
             </div>
-            <h3 class="person-name">Muhamad<br>Nur Salam</h3>
-            <p class="person-sub">Putra dari</p>
-            <p class="person-parents">
-                <strong>Bapak Abdullah Salam</strong><br>&amp;<br>
-                <strong>Ibu Siti Rahmawati</strong>
-            </p>
+            <h3 class="person-name" data-preview="first_name">{{ !empty($invitation->profile->first_name) ? $invitation->profile->first_name : 'Nama Pertama' }}</h3>
+            @if($showParents)
+                <p class="person-sub">Putra dari</p>
+                <p class="person-parents">
+                    <strong><span data-preview="first_father">{{ !empty($invitation->profile->first_father) ? $invitation->profile->first_father : 'Nama Ayah' }}</span></strong><br>&amp;<br>
+                    <strong><span data-preview="first_mother">{{ !empty($invitation->profile->first_mother) ? $invitation->profile->first_mother : 'Nama Ibu' }}</span></strong>
+                </p>
+            @endif
         </div>
 
-        <!-- Divider -->
+        @if($hasSecondPerson)
         <div class="couple-div-col" style="text-align:center;">
             <span class="couple-amp">&</span>
         </div>
 
-        <!-- Bride -->
         <div class="person-card reveal">
             <div class="portrait">
-                <div class="portrait-ph"><i class="fa-solid fa-user"></i></div>
+                @if ($invitation->secondPersonPhoto && file_exists(public_path($invitation->secondPersonPhoto->file_path)))
+                    <img src="{{ asset($invitation->secondPersonPhoto->file_path) }}" class="w-full h-full object-cover block">
+                @else
+                    <div class="portrait-ph"><i class="fa-solid fa-user"></i></div>
+                @endif
             </div>
-            <h3 class="person-name">Davina<br>Karamoy</h3>
-            <p class="person-sub">Putri dari</p>
-            <p class="person-parents">
-                <strong>Bapak Michael Karamoy</strong><br>&amp;<br>
-                <strong>Ibu Grace Karamoy</strong>
-            </p>
+            <h3 class="person-name" data-preview="second_name">{{ $invitation->profile->second_name }}</h3>
+            @if($showParents)
+                <p class="person-sub">Putri dari</p>
+                <p class="person-parents">
+                    <strong><span data-preview="second_father">{{ !empty($invitation->profile->second_father) ? $invitation->profile->second_father : 'Nama Ayah' }}</span></strong><br>&amp;<br>
+                    <strong><span data-preview="second_mother">{{ !empty($invitation->profile->second_mother) ? $invitation->profile->second_mother : 'Nama Ibu' }}</span></strong>
+                </p>
+            @endif
         </div>
+        @endif
     </div>
 </section>
+@endif
 
-
-<!-- ============================================================
-     EVENTS
-============================================================ -->
+@if ($section['id'] == 'event')
 <section id="events">
     <div class="events-wrap">
         <div class="section-hdr reveal">
             <span class="eyebrow">The Day Of</span>
             <h2 class="section-title section-title--light">Rangkaian Acara</h2>
             <div class="gold-rule"></div>
+            <p style="font-size: 13px; color: rgba(250,246,239,.65); max-width: 500px; margin: 12px auto 0; font-weight: 300;" data-preview="description">{{ !empty($invitation->profile->description) ? $invitation->profile->description : 'Tambahkan deskripsi acara Anda di sini...' }}</p>
         </div>
 
         <div class="events-grid">
-            <div class="event-card reveal">
-                <p class="event-num">01 — Akad Nikah</p>
-                <h3 class="event-name">Ijab Kabul</h3>
-                <p class="event-meta">Tanggal</p>
-                <p class="event-val">Kamis, 25 Desember 2025</p>
-                <p class="event-meta">Waktu</p>
-                <p class="event-val">08.00 WIB — Selesai</p>
-                <div class="event-rule"></div>
-                <p class="event-venue">Masjid Al-Ikhlas</p>
-                <p class="event-address">Jl. Merdeka No. 1<br>Bandung, Jawa Barat</p>
-            </div>
+            @forelse ($invitation->events as $index => $event)
+                <div class="event-card reveal">
+                    <p class="event-num">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }} — {{ $event->name }}</p>
+                    <h3 class="event-name" data-event-preview="name_{{ $index }}">{{ $event->name }}</h3>
 
-            <div class="event-card reveal">
-                <p class="event-num">02 — Resepsi</p>
-                <h3 class="event-name">Walimatul 'Urs</h3>
-                <p class="event-meta">Tanggal</p>
-                <p class="event-val">Kamis, 25 Desember 2025</p>
-                <p class="event-meta">Waktu</p>
-                <p class="event-val">11.00 WIB — Selesai</p>
-                <div class="event-rule"></div>
-                <p class="event-venue">The Grand Ballroom</p>
-                <p class="event-address">Jl. Asia Afrika No. 25<br>Bandung, Jawa Barat</p>
-            </div>
+                    <p class="event-meta">Tanggal</p>
+                    <p class="event-val" data-event-preview="event_date_{{ $index }}">{{ \Carbon\Carbon::parse($event->event_date)->translatedFormat('l, d F Y') }}</p>
+
+                    <p class="event-meta">Waktu</p>
+                    <p class="event-val">
+                        <span data-event-preview="start_time_{{ $index }}">{{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }}</span> -
+                        <span data-event-preview="end_time_{{ $index }}">{{ $event->end_time ? \Carbon\Carbon::parse($event->end_time)->format('H:i') : 'Selesai' }}</span>
+                    </p>
+
+                    <div class="event-rule"></div>
+                    <p class="event-venue" data-event-preview="venue_name_{{ $index }}">{{ $event->venue_name }}</p>
+                    <p class="event-address" data-event-preview="address_{{ $index }}">{{ $event->address }}</p>
+
+                    @if($event->description)
+                        <div class="event-rule"></div>
+                        <p class="event-address" data-event-preview="description_{{ $index }}">{{ $event->description }}</p>
+                    @endif
+
+                    @if($event->google_maps_url)
+                        <div style="margin-top: 24px;">
+                            <a href="{{ $event->google_maps_url }}" target="_blank" class="btn-open" style="padding: 8px 20px; font-size: 8px;">
+                                <span>Buka G-Maps</span>
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            @empty
+                <div class="event-card reveal" style="grid-column: span 2;">
+                    <p class="event-val">Belum ada rincian event ditambahkan.</p>
+                </div>
+            @endforelse
         </div>
     </div>
 </section>
+@endif
 
-
-<!-- ============================================================
-     GALLERY
-============================================================ -->
+@if ($section['id'] == 'gallery')
 <section id="gallery">
     <div class="section-hdr reveal">
         <span class="eyebrow">Captured Moments</span>
@@ -792,31 +923,20 @@
     </div>
 
     <div class="gallery-grid">
-        <div class="g-item">
-            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=900" alt="Wedding photo">
-        </div>
-        <div class="g-item">
-            <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=600" alt="Wedding photo">
-        </div>
-        <div class="g-item">
-            <img src="https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=600" alt="Wedding photo">
-        </div>
-        <div class="g-item">
-            <img src="https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=600" alt="Wedding photo">
-        </div>
-        <div class="g-item">
-            <img src="https://images.unsplash.com/photo-1529636798458-92182e662485?q=80&w=600" alt="Wedding photo">
-        </div>
-        <div class="g-item">
-            <img src="https://images.unsplash.com/photo-1587271407850-8d438ca9fdf2?q=80&w=600" alt="Wedding photo">
-        </div>
+        @forelse ($invitation->galleries->filter(function($g) { return file_exists(public_path($g->file_path)); }) as $gallery)
+            <div class="g-item">
+                <img src="{{ asset($gallery->file_path) }}" alt="Wedding photo">
+            </div>
+        @empty
+            <div class="g-item" style="grid-column: span 6; text-align: center; color: var(--text-light); padding: 48px 0;">
+                <p>Belum ada foto galeri yang diunggah.</p>
+            </div>
+        @endforelse
     </div>
 </section>
+@endif
 
-
-<!-- ============================================================
-     CLOSING
-============================================================ -->
+@if ($section['id'] == 'closing')
 <section id="closing">
     <div class="closing-glow"></div>
     <div class="closing-border"></div>
@@ -824,15 +944,15 @@
     <p class="closing-tag reveal">Kami yang berbahagia</p>
 
     <div class="closing-names reveal">
-        <div class="closing-name">Muhamad Nur Salam</div>
-        <span class="closing-amp">& Davina</span>
-        <div class="closing-name">Karamoy</div>
+        <div class="closing-name" data-preview="first_name">{{ !empty($invitation->profile->first_name) ? $invitation->profile->first_name : 'Nama' }}</div>
+        @if($hasSecondPerson)
+            <span class="closing-amp">&</span>
+            <div class="closing-name" data-preview="second_name">{{ $invitation->profile->second_name }}</div>
+        @endif
     </div>
 
-    <p class="closing-text reveal">
-        Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila
-        Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu
-        kepada kedua mempelai.
+    <p class="closing-text reveal" data-preview="closing_text">
+        {{ !empty($invitation->profile->closing_text) ? $invitation->profile->closing_text : 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kedua mempelai.' }}
     </p>
 
     <div class="ornament reveal">
@@ -843,21 +963,28 @@
         <div class="ornament-line"></div>
     </div>
 </section>
+@endif
 
+@endif
+@endforeach
 
-<!-- ============================================================
-     JAVASCRIPT
-============================================================ -->
 <script>
-    /* ---- Envelope Open ---- */
+
     const audio     = document.getElementById('audio');
     const musicBtn  = document.getElementById('music-btn');
     const musicIcon = document.getElementById('music-icon');
     let playing = false;
 
+    @if(request()->has('preview'))
+        musicBtn.classList.add('show');
+    @endif
+
     function openInvitation() {
         const env = document.getElementById('env');
-        env.classList.add('exit');
+        if(env) {
+            env.classList.add('exit');
+            setTimeout(() => env.remove(), 950);
+        }
         document.body.classList.add('unlocked');
         musicBtn.classList.add('show');
 
@@ -865,8 +992,6 @@
             playing = true;
             musicIcon.className = 'fa-solid fa-compact-disc fa-spin';
         }).catch(() => {});
-
-        setTimeout(() => env.remove(), 950);
     }
 
     function toggleMusic() {
@@ -881,8 +1006,7 @@
         }
     }
 
-    /* ---- Countdown ---- */
-    const weddingDate = new Date('2025-12-25T08:00:00');
+    const weddingDate = new Date({{ $year }}, {{ $month - 1 }}, {{ $day }}, 8, 0, 0);
 
     function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -902,7 +1026,6 @@
     tick();
     setInterval(tick, 1000);
 
-    /* ---- Scroll Reveal ---- */
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => {
             if (e.isIntersecting) {

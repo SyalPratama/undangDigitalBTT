@@ -175,7 +175,7 @@ class ResKelolaUndanganController extends Controller
         $destinationPath = public_path("assets/{$folderName}");
 
         try {
-            DB::transaction(function () use ($request, $isEdit, $folderName, $destinationPath, &$invitation) {
+            DB::transaction(function () use ($request, $isEdit, $folderName, $destinationPath, &$invitation, $invitationType) {
                 
                 $invitationData = [
                     'theme_id'           => $request->theme_id,
@@ -203,12 +203,12 @@ class ResKelolaUndanganController extends Controller
                     'quote'           => $request->quote,
                     'first_name'      => $request->first_name,
                     'first_nickname'  => $request->first_nickname,
-                    'second_name'     => $request->second_name,
-                    'second_nickname' => $request->second_nickname,
+                    'second_name'     => $isDoubleParty ? $request->second_name : null,
+                    'second_nickname' => $isDoubleParty ? $request->second_nickname : null,
                     'first_father'    => $request->first_father,
                     'first_mother'    => $request->first_mother,
-                    'second_father'   => $request->second_father,
-                    'second_mother'   => $request->second_mother,
+                    'second_father'   => $isDoubleParty ? $request->second_father : null,
+                    'second_mother'   => $isDoubleParty ? $request->second_mother : null,
                     'description'     => $request->description,
                     'address'         => $request->address,
                     'closing_text'    => $request->closing_text,

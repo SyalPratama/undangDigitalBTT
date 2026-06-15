@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,362 +7,591 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap"
-        rel="stylesheet">
+    @php
+        $projectData = [];
+        if(isset($invitation->builder->project_data)) {
+            $projectData = is_string($invitation->builder->project_data) ? json_decode($invitation->builder->project_data, true) : $invitation->builder->project_data;
+        }
+        
+        $musicMedia = $invitation->media->where('type', 'music')->first();
+        $musicPath = $musicMedia ? asset($musicMedia->file_path) . '?t=' . time() : 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+        
+        $showParents = isset($projectData['show_parents']) ? filter_var($projectData['show_parents'], FILTER_VALIDATE_BOOLEAN) : true;
+        $primaryColor = !empty($projectData['primary_color']) ? $projectData['primary_color'] : '#E0A96D';
+
+        $coverMedia = $invitation->media->where('type', 'cover')->first();
+        $coverImage = ($coverMedia && file_exists(public_path($coverMedia->file_path))) 
+            ? asset($coverMedia->file_path) . '?t=' . time() 
+            : 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2000';
+
+        $defaultOrder = [
+            ['id' => 'cover', 'visible' => true],
+            ['id' => 'quote', 'visible' => true],
+            ['id' => 'profile', 'visible' => true],
+            ['id' => 'event', 'visible' => true],
+            ['id' => 'gallery', 'visible' => true],
+            ['id' => 'closing', 'visible' => true]
+        ];
+
+        $sectionOrder = $defaultOrder;
+        if(!empty($projectData['section_order'])) {
+            $savedOrder = is_string($projectData['section_order']) ? json_decode($projectData['section_order'], true) : $projectData['section_order'];
+            $savedIds = array_column($savedOrder, 'id');
+            $sectionOrder = $savedOrder;
+            foreach ($defaultOrder as $def) {
+                if (!in_array($def['id'], $savedIds)) {
+                    $sectionOrder[] = $def;
+                }
+            }
+        }
+
+        $firstPhoto = $invitation->firstPersonPhoto;
+        $firstPhotoPath = ($firstPhoto && file_exists(public_path($firstPhoto->file_path))) 
+            ? asset($firstPhoto->file_path) 
+            : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800';
+
+        $secondPhoto = $invitation->secondPersonPhoto;
+        $secondPhotoPath = ($secondPhoto && file_exists(public_path($secondPhoto->file_path))) 
+            ? asset($secondPhoto->file_path) 
+            : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800';
+
+        $firstName = !empty($invitation->profile->first_name) ? $invitation->profile->first_name : 'Mempelai Pria';
+        $secondName = !empty($invitation->profile->second_name) ? $invitation->profile->second_name : 'Mempelai Wanita';
+    @endphp
 
     <style>
+        :root {
+            --sapphire-dark: #0D1B2A;
+            --sapphire-medium: #1B263B;
+            --sapphire-light: #415A77;
+            --gold: {{ $primaryColor }};
+            --gold-glow: rgba(224, 169, 109, 0.4);
+            --gold-dim: rgba(224, 169, 109, 0.15);
+            --text-light: #F8F9FA;
+            --text-dark: #212529;
+        }
+
         body {
-            font-family: 'Montserrat', sans-serif;
-            letter-spacing: 0.05em;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--sapphire-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
         }
+        body.locked { overflow: hidden; }
 
-        .heading-font {
-            font-family: 'Playfair Display', serif;
-            letter-spacing: 0.02em;
-        }
+        .font-header { font-family: 'Cinzel', serif; }
 
-        /* Hero Background with Classic Subtle Overlay */
-        .hero-bg {
-            background:
-                linear-gradient(rgba(255, 255, 255, 0.75),
-                    rgba(255, 255, 255, 0.85)),
-                url('{{ $invitation->cover?->file_path
-                    ? asset('storage/' . $invitation->cover->file_path)
-                    : 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2000' }}');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
-        /* Premium Aesthetic Corner Florals (White Classic Gold Accent) */
-        .floral-corner {
-            background-image: url('https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=500');
-            /* Tekstur bunga samar di background */
-            opacity: 0.04;
-            mix-blend-mode: multiply;
-        }
-
-        /* SVG Floral Corner Decoration Style Injection */
-        .floral-ornament {
-            position: absolute;
-            width: 140px;
-            height: 140px;
-            opacity: 0.15;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .top-left-flower {
-            top: 0;
-            left: 0;
-            transform: scaleX(-1);
-            filter: sepia(0.3) hue-rotate(10deg);
-        }
-
-        .top-right-flower {
-            top: 0;
-            right: 0;
-            filter: sepia(0.3) hue-rotate(10deg);
-        }
-
-        .bottom-left-flower {
-            bottom: 0;
-            left: 0;
-            transform: scale(-1);
-            filter: sepia(0.3) hue-rotate(10deg);
-        }
-
-        .bottom-right-flower {
-            bottom: 0;
-            right: 0;
-            transform: scaleY(-1);
-            filter: sepia(0.3) hue-rotate(10deg);
-        }
-
-        .gold-accent {
-            color: #bfa15f;
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FFE0B2 0%, var(--gold) 50%, #BCAAA4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .gold-border {
-            border-color: #e5d5b5;
+            border-color: var(--gold);
         }
 
-        .gold-bg {
-            background-color: #bfa15f;
+        .glass-panel {
+            background: rgba(27, 38, 59, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(224, 169, 109, 0.25);
+            border-radius: 30px;
         }
 
-        /* Lock scroll when envelope is closed */
-        body.envelope-active {
+        #envelopeOverlay {
+            position: fixed; inset: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--sapphire-dark);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #envelopeOverlay::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at center, var(--sapphire-medium) 0%, var(--sapphire-dark) 100%);
+            opacity: 0.95;
+        }
+        #envelopeOverlay.exit { opacity: 0; transform: translateY(-100%) scale(1.05); }
+
+        .btn-open {
+            display: inline-flex; align-items: center; gap: 12px;
+            padding: 18px 48px;
+            background: linear-gradient(135deg, var(--gold) 0%, #E6B080 100%);
+            color: var(--sapphire-dark);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px var(--gold-glow);
+            transition: all 0.3s ease;
+        }
+        .btn-open:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px var(--gold-glow);
+        }
+
+        #musicToggle {
+            position: fixed; bottom: 24px; right: 24px; z-index: 50;
+            width: 52px; height: 52px; border-radius: 50%;
+            background: rgba(13, 27, 42, 0.85);
+            backdrop-filter: blur(8px);
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            display: none; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        }
+        #musicToggle.on { display: flex; animation: spinCD 4s linear infinite; }
+        #musicToggle:hover { transform: scale(1.1); }
+
+        @keyframes spinCD {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+            padding: 100px 24px;
+            background: linear-gradient(180deg, var(--sapphire-dark) 0%, var(--sapphire-medium) 100%);
+        }
+        .hero-bg {
+            position: absolute; inset: 0;
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            opacity: 0.15;
+            filter: blur(1px);
+        }
+        .hero-name {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(44px, 8vw, 84px);
+            font-weight: 700;
+            line-height: 1.15;
+            text-align: center;
+        }
+
+        .profile-sec {
+            padding: 120px 24px;
+            background: var(--sapphire-medium);
+            position: relative;
+        }
+        .profile-card {
+            background: rgba(13, 27, 42, 0.4);
+            border: 1px solid rgba(224, 169, 109, 0.15);
+            border-radius: 40px;
+            padding: 40px;
+            max-width: 420px;
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+        .profile-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold);
+            box-shadow: 0 15px 35px var(--gold-dim);
+        }
+        .profile-portrait {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            border-radius: 28px;
+            border: 2px solid var(--gold);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: transform 0.5s ease;
+        }
+        .profile-card:hover .profile-portrait {
+            transform: scale(1.02);
+        }
+
+        .event-card {
+            background: rgba(27, 38, 59, 0.4);
+            border: 1px solid rgba(224, 169, 109, 0.15);
+            border-radius: 30px;
+            padding: 40px;
+            transition: all 0.4s ease;
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto 30px auto;
+            text-align: center;
+            position: relative;
+        }
+        .event-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--gold);
+            box-shadow: 0 15px 30px var(--gold-dim);
+        }
+
+        .btn-map {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--gold) 0%, #E6B080 100%);
+            color: var(--sapphire-dark);
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 12px;
+            text-decoration: none;
+            margin-top: 24px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px var(--gold-dim);
+        }
+        .btn-map:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--gold-glow);
+        }
+
+        .gallery-sec {
+            padding: 120px 24px;
+            background: var(--sapphire-dark);
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+        .gallery-item {
             overflow: hidden;
+            border-radius: 20px;
+            border: 1px solid rgba(224, 169, 109, 0.15);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px;
+            transition: all 0.4s ease;
         }
+        .gallery-item img {
+            width: 100%;
+            aspect-ratio: 4/5;
+            object-fit: cover;
+            border-radius: 14px;
+            transition: transform 0.6s ease;
+        }
+        .gallery-item:hover {
+            transform: translateY(-6px);
+            border-color: var(--gold);
+            box-shadow: 0 10px 25px var(--gold-dim);
+        }
+        .gallery-item:hover img {
+            transform: scale(1.03);
+        }
+
+        .closing-sec {
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 120px 24px;
+            background: linear-gradient(180deg, var(--sapphire-medium) 0%, var(--sapphire-dark) 100%);
+            text-align: center;
+        }
+
+        .rev {
+            opacity: 0; transform: translateY(35px);
+            transition: opacity .8s cubic-bezier(0.16, 1, 0.3, 1), transform .8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .rev.in { opacity: 1; transform: none; }
+
+        .leaf-particle {
+            position: fixed;
+            z-index: 99;
+            pointer-events: none;
+            opacity: 0.8;
+            font-size: 20px;
+        }
+
+        .star-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: pulseStar 3s infinite alternate;
+        }
+        @keyframes pulseStar {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            100% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        body.is-editor #envelopeOverlay { display: none !important; }
+        body.is-editor { overflow: auto !important; }
     </style>
+    <script>
+        if (window.self !== window.top) {
+            document.documentElement.classList.add('is-editor');
+        }
+    </script>
 </head>
 
-<body class="bg-white text-[#333333] antialiased selection:bg-[#e5d5b5] envelope-active">
+<body class="locked">
+    <script>
+        if (window.self !== window.top) {
+            document.body.classList.add('is-editor');
+            document.body.classList.remove('locked');
+        }
+    </script>
 
     <audio id="weddingMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        <source src="{{ $musicPath }}" type="audio/mpeg">
     </audio>
 
-    <button id="musicToggle" onclick="toggleMusic()"
-        class="fixed bottom-6 right-6 z-50 w-12 h-12 bg-white/90 text-[#bfa15f] rounded-full border border-[#e5d5b5] shadow-lg flex items-center justify-center hidden hover:bg-white transition-all duration-300">
-        <i id="musicIcon" class="fa-solid fa-compact-disc fa-spin text-xl"></i>
+    <button id="musicToggle" onclick="toggleMusic()" aria-label="Toggle Music">
+        <i id="musicIcon" class="fa-solid fa-compact-disc"></i>
     </button>
 
-
-    <div id="envelopeOverlay"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-white transition-all duration-1000 ease-in-out transform translate-y-0 overflow-hidden">
-
-        <div class="absolute inset-0 floral-corner"></div>
-        <img src="https://cdn.pixabay.com/photo/2017/08/12/10/16/pattern-2633917_1280.png"
-            class="absolute inset-0 w-full h-full object-cover opacity-[0.03] pointer-events-none">
-
-        <div
-            class="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 border-t-2 border-l-2 gold-border m-6 md:m-12 opacity-40">
-        </div>
-        <div
-            class="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 border-b-2 border-r-2 gold-border m-6 md:m-12 opacity-40">
-        </div>
-
-        <div class="max-w-xl text-center px-6 z-10">
-            <p class="tracking-[0.4em] uppercase text-xs text-gray-400 mb-4 font-light">WEDDING INVITATION</p>
-
-            <h2 class="heading-font text-4xl md:text-5xl font-light text-[#1a1a1a] mb-2">
-                {{ $invitation->profile->first_name ?? '' }}
-                <span class="gold-accent italic text-2xl heading-font block md:inline my-1 md:my-0 mx-2">&</span>
-                {{ $invitation->profile->second_name ?? '' }}
+    @if(!request()->has('preview'))
+    <div id="envelopeOverlay">
+        <div class="ov-inner glass-panel">
+            <div style="font-size: 32px; color: var(--gold); margin-bottom: 20px; text-shadow: 0 0 10px var(--gold-glow);">
+                <i class="fa-solid fa-feather-pointed"></i>
+            </div>
+            
+            <p class="font-header" style="letter-spacing: 0.3em; font-size: 11px; color: var(--gold); text-transform: uppercase;">The Wedding Of</p>
+            
+            <h2 class="ov-name">
+                <span class="gold-gradient-text">{{ $firstName }}</span>
+                <span style="display: block; font-size: 20px; margin: 12px 0; opacity: 0.6; font-weight: 300;">&amp;</span>
+                <span class="gold-gradient-text">{{ $secondName }}</span>
             </h2>
 
-            <div class="w-16 h-[1px] bg-[#bfa15f] mx-auto my-6 opacity-60"></div>
+            <div style="width: 40px; height: 1px; background: var(--gold); margin: 24px auto; opacity: 0.5;"></div>
 
-            <p class="text-xs text-gray-400 uppercase tracking-widest font-light mb-8">
-                Kepada Bapak/Ibu/Saudara/i:
-            </p>
-
-            <div
-                class="bg-[#f9f9f9] border gold-border/60 py-4 px-8 rounded-lg shadow-sm mb-10 max-w-sm mx-auto backdrop-blur-sm">
-                <p class="text-[#1a1a1a] font-medium tracking-wide text-base">
-                    {{ request()->get('to') ?? 'Tamu Undangan Terhormat' }}
-                </p>
+            <p style="font-size: 11px; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 10px;">Kepada Yth.</p>
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(224, 169, 109, 0.2); border-radius: 16px; padding: 12px 24px; margin-bottom: 36px; display: inline-block;">
+                <p style="font-weight: 600; font-size: 15px; color: #fff;">{{ request()->get('to') ?? 'Sahabat & Keluarga Tercinta' }}</p>
             </div>
 
-            <button onclick="openInvitation()"
-                class="inline-flex items-center gap-3 px-8 py-3.5 bg-[#1a1a1a] hover:bg-[#bfa15f] text-white text-xs uppercase tracking-[0.2em] font-medium rounded-full transition-all duration-500 transform hover:scale-105 shadow-md">
-                <i class="fa-solid fa-envelope-open text-xs"></i> Buka Undangan
-            </button>
+            <div>
+                <button class="btn-open" onclick="openInvitation()">
+                    Buka Undangan
+                </button>
+            </div>
         </div>
     </div>
+    @endif
 
+    @foreach ($sectionOrder as $section)
+    @if ($section['visible'])
 
-    <section class="hero-bg min-h-screen flex items-center justify-center text-center px-6 relative overflow-hidden">
-        <div class="absolute inset-6 md:inset-12 border gold-border opacity-40 pointer-events-none"></div>
+    @if ($section['id'] == 'cover')
+    <section class="hero">
+        <div class="hero-bg" style="background-image: url('{{ $coverImage }}');"></div>
+        <div class="star-particle" style="top: 15%; left: 10%;"></div>
+        <div class="star-particle" style="top: 25%; left: 80%; animation-delay: 1s;"></div>
+        <div class="star-particle" style="top: 60%; left: 15%; animation-delay: 1.5s;"></div>
+        <div class="star-particle" style="top: 75%; left: 70%; animation-delay: 0.5s;"></div>
+        <div class="star-particle" style="top: 40%; left: 85%; animation-delay: 2s;"></div>
 
-        <img src="https://www.transparentpng.com/download/floral/vintage-gold-floral-corner-png-3.png"
-            class="floral-ornament top-left-flower" alt="">
-        <img src="https://www.transparentpng.com/download/floral/vintage-gold-floral-corner-png-3.png"
-            class="floral-ornament top-right-flower" alt="">
+        <div style="position:relative; z-index:1; text-align:center; max-width: 800px; width: 100%;">
+            <span class="font-header" style="letter-spacing: 0.4em; font-size: 11px; color: var(--gold); text-transform: uppercase; display: block; margin-bottom: 24px;">The Wedding Celebration</span>
 
-        <div class="max-w-4xl z-10 py-12">
-            <p class="tracking-[0.5em] uppercase text-xs md:text-sm text-gray-500 mb-8 font-light">
-                The Wedding Celebration Of
-            </p>
-
-            <h1 class="heading-font text-5xl md:text-7xl font-light text-[#1a1a1a] leading-tight">
-                {{ $invitation->profile->first_name ?? '' }}
+            <h1 class="hero-name">
+                <span class="gold-gradient-text" data-preview="first_name">{{ $firstName }}</span>
+                <span style="display: block; font-size: 28px; margin: 16px 0; font-weight: 300; opacity: 0.7;">&amp;</span>
+                <span class="gold-gradient-text" data-preview="second_name">{{ $secondName }}</span>
             </h1>
 
-            <div class="my-6 text-2xl md:text-3xl italic gold-accent heading-font font-light">
-                and
-            </div>
-
-            <h1 class="heading-font text-5xl md:text-7xl font-light text-[#1a1a1a] leading-tight mb-12">
-                {{ $invitation->profile->second_name ?? '' }}
-            </h1>
-
-            <div class="inline-block border-t border-b gold-border py-3 px-8 mt-4 bg-white/40 backdrop-blur-xs">
-                <p class="text-xs uppercase tracking-[0.3em] text-gray-500 mb-1 font-medium">
-                    Save The Date
-                </p>
-                <p class="heading-font text-xl md:text-2xl text-[#1a1a1a] font-medium">
-                    {{ optional($invitation->event_date)->format('d . m . Y') }}
-                </p>
+            <div class="hero-meta rev glass-panel" style="max-width: 600px; margin: 48px auto 0 auto; padding: 10px;">
+                <div class="meta-cell">
+                    <span class="lbl">Tanggal</span>
+                    <span class="meta-val gold-gradient-text" data-preview="event_date">
+                        {{ isset($invitation->event_date) ? \Carbon\Carbon::parse($invitation->event_date)->translatedFormat('d . m . Y') : '--' }}
+                    </span>
+                </div>
+                <div style="width: 1px; background: rgba(224, 169, 109, 0.2); height: 40px; align-self: center;"></div>
+                <div class="meta-cell">
+                    <span class="lbl">Hari</span>
+                    <span class="meta-val" data-preview="event_date">
+                        {{ isset($invitation->event_date) ? \Carbon\Carbon::parse($invitation->event_date)->translatedFormat('l') : '--' }}
+                    </span>
+                </div>
+                <div style="width: 1px; background: rgba(224, 169, 109, 0.2); height: 40px; align-self: center;"></div>
+                <div class="meta-cell">
+                    <span class="lbl">Waktu</span>
+                    <span class="meta-val">Pernikahan</span>
+                </div>
             </div>
         </div>
     </section>
+    @endif
 
-    <section class="py-32 px-6 bg-white relative overflow-hidden">
-        <div class="absolute inset-0 floral-corner"></div>
-
-        <div class="max-w-2xl mx-auto text-center relative z-10">
-            <div class="text-4xl text-gray-300 heading-font mb-4">“</div>
-            <h2 class="heading-font text-xl md:text-2xl mb-8 tracking-wide text-[#1a1a1a] italic font-light">
-                Bismillahirrahmanirrahim
-            </h2>
-            <p class="leading-relaxed text-gray-500 font-light text-sm md:text-base italic px-4">
-                {{ $invitation->profile->quote }}
+    @if ($section['id'] == 'quote')
+    <section class="py-32 px-6 bg-white text-center relative overflow-hidden" style="background: var(--sapphire-dark);">
+        <div class="max-w-3xl mx-auto relative z-10 rev">
+            <div style="font-size: 32px; color: var(--gold); opacity: 0.6; margin-bottom: 24px;">
+                <i class="fa-solid fa-quote-left"></i>
+            </div>
+            <p class="quote-text font-header">
+                {{ !empty($invitation->profile->quote) ? $invitation->profile->quote : 'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu merasa tenteram kepadanya.' }}
             </p>
-            <div class="text-4xl text-gray-300 heading-font mt-4">”</div>
+            <div style="width: 40px; height: 1px; background: var(--gold); margin: 32px auto 0 auto; opacity: 0.4;"></div>
         </div>
     </section>
+    @endif
 
-    <section class="bg-[#f9f9f9] py-32 px-6 border-t border-b border-gray-100 relative overflow-hidden">
-        <img src="https://www.transparentpng.com/download/floral/vintage-gold-floral-corner-png-3.png"
-            class="floral-ornament top-right-flower opacity-10" alt="">
-        <img src="https://www.transparentpng.com/download/floral/vintage-gold-floral-corner-png-3.png"
-            class="floral-ornament bottom-left-flower opacity-10" alt="">
-
-        <div class="max-w-5xl mx-auto relative z-10">
-            <div class="grid md:grid-cols-2 gap-24 md:gap-16 items-center">
-
-                <div class="text-center group">
-                    @if ($invitation->firstPersonPhoto)
-                        <div
-                            class="w-72 h-[400px] mx-auto overflow-hidden shadow-sm border-4 border-white transition-all duration-700 group-hover:shadow-xl relative">
-                            <img src="{{ asset('storage/' . $invitation->firstPersonPhoto->file_path) }}"
-                                class="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700 scale-100 hover:scale-105">
+    @if ($section['id'] == 'profile')
+    <section class="profile-sec">
+        <div class="wrap">
+            <div class="grid md:grid-cols-2 gap-16 md:gap-24">
+                <div class="rev">
+                    <div class="profile-card">
+                        <img src="{{ $firstPhotoPath }}" class="profile-portrait" alt="{{ $firstName }}">
+                        <h3 class="font-header text-3xl mt-8 gold-gradient-text" data-preview="first_name">
+                            {{ $firstName }}
+                        </h3>
+                        @if($showParents)
+                        <div class="info-box">
+                            <span class="info-label">Putra Tercinta dari</span>
+                            <p class="info-val" style="color: var(--text-light);">
+                                <span data-preview="first_father">{{ !empty($invitation->profile->first_father) ? $invitation->profile->first_father : 'Bapak' }}</span>
+                                <br>&amp;<br>
+                                <span data-preview="first_mother">{{ !empty($invitation->profile->first_mother) ? $invitation->profile->first_mother : 'Ibu' }}</span>
+                            </p>
                         </div>
-                    @endif
-
-                    <h3 class="heading-font text-4xl mt-8 text-[#1a1a1a] font-light">
-                        {{ $invitation->profile->first_name }}
-                    </h3>
-                    <div class="w-8 h-[1px] bg-[#bfa15f] mx-auto my-4"></div>
-                    <p class="text-xs uppercase tracking-widest text-gray-400 font-light mb-2">
-                        Putra Kekasih dari
-                    </p>
-                    <p class="font-light text-sm md:text-base text-gray-600">
-                        <span class="font-medium text-gray-800">{{ $invitation->profile->first_father }}</span>
-                        <br>&<br>
-                        <span class="font-medium text-gray-800">{{ $invitation->profile->first_mother }}</span>
-                    </p>
+                        @endif
+                    </div>
                 </div>
 
-                <div class="text-center group">
-                    @if ($invitation->secondPersonPhoto)
-                        <div
-                            class="w-72 h-[400px] mx-auto overflow-hidden shadow-sm border-4 border-white transition-all duration-700 group-hover:shadow-xl relative">
-                            <img src="{{ asset('storage/' . $invitation->secondPersonPhoto->file_path) }}"
-                                class="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700 scale-100 hover:scale-105">
+                <div class="rev">
+                    <div class="profile-card">
+                        <img src="{{ $secondPhotoPath }}" class="profile-portrait" alt="{{ $secondName }}">
+                        <h3 class="font-header text-3xl mt-8 gold-gradient-text" data-preview="second_name">
+                            {{ $secondName }}
+                        </h3>
+                        @if($showParents)
+                        <div class="info-box">
+                            <span class="info-label">Putri Tercinta dari</span>
+                            <p class="info-val" style="color: var(--text-light);">
+                                <span data-preview="second_father">{{ !empty($invitation->profile->second_father) ? $invitation->profile->second_father : 'Bapak' }}</span>
+                                <br>&amp;<br>
+                                <span data-preview="second_mother">{{ !empty($invitation->profile->second_mother) ? $invitation->profile->second_mother : 'Ibu' }}</span>
+                            </p>
                         </div>
-                    @endif
-
-                    <h3 class="heading-font text-4xl mt-8 text-[#1a1a1a] font-light">
-                        {{ $invitation->profile->second_name }}
-                    </h3>
-                    <div class="w-8 h-[1px] bg-[#bfa15f] mx-auto my-4"></div>
-                    <p class="text-xs uppercase tracking-widest text-gray-400 font-light mb-2">
-                        Putri Kekasih dari
-                    </p>
-                    <p class="font-light text-sm md:text-base text-gray-600">
-                        <span class="font-medium text-gray-800">{{ $invitation->profile->second_father }}</span>
-                        <br>&<br>
-                        <span class="font-medium text-gray-800">{{ $invitation->profile->second_mother }}</span>
-                    </p>
+                        @endif
+                    </div>
                 </div>
-
             </div>
         </div>
     </section>
+    @endif
 
-    <section class="py-32 px-6 bg-white relative overflow-hidden">
-        <div class="absolute inset-0 floral-corner"></div>
-
-        <div class="max-w-4xl mx-auto relative z-10">
-            <div class="text-center mb-20">
-                <p class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-2 font-light">The Day Of</p>
-                <h2 class="heading-font text-4xl md:text-5xl text-[#1a1a1a] font-light">
-                    Wedding Events
-                </h2>
-                <div class="w-12 h-[1px] bg-[#bfa15f] mx-auto mt-4"></div>
+    @if ($section['id'] == 'event')
+    <section class="py-32 px-6" style="background: var(--sapphire-dark);">
+        <div class="wrap">
+            <div class="text-center mb-20 rev">
+                <p class="font-header" style="letter-spacing: 0.3em; font-size: 11px; color: var(--gold); text-transform: uppercase;">Save The Date</p>
+                <h2 class="font-header text-4xl md:text-5xl mt-2">Agenda Pernikahan</h2>
+                <div style="width: 40px; height: 1px; background: var(--gold); margin: 16px auto 0 auto; opacity: 0.5;"></div>
             </div>
 
             <div class="grid md:grid-cols-2 gap-12">
-                @foreach ($invitation->events as $event)
-                    <div
-                        class="bg-white/90 backdrop-blur-xs border border-gray-100 p-10 md:p-12 text-center shadow-sm relative transition-all duration-300 hover:shadow-md hover:border-[#e5d5b5]">
-                        <div class="absolute top-4 left-4 right-4 bottom-4 border border-gray-50 pointer-events-none">
+                @foreach ($invitation->events as $index => $event)
+                    <div class="event-card rev">
+                        <div style="font-size: 28px; color: var(--gold); margin-bottom: 20px;">
+                            <i class="fa-solid fa-bell"></i>
                         </div>
-
-                        <h3 class="heading-font text-2xl md:text-3xl text-[#1a1a1a] mb-6 font-light">
+                        <h3 class="font-header text-2xl gold-gradient-text mb-6" data-event-preview="name_{{ $index }}">
                             {{ $event->name }}
                         </h3>
 
-                        <div class="text-xs uppercase tracking-widest text-gray-400 mb-1 font-light">Tanggal</div>
-                        <p class="text-gray-700 text-sm font-medium mb-6">
+                        <p class="text-xs uppercase tracking-widest style='color: var(--gold); opacity: 0.6;' mb-1">Tanggal</p>
+                        <p class="text-sm font-semibold mb-6" data-event-preview="event_date_{{ $index }}">
                             {{ \Carbon\Carbon::parse($event->event_date)->translatedFormat('l, d F Y') }}
                         </p>
 
-                        <div class="text-xs uppercase tracking-widest text-gray-400 mb-1 font-light">Waktu</div>
-                        <p class="text-gray-700 text-sm font-medium mb-6">
-                            {{ $event->start_time }} - Selesai
+                        <p class="text-xs uppercase tracking-widest style='color: var(--gold); opacity: 0.6;' mb-1">Waktu</p>
+                        <p class="text-sm font-semibold mb-6">
+                            <span data-event-preview="start_time_{{ $index }}">{{ \Carbon\Carbon::parse($event->start_time)->format('H:i') }}</span>
+                            @if($event->end_time)
+                                - <span data-event-preview="end_time_{{ $index }}">{{ \Carbon\Carbon::parse($event->end_time)->format('H:i') }}</span>
+                            @else
+                                - Selesai
+                            @endif
+                            WIB
                         </p>
 
-                        <div class="w-8 h-[1px] bg-gray-200 mx-auto mb-6"></div>
+                        <div style="width: 40px; height: 1px; background: rgba(224, 169, 109, 0.2); margin: 24px auto;"></div>
 
-                        <div class="text-xs uppercase tracking-widest text-gray-400 mb-1 font-light">Tempat</div>
-                        <p class="text-gray-900 text-sm font-semibold mb-2 heading-font tracking-wide">
+                        <p class="text-xs uppercase tracking-widest style='color: var(--gold); opacity: 0.6;' mb-1">Tempat</p>
+                        <p class="text-sm font-semibold mb-2 font-header" data-event-preview="venue_name_{{ $index }}">
                             {{ $event->venue_name }}
                         </p>
-                        <p class="text-gray-400 text-xs font-light leading-relaxed max-w-xs mx-auto">
+                        <p class="text-xs opacity-70 leading-relaxed max-w-xs mx-auto" data-event-preview="address_{{ $index }}">
                             {{ $event->address }}
                         </p>
+
+                        @if($event->google_maps_url)
+                            <a href="{{ $event->google_maps_url }}" target="_blank" class="btn-map">
+                                <i class="fa-solid fa-location-crosshairs"></i> Google Maps
+                            </a>
+                        @endif
                     </div>
                 @endforeach
             </div>
         </div>
     </section>
+    @endif
 
-    <section class="bg-[#f9f9f9] py-32 px-6 border-t border-b border-gray-100 relative overflow-hidden">
-        <img src="https://www.transparentpng.com/download/floral/vintage-gold-floral-corner-png-3.png"
-            class="floral-ornament top-left-flower opacity-10" alt="">
-        <img src="https://www.transparentpng.com/download/floral/vintage-gold-floral-corner-png-3.png"
-            class="floral-ornament bottom-right-flower opacity-10" alt="">
-
-        <div class="max-w-6xl mx-auto relative z-10">
-            <div class="text-center mb-16">
-                <p class="text-xs uppercase tracking-[0.4em] text-gray-400 mb-2 font-light">Captured Moments</p>
-                <h2 class="heading-font text-4xl md:text-5xl text-[#1a1a1a] font-light">
-                    Our Gallery
-                </h2>
-                <div class="w-12 h-[1px] bg-[#bfa15f] mx-auto mt-4"></div>
+    @if ($section['id'] == 'gallery')
+    <section class="gallery-sec">
+        <div class="wrap">
+            <div class="text-center mb-16 rev">
+                <p class="font-header" style="letter-spacing: 0.3em; font-size: 11px; color: var(--gold); text-transform: uppercase;">Captured Moments</p>
+                <h2 class="font-header text-4xl md:text-5xl mt-2">Galeri Foto</h2>
+                <div style="width: 40px; height: 1px; background: var(--gold); margin: 16px auto 0 auto; opacity: 0.5;"></div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                @foreach ($invitation->galleries as $gallery)
-                    <div
-                        class="overflow-hidden bg-white p-3 shadow-sm transition-all duration-500 hover:shadow-lg group">
-                        <img src="{{ asset($gallery->file_path) }}"
-                            class="w-full h-80 object-cover transition-all duration-700 filter contrast-[95%] group-hover:contrast-100 scale-100 group-hover:scale-102">
+            <div class="gallery-grid rev">
+                @forelse ($invitation->galleries as $index => $gallery)
+                    <div class="gallery-item">
+                        @if(file_exists(public_path($gallery->file_path)))
+                            <img src="{{ asset($gallery->file_path) }}" alt="Momen {{ $index + 1 }}">
+                        @else
+                            <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800" alt="Momen {{ $index + 1 }}">
+                        @endif
                     </div>
-                @endforeach
+                @empty
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800" alt="">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800" alt="">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1519225495810-7512c696505a?q=80&w=800" alt="">
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
+    @endif
 
-    <section class="py-32 px-6 bg-white relative overflow-hidden">
-        <div class="absolute inset-0 floral-corner"></div>
+    @if ($section['id'] == 'closing')
+    <section class="closing-sec">
+        <div class="closing-box wrap rev">
+            <h2 class="font-header text-4xl md:text-5xl mb-8">Terima Kasih</h2>
 
-        <div class="max-w-3xl mx-auto text-center z-10 relative">
-            <h2 class="heading-font text-4xl md:text-5xl mb-8 text-[#1a1a1a] font-light">
-                Terima Kasih
-            </h2>
-
-            <p class="text-gray-500 font-light text-sm md:text-base leading-loose max-w-2xl mx-auto mb-16">
-                Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila
-                Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kedua mempelai.
+            <p style="font-size: 14px; opacity: 0.8; leading-relaxed: 2; max-width: 600px; margin: 0 auto 48px auto;" data-preview="closing_text">
+                {{ !empty($invitation->profile->closing_text) ? $invitation->profile->closing_text : 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kami.' }}
             </p>
 
-            <p class="text-xs uppercase tracking-[0.3em] text-gray-400 mb-4 font-light">Kami yang berbahagia</p>
-            <div class="mt-4">
-                <h3 class="heading-font text-3xl md:text-4xl font-light text-[#1a1a1a]">
-                    {{ $invitation->profile->first_name }} & {{ $invitation->profile->second_name }}
+            <p class="font-header" style="letter-spacing: 0.2em; font-size: 11px; color: var(--gold); text-transform: uppercase; margin-bottom: 16px;">Kami yang berbahagia</p>
+            <div>
+                <h3 class="font-header text-3xl md:text-4xl gold-gradient-text" data-preview="first_name">
+                    {{ $firstName }} & {{ $secondName }}
                 </h3>
             </div>
         </div>
     </section>
+    @endif
 
+    @endif
+    @endforeach
 
     <script>
         const audio = document.getElementById('weddingMusic');
@@ -371,41 +599,76 @@
         const musicIcon = document.getElementById('musicIcon');
 
         function openInvitation() {
-            // Slide up and fade out the envelope cover overlay smoothly
             const envelope = document.getElementById('envelopeOverlay');
-            envelope.style.transform = 'translateY(-100%)';
-            envelope.style.opacity = '0';
+            if (envelope) {
+                envelope.classList.add('exit');
+                setTimeout(() => envelope.style.display = 'none', 1000);
+            }
 
-            // Re-enable page scrolling
-            document.body.classList.remove('envelope-active');
+            document.body.classList.remove('locked');
+            musicBtn.classList.add('on');
 
-            // Show the floating music trigger
-            musicBtn.classList.remove('hidden');
-
-            // Play background music gracefully
             audio.play().catch(error => {
                 console.log("Autoplay blocked by browser policy, waiting for direct click interaction.");
             });
 
-            // Automatically sweep overlay away after transition completes
-            setTimeout(() => {
-                envelope.classList.add('hidden');
-            }, 1000);
+            createConfettiBurst();
         }
 
         function toggleMusic() {
             if (audio.paused) {
                 audio.play();
-                musicIcon.classList.add('fa-spin');
-                musicIcon.className = "fa-solid fa-compact-disc fa-spin text-xl";
+                musicBtn.classList.add('on');
+                musicIcon.className = "fa-solid fa-compact-disc";
             } else {
                 audio.pause();
-                musicIcon.classList.remove('fa-spin');
-                musicIcon.className = "fa-solid fa-circle-pause text-xl";
+                musicBtn.classList.remove('on');
+                musicIcon.className = "fa-solid fa-pause";
+            }
+        }
+
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.rev').forEach(el => io.observe(el));
+
+        function createConfettiBurst() {
+            const leafSymbols = ['🍃', '🍂', '🍁', '✨', '🌸'];
+            const colors = ['#FFE0B2', '#E0A96D', '#BCAAA4', '#E6B080'];
+            for (let i = 0; i < 40; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf-particle';
+                leaf.style.left = Math.random() * 100 + 'vw';
+                leaf.style.top = '-20px';
+                
+                if (Math.random() > 0.5) {
+                    leaf.innerText = leafSymbols[Math.floor(Math.random() * leafSymbols.length)];
+                } else {
+                    leaf.style.width = Math.random() * 8 + 4 + 'px';
+                    leaf.style.height = leaf.style.width;
+                    leaf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    leaf.style.borderRadius = '50%';
+                }
+                
+                document.body.appendChild(leaf);
+
+                const duration = Math.random() * 3000 + 2000;
+                const destX = (Math.random() - 0.5) * 200;
+                
+                leaf.animate([
+                    { transform: 'translate(0, 0) rotate(0deg)', opacity: 0.8 },
+                    { transform: `translate(${destX}px, 105vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: duration,
+                    easing: 'linear',
+                    fill: 'forwards'
+                });
+
+                setTimeout(() => leaf.remove(), duration + 100);
             }
         }
     </script>
-
 </body>
-
 </html>

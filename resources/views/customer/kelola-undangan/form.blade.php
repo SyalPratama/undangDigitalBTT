@@ -5,20 +5,21 @@
 @section('content')
 
 @php
-    // Membongkar Settingan Builder JSON
     $projectData = [];
     if (isset($invitation) && $invitation->exists && $invitation->builder && $invitation->builder->project_data) {
         $projectData = is_string($invitation->builder->project_data) ? json_decode($invitation->builder->project_data, true) : $invitation->builder->project_data;
     }
     $primaryColor = $projectData['primary_color'] ?? '#10b981';
     
-    // PERBAIKAN: Pastikan data di-encode kembali menjadi string JSON agar tidak error saat dimasukkan ke input HTML
     $sectionOrderVal = isset($projectData['section_order']) 
                         ? (is_array($projectData['section_order']) ? json_encode($projectData['section_order']) : $projectData['section_order']) 
                         : '';
     
     $hasParentsData = isset($invitation->profile) && ($invitation->profile->first_father || $invitation->profile->first_mother || $invitation->profile->second_father || $invitation->profile->second_mother);
     $showParents = isset($projectData['show_parents']) ? filter_var($projectData['show_parents'], FILTER_VALIDATE_BOOLEAN) : $hasParentsData;
+
+    $programStudi = $projectData['program_studi'] ?? '';
+    $universitas = $projectData['universitas'] ?? '';
 @endphp
 
 <div class="flex h-[calc(100vh-4.5rem)] overflow-hidden font-sans border-t border-slate-200 -mx-6 -mt-6 bg-slate-100">
@@ -152,7 +153,7 @@
 
                     <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 mt-2">
                         <div>
-                            <p class="text-xs font-semibold text-slate-700">Tampilkan Nama Orang Tua</p>
+                            <p id="toggle-parents-text" class="text-xs font-semibold text-slate-700">Tampilkan Nama Orang Tua</p>
                             <p class="text-[10px] text-slate-400 mt-0.5">Aktifkan untuk menyertakan di undangan.</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
@@ -166,11 +167,11 @@
                         <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
                             <span id="label-parent-1" class="text-[10px] font-bold text-slate-400 uppercase block tracking-wider">Orang Tua Pihak Ke-1</span>
                             <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Nama Ayah</label>
+                                <label id="label-first-father" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Nama Ayah</label>
                                 <input type="text" name="first_father" data-preview="first_father" id="first_father" value="{{ old('first_father', optional($invitation->profile)->first_father ?? 'Bapak Ahmad') }}" class="w-full text-xs bg-white border border-slate-200 rounded-lg px-3 py-2 focus:border-sky-500 outline-none transition-all">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Nama Ibu</label>
+                                <label id="label-first-mother" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Nama Ibu</label>
                                 <input type="text" name="first_mother" data-preview="first_mother" id="first_mother" value="{{ old('first_mother', optional($invitation->profile)->first_mother ?? 'Ibu Ani') }}" class="w-full text-xs bg-white border border-slate-200 rounded-lg px-3 py-2 focus:border-sky-500 outline-none transition-all">
                             </div>
                         </div>
@@ -185,6 +186,17 @@
                                 <label class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Nama Ibu</label>
                                 <input type="text" name="second_mother" data-preview="second_mother" id="second_mother" value="{{ old('second_mother', optional($invitation->profile)->second_mother ?? 'Ibu Susi') }}" class="w-full text-xs bg-white border border-slate-200 rounded-lg px-3 py-2 focus:border-sky-500 outline-none transition-all">
                             </div>
+                        </div>
+                    </div>
+
+                    <div id="wrapper-graduation-fields" class="grid grid-cols-2 gap-4 hidden">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Program Studi</label>
+                            <input type="text" name="builder[program_studi]" id="program_studi" value="{{ old('builder.program_studi', $programStudi) }}" placeholder="Contoh: Teknik Informatika" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:bg-white focus:border-sky-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Almamater / Universitas</label>
+                            <input type="text" name="builder[universitas]" id="universitas" value="{{ old('builder.universitas', $universitas) }}" placeholder="Contoh: Universitas Pasundan" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:bg-white focus:border-sky-500 outline-none transition-all">
                         </div>
                     </div>
 
@@ -430,6 +442,18 @@
                 return;
             }
 
+            if (name === 'builder[program_studi]') {
+                const elements = doc.querySelectorAll('[data-preview="program_studi"]');
+                elements.forEach(el => { el.innerText = value; });
+                return;
+            }
+
+            if (name === 'builder[universitas]') {
+                const elements = doc.querySelectorAll('[data-preview="universitas"]');
+                elements.forEach(el => { el.innerText = value; });
+                return;
+            }
+
             // FORMAT REAL-TIME UNTUK TANGGAL PELAKSANAAN UTAMA
             if (name === 'event_date') {
                 if (!value) return;
@@ -642,19 +666,52 @@
         const labelFirstNick = document.getElementById('label-first-nick');
         const labelParent1 = document.getElementById('label-parent-1');
         const boxParent2 = document.getElementById('box-parent-2');
+        const wrapperGraduation = document.getElementById('wrapper-graduation-fields');
+
+        const toggleParentsText = document.getElementById('toggle-parents-text');
+        const labelFirstFather = document.getElementById('label-first-father');
+        const labelFirstMother = document.getElementById('label-first-mother');
 
         if (typeSlug === 'wedding' || typeSlug === 'pernikahan' || typeSlug === 'engagement') {
             wrapperSecondParty.classList.remove('hidden');
             boxParent2.classList.remove('hidden');
+            wrapperGraduation.classList.add('hidden');
             labelFirstName.textContent = "Nama Pria / Wanita Pertama";
             labelFirstNick.textContent = "Nama Panggilan Pertama";
             labelParent1.textContent = "Orang Tua Pihak Ke-1";
-        } else {
+            if (toggleParentsText) toggleParentsText.textContent = "Tampilkan Nama Orang Tua";
+            if (labelFirstFather) labelFirstFather.textContent = "Nama Ayah";
+            if (labelFirstMother) labelFirstMother.textContent = "Nama Ibu";
+        } else if (typeSlug === 'graduation' || typeSlug === 'wisuda') {
             wrapperSecondParty.classList.add('hidden');
             boxParent2.classList.add('hidden');
+            wrapperGraduation.classList.remove('hidden');
             labelFirstName.textContent = "Nama Lengkap (Pemilik Acara)";
             labelFirstNick.textContent = "Nama Panggilan";
             labelParent1.textContent = "Informasi Orang Tua";
+            if (toggleParentsText) toggleParentsText.textContent = "Tampilkan Nama Orang Tua";
+            if (labelFirstFather) labelFirstFather.textContent = "Nama Ayah";
+            if (labelFirstMother) labelFirstMother.textContent = "Nama Ibu";
+        } else if (typeSlug === 'reuni') {
+            wrapperSecondParty.classList.add('hidden');
+            boxParent2.classList.add('hidden');
+            wrapperGraduation.classList.add('hidden');
+            labelFirstName.textContent = "Nama Alumni / Angkatan";
+            labelFirstNick.textContent = "Nama Singkat";
+            labelParent1.textContent = "Panitia Pelaksana";
+            if (toggleParentsText) toggleParentsText.textContent = "Tampilkan Panitia Pelaksana";
+            if (labelFirstFather) labelFirstFather.textContent = "Nama Ketua Panitia";
+            if (labelFirstMother) labelFirstMother.textContent = "Nama Wakil Ketua";
+        } else {
+            wrapperSecondParty.classList.add('hidden');
+            boxParent2.classList.add('hidden');
+            wrapperGraduation.classList.add('hidden');
+            labelFirstName.textContent = "Nama Lengkap (Pemilik Acara)";
+            labelFirstNick.textContent = "Nama Panggilan";
+            labelParent1.textContent = "Informasi Orang Tua";
+            if (toggleParentsText) toggleParentsText.textContent = "Tampilkan Nama Orang Tua";
+            if (labelFirstFather) labelFirstFather.textContent = "Nama Ayah";
+            if (labelFirstMother) labelFirstMother.textContent = "Nama Ibu";
         }
         
         const themeSelect = document.getElementById('theme-select');

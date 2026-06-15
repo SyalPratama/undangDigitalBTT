@@ -55,6 +55,7 @@
                 <h3 class="font-serif text-[36px] font-bold text-slate-900 leading-none">0</h3>
             </div>
         </div>
+    </x-slot>
 
         {{-- Recent Invitations Table --}}
         <div class="bg-white/70 backdrop-blur-xl rounded-[2rem] p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] border border-white mt-8">
@@ -90,7 +91,11 @@
                     </div>
                 @endforelse
             </div>
+
         </div>
 
     </div>
-@endsection
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</x-app-layout>

@@ -33,32 +33,33 @@ class InvitationSeeder extends Seeder
         */
 
         $invitation1 = Invitation::create([
-            'id'                 => (string) Str::uuid(),
+            'id'                 => '770a3144-67d7-4275-8765-dc802adc0520',
             'user_id'            => $userBudi->id,
             'invitation_type_id' => $weddingType->id,
             'theme_id'           => $theme->id,
-            'slug'               => 'faisyal-isma',
-            'title'              => 'Undangan Pernikahan Faisyal & Salsa',
+            'slug'               => 'muhamad-davina',
+            'title'              => 'Undangan Pernikahan Muhamad & Davina',
             'is_active'          => true,
             'published_at'       => now(),
-            'event_date'         => '2026-08-15',
+            'event_date'         => '2026-12-25',
             'visitor_count'      => 0,
-            'meta_title'         => 'Undangan Pernikahan Faisyal & Salsa',
-            'meta_description'   => 'Undangan Pernikahan Faisyal & Salsa',
+            'meta_title'         => 'Undangan Pernikahan Muhamad & Davina',
+            'meta_description'   => 'Undangan Pernikahan Muhamad & Davina',
         ]);
 
         InvitationProfile::create([
             'id'            => (string) Str::uuid(),
             'invitation_id' => $invitation1->id,
-            'first_name'    => 'Faisyal Nur',
-            'second_name'   => 'Isma Herdiani',
-            'first_father'  => 'Ahmad',
-            'first_mother'  => 'Siti',
-            'second_father' => 'Budi',
-            'second_mother' => 'Dewi',
-            'headline'      => 'The Wedding Of',
-            'quote'         => 'Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan pasangan untukmu.',
-            'description'   => 'Dengan memohon rahmat dan ridho Allah SWT.',
+            'first_name'    => 'Muhamad Nur Salam',
+            'second_name'   => 'Davina Karamoy',
+            'first_father'  => 'Abdullah Salam',
+            'first_mother'  => 'Siti Rahmawati',
+            'second_father' => 'Michael Karamoy',
+            'second_mother' => 'Grace Karamoy',
+            'headline'      => 'Wedding Invitation',
+            'quote' => 'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.',
+            'description'   => 'Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami.',
+            'address'       => 'Dago, Bandung, Jawa Barat',
         ]);
 
         InvitationMedia::create([
@@ -83,11 +84,11 @@ class InvitationSeeder extends Seeder
             'id'            => (string) Str::uuid(),
             'invitation_id' => $invitation1->id,
             'name'          => 'Akad Nikah',
-            'event_date'    => '2026-08-15',
+            'event_date'    => '2026-12-25',
             'start_time'    => '08:00:00',
             'end_time'      => '10:00:00',
-            'venue_name'    => 'Masjid Agung Bandung',
-            'address'       => 'Jl. Asia Afrika No.1 Bandung',
+            'venue_name'    => 'Masjid Al-Ikhlas',
+            'address'       => 'Jl. Dago No. 10, Bandung, Jawa Barat',
             'sort_order'    => 1,
             'is_active'     => true,
         ]);
@@ -96,11 +97,11 @@ class InvitationSeeder extends Seeder
             'id'            => (string) Str::uuid(),
             'invitation_id' => $invitation1->id,
             'name'          => 'Resepsi',
-            'event_date'    => '2026-08-15',
+            'event_date'    => '2026-12-25',
             'start_time'    => '11:00:00',
             'end_time'      => '15:00:00',
-            'venue_name'    => 'Gedung Serbaguna Bandung',
-            'address'       => 'Jl. Merdeka Bandung',
+            'venue_name'    => 'The Grand Ballroom',
+            'address'       => 'Hotel Sheraton Dago, Jl. Ir. H. Juanda No. 390, Bandung, Jawa Barat',
             'sort_order'    => 2,
             'is_active'     => true,
         ]);
@@ -112,7 +113,7 @@ class InvitationSeeder extends Seeder
         */
 
         $invitation2 = Invitation::create([
-            'id'                 => (string) Str::uuid(),
+            'id'                 => '01e8d4a6-2968-4b0a-875a-5001090f89a3',
             'user_id'            => $userBudi->id,
             'invitation_type_id' => $birthdayType->id,
             'theme_id'           => $theme->id,
