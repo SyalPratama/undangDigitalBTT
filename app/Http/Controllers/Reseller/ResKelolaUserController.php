@@ -12,24 +12,26 @@ use Exception;
 
 class ResKelolaUserController extends Controller
 {
-    // Menampilkan halaman kelola user
+    // Menampilkan halaman reseller workspace (sebelumnya kelola user)
     public function index(Request $request)
     {
-        $roles = Role::all(); 
-        $users = User::with('roles')
-            ->where('reseller_id', Auth::id())
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->search;
+        $userId = Auth::id();
+        
+        // 1. Data Stats
+        $customersCount = User::where('reseller_id', $userId)->count();
+        $invitationsCount = \App\Models\Invitation::whereHas('user', function($q) use ($userId) {
+            $q->where('reseller_id', $userId);
+        })->count();
+        $activeSubscriptions = 0; // Dummy
+        $totalViews = 991; // Dummy
 
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "%{$search}%");
-                });
-            })
+        // 2. Data Table
+        $users = User::withCount('invitations')
+            ->where('reseller_id', $userId)
             ->latest()
             ->paginate(10);
 
-        return view('reseller.kelola-user', compact('users', 'roles'));
+        return view('reseller.kelola-user', compact('customersCount', 'invitationsCount', 'activeSubscriptions', 'totalViews', 'users'));
     }
 
     // Menyimpan data user baru.

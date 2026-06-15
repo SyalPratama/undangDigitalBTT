@@ -47,10 +47,56 @@ class ResKelolaUndanganController extends Controller
         return view('reseller.kelola-undangan.index', compact('invitations', 'types'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        if ($request->has('theme_id')) {
+            $theme = Theme::find($request->theme_id);
+            if ($theme) {
+                // Buat draft awal agar data template terisi otomatis
+                $invitation = Invitation::create([
+                    'user_id' => Auth::id(),
+                    'theme_id' => $theme->id,
+                    'invitation_type_id' => InvitationType::first()->id ?? null,
+                    'title' => 'Undangan ' . $theme->name,
+                    'slug' => Str::slug('undangan-' . $theme->name . '-' . Str::random(5)),
+                    'event_date' => now()->addMonths(1)->format('Y-m-d'),
+                    'is_active' => false,
+                ]);
+                
+                $invitation->profile()->create([
+                    'id' => (string) Str::uuid(),
+                    'first_name' => 'Romeo',
+                    'first_nickname' => 'Romeo',
+                    'second_name' => 'Juliet',
+                    'second_nickname' => 'Juliet',
+                    'headline' => 'The Wedding Of',
+                    'closing_text' => 'Merupakan suatu kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.',
+                ]);
+                
+                $invitation->events()->create([
+                    'id' => (string) Str::uuid(),
+                    'name' => 'Resepsi Pernikahan',
+                    'event_date' => now()->addMonths(1)->format('Y-m-d'),
+                    'start_time' => '09:00',
+                    'venue_name' => 'Gedung Pernikahan',
+                    'address' => 'Jl. Contoh No. 123',
+                    'sort_order' => 1,
+                    'is_active' => true,
+                ]);
+
+                return redirect()->route('reseller.kelola-undangan.edit', $invitation->id)->with('success', 'Template berhasil digunakan. Silakan sesuaikan data undangan.');
+            }
+        }
+
         $types = InvitationType::orderBy('name')->get();
-        $themes = Theme::orderBy('name')->get();
+        // Load themes beserta slug category-nya dari tabel relasi agar bisa di filter JS
+        $themes = DB::table('themes')
+            ->leftJoin('theme_categories', 'themes.theme_category_id', '=', 'theme_categories.id')
+            ->select('themes.id', 'themes.name', 'theme_categories.slug as category_slug')
+            ->where('themes.is_active', true)
+            ->orderBy('themes.name')
+            ->get();
+
         $invitation = new Invitation(); // Instance kosong aman untuk create form
 
         return view('reseller.kelola-undangan.form', compact('types', 'themes', 'invitation'));
@@ -59,11 +105,17 @@ class ResKelolaUndanganController extends Controller
     public function edit($id)
     {
         $types = InvitationType::orderBy('name')->get();
-        $themes = Theme::orderBy('name')->get();
+        $themes = DB::table('themes')
+            ->leftJoin('theme_categories', 'themes.theme_category_id', '=', 'theme_categories.id')
+            ->select('themes.id', 'themes.name', 'theme_categories.slug as category_slug')
+            ->where('themes.is_active', true)
+            ->orderBy('themes.name')
+            ->get();
         
-        // Pastikan hanya bisa membuka data miliknya sendiri
-        $invitation = Invitation::where('user_id', Auth::id())
-            ->with(['profile', 'events', 'media'])
+        // Pastikan hanya bisa membuka data miliknya sendiri atau milik customernya
+        $customerIds = \App\Models\User::where('reseller_id', Auth::id())->pluck('id')->push(Auth::id());
+        $invitation = Invitation::whereIn('user_id', $customerIds)
+            ->with(['profile', 'events', 'media', 'builder'])
             ->findOrFail($id);
 
         return view('reseller.kelola-undangan.form', compact('types', 'themes', 'invitation'));
@@ -71,27 +123,24 @@ class ResKelolaUndanganController extends Controller
 
     public function save(Request $request, $id = null)
     {
-        // Menentukan mode edit berdasarkan keberadaan ID dan kepemilikan data
         $invitation = null;
         $isEdit = false;
 
         if ($id) {
-            $invitation = Invitation::where('user_id', Auth::id())->find($id);
+            $customerIds = \App\Models\User::where('reseller_id', Auth::id())->pluck('id')->push(Auth::id());
+            $invitation = Invitation::whereIn('user_id', $customerIds)->find($id);
             if ($invitation) {
                 $isEdit = true;
             }
         }
 
-        // Log penanda awal proses
         Log::info($isEdit ? '=== MEMULAI PROSES UPDATE UNDANGAN ===' : '=== MEMULAI PROSES SIMPAN UNDANGAN ===', [
             'user_id'       => Auth::id(),
             'invitation_id' => $id,
             'title'         => $request->title,
-            'slug'          => $request->slug
         ]);
 
-        // Validasi data input
-        $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'title'              => 'required|max:255',
             'slug'               => 'required|max:255|unique:invitations,slug,' . ($isEdit ? $id : 'NULL') . ',id',
             'theme_id'           => 'required|exists:themes,id',
@@ -99,27 +148,27 @@ class ResKelolaUndanganController extends Controller
             'event_date'         => 'required|date',
             'password'           => 'nullable|string|min:4',
             'custom_domain'      => 'nullable|string|max:255',
-            
-            // Validasi Relasi Profile
             'first_name'         => 'required|string|max:255',
             'first_nickname'     => 'required|string|max:255',
             'second_name'        => 'nullable|string|max:255',
             'second_nickname'    => 'nullable|string|max:255',
-            
-            // Validasi Array Rangkaian Acara (Events)
             'events'             => 'required|array|min:1',
             'events.*.name'      => 'required|string|max:255',
             'events.*.event_date'=> 'required|date',
             'events.*.start_time'=> 'required',
             'events.*.venue_name'=> 'required|string|max:255',
             'events.*.address'   => 'required|string',
-            
-            // Validasi File Media
-            'media_cover'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'media_gallery.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'media_cover'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'media_gallery.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'media_music'        => 'nullable|file|mimes:mp3,wav,ogg|max:15360',
         ]);
 
-        Log::info('1. Validasi request berhasil dilewati.');
+        if ($validator->fails()) {
+            if ($request->ajax()) {
+                return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
+            }
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $invitationType = InvitationType::findOrFail($request->invitation_type_id);
         $folderName = Str::slug($invitationType->name); 
@@ -143,15 +192,12 @@ class ResKelolaUndanganController extends Controller
 
                 if ($isEdit) {
                     $invitation->update($invitationData);
-                    Log::info('3. Data tabel "invitations" berhasil di-update.', ['invitation_id' => $invitation->id]);
                 } else {
                     $invitationData['user_id'] = Auth::id();
                     $invitationData['is_active'] = false; 
                     $invitation = Invitation::create($invitationData);
-                    Log::info('3. Data tabel "invitations" berhasil dibuat baru.', ['invitation_id' => $invitation->id]);
                 }
 
-                // Upsert ke tabel: INVITATION_PROFILES
                 $profileData = [
                     'headline'        => $request->headline,
                     'quote'           => $request->quote,
@@ -170,21 +216,54 @@ class ResKelolaUndanganController extends Controller
 
                 if ($isEdit && $invitation->profile) {
                     $invitation->profile()->update($profileData);
-                    Log::info('4. Data tabel "invitation_profiles" berhasil di-update.');
                 } else {
                     $profileData['id'] = (string) Str::uuid();
                     $invitation->profile()->create($profileData);
-                    Log::info('4. Data tabel "invitation_profiles" berhasil dibuat baru.');
                 }
 
-                // 6. Sinkronisasi tabel: EVENTS
-                if ($request->has('events')) {
-                    Log::info('5. Memproses rangkaian acara (events)...');
+                if ($request->has('builder')) {
+                    $rawShowParents = $request->input('builder.show_parents', true);
                     
-                    if ($isEdit) {
-                        $invitation->events()->delete();
+                    if (is_array($rawShowParents)) {
+                        $rawShowParents = end($rawShowParents);
                     }
 
+                    $builderDataArray = [
+                        'primary_color' => $request->input('builder.primary_color', '#10b981'),
+                        'section_order' => json_decode($request->input('builder.section_order', '[]'), true),
+                        'show_parents'  => filter_var($rawShowParents, FILTER_VALIDATE_BOOLEAN),
+                    ];
+
+                    $existingProjectData = [];
+                    if ($isEdit && $invitation->builder && $invitation->builder->project_data) {
+                        $existingProjectData = is_string($invitation->builder->project_data) 
+                            ? json_decode($invitation->builder->project_data, true) 
+                            : $invitation->builder->project_data;
+                    }
+                    
+                    $mergedProjectData = array_merge($existingProjectData, $builderDataArray);
+                    $builderPayload = ['project_data' => json_encode($mergedProjectData)];
+
+                    if ($isEdit && $invitation->builder) {
+                        $invitation->builder()->update($builderPayload);
+                    } else {
+                        $builderPayload['id'] = (string) Str::uuid();
+                        $invitation->builder()->create($builderPayload);
+                    }
+                }
+
+                if ($request->has('deleted_media')) {
+                    $mediaToDelete = $invitation->media()->whereIn('id', $request->deleted_media)->get();
+                    foreach ($mediaToDelete as $media) {
+                        if (file_exists(public_path($media->file_path))) {
+                            @unlink(public_path($media->file_path));
+                        }
+                        $media->delete();
+                    }
+                }
+
+                if ($request->has('events')) {
+                    $invitation->events()->delete();
                     foreach ($request->events as $index => $eventData) {
                         $invitation->events()->create([
                             'id'              => (string) Str::uuid(), 
@@ -202,94 +281,111 @@ class ResKelolaUndanganController extends Controller
                             'is_active'       => true,
                         ]);
                     }
-                    Log::info('5a. Seluruh data "events" berhasil disinkronisasi.');
                 }
 
-                // 7. Simpan Media: COVER
-                if ($request->hasFile('media_cover')) {
-                    Log::info('6. Mendeteksi file media_cover baru.');
-
-                    if ($isEdit) {
-                        $oldCover = $invitation->media()->where('type', 'cover')->first();
-                        if ($oldCover) {
-                            if (file_exists(public_path($oldCover->file_path))) {
-                                @unlink(public_path($oldCover->file_path));
-                            }
-                            $oldCover->delete();
-                            Log::info('   -> File & record cover lama dibersihkan.');
-                        }
+                if ($request->hasFile('media_cover') && $request->file('media_cover')->isValid()) {
+                    $file = $request->file('media_cover');
+                    $fileSize = $file->getSize();
+                    $mimeType = $file->getClientMimeType();
+                    
+                    $oldCover = $invitation->media()->where('type', 'cover')->first();
+                    if ($oldCover && file_exists(public_path($oldCover->file_path))) {
+                        @unlink(public_path($oldCover->file_path));
+                        $oldCover->delete();
                     }
                     
-                    $file = $request->file('media_cover');
-                    $fileSize = $file->getSize() ?? 0;
-                    $mimeType = $file->getClientMimeType();
                     $fileName = 'cover_' . time() . '_' . Str::random(5) . '.' . $file->getClientOriginalExtension();
-                    
                     $file->move($destinationPath, $fileName);
 
                     $invitation->media()->create([
-                        'id'          => (string) Str::uuid(),
-                        'type'        => 'cover',
-                        'file_path'   => "assets/{$folderName}/{$fileName}",
-                        'mime_type'   => $mimeType,
-                        'file_size'   => $fileSize,
-                        'sort_order'  => 1,
-                        'is_active'   => true,
+                        'id'        => (string) Str::uuid(),
+                        'type'      => 'cover',
+                        'file_path' => "assets/{$folderName}/{$fileName}",
+                        'mime_type' => $mimeType,
+                        'file_size' => $fileSize,
+                        'sort_order'=> 1,
+                        'is_active' => true,
                     ]);
-                    Log::info('   -> Cover baru berhasil disimpan.');
                 }
 
-                // 8. Simpan Media: GALLERY
-                if ($request->hasFile('media_gallery')) {
-                    Log::info('7. Mendeteksi file media_gallery baru dimasukkan.', [
-                        'total_gallery_files' => count($request->file('media_gallery'))
-                    ]);
+                if ($request->hasFile('media_music') && $request->file('media_music')->isValid()) {
+                    $file = $request->file('media_music');
+                    $fileSize = $file->getSize();
+                    $mimeType = $file->getClientMimeType();
                     
-                    $lastSortOrder = $invitation->media()->max('sort_order') ?? 1;
-
-                    foreach ($request->file('media_gallery') as $index => $file) {
-                        $fileSize = $file->getSize() ?? 0;
-                        $mimeType = $file->getClientMimeType();
-                        $fileName = 'gallery_' . time() . '_' . Str::random(5) . '_' . $index . '.' . $file->getClientOriginalExtension();
-                        
-                        $file->move($destinationPath, $fileName);
-
-                        $invitation->media()->create([
-                            'id'          => (string) Str::uuid(),
-                            'type'        => 'gallery',
-                            'file_path'   => "assets/{$folderName}/{$fileName}",
-                            'mime_type'   => $mimeType,
-                            'file_size'   => $fileSize,
-                            'sort_order'  => $lastSortOrder + $index + 1,
-                            'is_active'   => true,
-                        ]);
+                    $oldMusic = $invitation->media()->where('type', 'music')->first();
+                    if ($oldMusic && file_exists(public_path($oldMusic->file_path))) {
+                        @unlink(public_path($oldMusic->file_path));
+                        $oldMusic->delete();
                     }
-                    Log::info('   -> Gallery tambahan berhasil di-upload.');
+                    
+                    $fileName = 'music_' . time() . '_' . Str::random(5) . '.' . $file->getClientOriginalExtension();
+                    $file->move($destinationPath, $fileName);
+
+                    $invitation->media()->create([
+                        'id'        => (string) Str::uuid(),
+                        'type'      => 'music',
+                        'file_path' => "assets/{$folderName}/{$fileName}",
+                        'mime_type' => $mimeType,
+                        'file_size' => $fileSize,
+                        'sort_order'=> 1,
+                        'is_active' => true,
+                    ]);
+                }
+
+                if ($request->hasFile('media_gallery')) {
+                    $lastSortOrder = $invitation->media()->where('type', 'gallery')->max('sort_order') ?? 0;
+                    foreach ($request->file('media_gallery') as $index => $file) {
+                        if ($file->isValid()) {
+                            $fileSize = $file->getSize();
+                            $mimeType = $file->getClientMimeType();
+                            $fileName = 'gallery_' . time() . '_' . Str::random(5) . '_' . $index . '.' . $file->getClientOriginalExtension();
+                            $file->move($destinationPath, $fileName);
+                            
+                            $invitation->media()->create([
+                                'id'        => (string) Str::uuid(),
+                                'type'      => 'gallery',
+                                'file_path' => "assets/{$folderName}/{$fileName}",
+                                'mime_type' => $mimeType,
+                                'file_size' => $fileSize,
+                                'sort_order'=> $lastSortOrder + $index + 1,
+                                'is_active' => true,
+                            ]);
+                        }
+                    }
                 }
             });
 
-            Log::info($isEdit ? '=== PROSES UPDATE UNDANGAN BERHASIL ===' . PHP_EOL : '=== PROSES SIMPAN UNDANGAN BERHASIL ===' . PHP_EOL);
+            if ($request->ajax()) {
+                return response()->json([
+                    'status' => 'success', 
+                    'message' => 'Undangan berhasil disimpan.',
+                    'redirect_url' => route('reseller.kelola-undangan.edit', $invitation->id),
+                    'save_url' => route('reseller.kelola-undangan.save', $invitation->id),
+                    'preview_url' => route('invitation.show', $invitation->slug)
+                ]);
+            }
 
-            return redirect()
-                ->route('reseller.kelola-undangan.index')
-                ->with('success', $isEdit ? 'Undangan berhasil diperbarui.' : 'Undangan berhasil dibuat.');
+            return redirect()->route('reseller.kelola-undangan.index')
+                             ->with('success', $isEdit ? 'Undangan berhasil diperbarui.' : 'Undangan berhasil dibuat.');
 
         } catch (\Exception $e) {
             Log::error('=== PROSES SIMPAN/UPDATE UNDANGAN GAGAL (ROLLBACK) ===', [
-                'error_message' => $e->getMessage(),
-                'error_trace'   => $e->getTraceAsString()
+                'error_message' => $e->getMessage()
             ]);
 
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+            if ($request->ajax()) {
+                return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()], 500);
+            }
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
     }
 
     public function destroy($id)
     {
-        $invitation = Invitation::where('user_id', Auth::id())->findOrFail($id);
+        $customerIds = \App\Models\User::where('reseller_id', Auth::id())->pluck('id')->push(Auth::id());
+        $invitation = Invitation::whereIn('user_id', $customerIds)->findOrFail($id);
         
         foreach($invitation->media as $media) {
             if (file_exists(public_path($media->file_path))) {

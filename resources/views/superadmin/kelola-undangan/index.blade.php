@@ -3,22 +3,19 @@
 @section('title', 'Kelola Undangan')
 
 @section('content')
-    <div class="space-y-6" x-data="{ openDetail: false, selectedData: {} }">
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-xs p-6">
+    <div class="max-w-6xl mx-auto space-y-6" x-data="{ openDetail: false, selectedData: {} }">
+        
+        {{-- Header --}}
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="font-serif text-[42px] font-bold text-slate-900 tracking-tight leading-none">Kelola Undangan</h1>
+            
+            <a href="{{ route('superadmin.kelola-undangan.create') }}" class="inline-flex items-center gap-2 bg-[#6d28d9] hover:bg-[#5b21b6] text-white px-6 py-2.5 rounded-full font-medium text-[14px] transition-all shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+                Tambah Undangan Baru
+            </a>
+        </div>
 
-            {{-- Header --}}
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <div>
-                    <h3 class="text-lg font-bold text-slate-800">Daftar Manajemen Undangan</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Kelola informasi, tema, dan status publikasi undangan digital.
-                    </p>
-                </div>
-
-                <a href="{{ route('superadmin.kelola-undangan.create') }}"
-                    class="bg-sky-500 text-white hover:bg-sky-600 px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm shadow-sky-500/10 hover:shadow-md hover:shadow-sky-500/20 inline-flex items-center">
-                    + Tambah Undangan Baru
-                </a>
-            </div>
+        <div class="bg-white/70 backdrop-blur-xl rounded-[2rem] p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] border border-white">
 
             {{-- Filter & Search --}}
             <div class="flex flex-col md:flex-row gap-3 mb-6 max-w-2xl">

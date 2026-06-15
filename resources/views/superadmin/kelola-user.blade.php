@@ -3,23 +3,30 @@
 @section('title', 'Kelola User')
 
 @section('content')
-    <div class="space-y-6">
-        {{-- Main Card Container --}}
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-xs p-6">
-
-            {{-- Bagian Header Kartu --}}
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <div>
-                    <h3 class="text-lg font-bold text-slate-800">Daftar Manajemen Pengguna</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Kelola informasi akun pengguna aplikasi undangan digital Anda.
-                    </p>
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        {{-- Header Title --}}
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-[#4c3a99] rounded-full flex items-center justify-center text-white shadow-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
                 </div>
-
-                <button onclick="toggleModal('modal-add')"
-                    class="bg-sky-500 text-white hover:bg-sky-600 px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm shadow-sky-500/10 hover:shadow-md hover:shadow-sky-500/20 cursor-pointer">
-                    + Tambah User Baru
-                </button>
+                <div>
+                    <h2 class="font-serif text-3xl font-bold text-slate-900 tracking-tight">Manajemen Pengguna</h2>
+                    <p class="text-sm text-slate-500 mt-0.5">Kelola informasi akun pengguna aplikasi undangan digital Anda.</p>
+                </div>
             </div>
+            <button onclick="toggleModal('modal-add')"
+                class="inline-flex items-center gap-2 bg-[#6d28d9] hover:bg-[#5b21b6] text-white px-6 py-2.5 rounded-full font-medium text-[14px] transition-all shadow-sm cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+                Tambah User Baru
+            </button>
+        </div>
+
+        {{-- Table Card --}}
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100/80 overflow-hidden p-6">
 
             <div class="flex flex-col md:flex-row gap-3 mb-6 max-w-2xl">
                 <div class="relative flex-1">

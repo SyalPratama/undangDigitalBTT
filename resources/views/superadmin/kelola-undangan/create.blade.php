@@ -3,13 +3,24 @@
 @section('title', 'Tambah Undangan')
 
 @section('content')
-    <div class="space-y-6">
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-xs p-6">
+    <div class="max-w-6xl mx-auto space-y-6">
 
-            <div class="mb-6">
-                <h3 class="text-lg font-bold text-slate-800">Tambah Undangan Baru</h3>
-                <p class="text-xs text-slate-400 mt-0.5">Buat entri data undangan digital baru ke dalam sistem.</p>
+        {{-- Header Area --}}
+        <div>
+            <div class="flex items-center gap-3 mb-2 text-sm text-slate-500">
+                <a href="{{ route('superadmin.kelola-undangan.index') }}" class="hover:text-[#6d28d9] transition-colors">Kelola Undangan</a>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                <span class="font-medium text-slate-700">Tambah Undangan Baru</span>
             </div>
+            <div class="flex items-center justify-between">
+                <h1 class="font-serif text-[42px] font-bold text-slate-900 tracking-tight leading-none">
+                    Tambah Undangan Baru
+                </h1>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Buat entri data undangan digital baru ke dalam sistem.</p>
+        </div>
+
+        <div class="bg-white/70 backdrop-blur-xl rounded-[2rem] p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] border border-white">
 
             <form action="{{ route('superadmin.kelola-undangan.store') }}" method="POST" class="space-y-6">
                 @csrf

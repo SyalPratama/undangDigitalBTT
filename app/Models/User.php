@@ -15,6 +15,8 @@ class User extends Authenticatable
         'name',
         'reseller_id',
         'email',
+        'active_package',
+        'package_expires_at',
         'password',
     ];
 
@@ -42,6 +44,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'package_expires_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -60,5 +63,9 @@ class User extends Authenticatable
     {
         return $this->roles()->where('name', $roleName)->exists();
     }
-    
+
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class);
+    }
 }

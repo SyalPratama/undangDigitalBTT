@@ -5,11 +5,28 @@ namespace App\Http\Controllers\Reseller;
 use App\Http\Controllers\Controller;
 use App\Models\Invitation;
 use App\Models\User; // Ditambahkan untuk menghitung total klien reseller
+use App\Models\Theme;
 use Illuminate\Support\Facades\Auth;
 
 class ResDashboardController extends Controller
 {
     public function index()
+    {
+        $user = Auth::user();
+        
+        $totalInvitations = \App\Models\Invitation::where('user_id', $user->id)->count();
+        $recentInvitations = \App\Models\Invitation::where('user_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+            
+        return view('reseller.dashboard', compact(
+            'totalInvitations',
+            'recentInvitations'
+        ));
+    }
+
+    public function templates()
     {
         $user = Auth::user();
         
@@ -29,11 +46,15 @@ class ResDashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('reseller.dashboard', compact(
+        // Mengambil semua tema untuk ditampilkan dalam bentuk card ke reseller
+        $themes = Theme::with('category')->get();
+
+        return view('reseller.templates', compact(
             'totalInvitations', 
             'activeInvitations', 
             'totalCustomers', 
-            'recentInvitations'
+            'recentInvitations',
+            'themes'
         ));
     }
 }

@@ -1,4 +1,4 @@
-@extends('layouts.reseller')
+@extends('layouts.customer')
 
 @section('title', 'Reseller Workspace')
 

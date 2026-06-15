@@ -16,6 +16,9 @@ use App\Http\Controllers\Reseller\ResKelolaUserController;
 // CUSTOMER
 use App\Http\Controllers\Customer\CusDashboardController;
 use App\Http\Controllers\Customer\CusKelolaUndanganController;
+use App\Http\Controllers\Customer\CusPaketController;
+use App\Http\Controllers\Customer\CusKontributorController;
+use App\Http\Controllers\Customer\CusResellerController;
 
 // GLOBAL
 use App\Http\Controllers\InvitationController;
@@ -91,7 +94,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['role:reseller'])->prefix('reseller')->name('reseller.')->group(function () {
         Route::get('/dashboard', [ResDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/kelola-user', [ResKelolaUserController::class, 'index'])->name('user.index');
+        Route::get('/templates', [ResDashboardController::class, 'templates'])->name('templates.index');
+        Route::get('/user', [ResKelolaUserController::class, 'index'])->name('user.index');
         Route::post('/kelola-user', [ResKelolaUserController::class, 'store'])->name('user.store');
         Route::put('/kelola-user/{id}', [ResKelolaUserController::class, 'update'])->name('user.update');
         Route::delete('/kelola-user/{id}', [ResKelolaUserController::class, 'destroy'])->name('user.destroy');
@@ -103,10 +107,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('kelola-undangan/{id}/toggle-status', [ResKelolaUndanganController::class, 'toggleStatus'])
         ->name('kelola-undangan.toggle-status');
         Route::get('/themes/{id}/preview', [CusDashboardController::class, 'preview'])->name('themes.preview');
+        Route::get('/kontributor', [\App\Http\Controllers\Reseller\ResContributorController::class, 'index'])->name('kontributor.index');
+        Route::post('/kontributor', [\App\Http\Controllers\Reseller\ResContributorController::class, 'store'])->name('kontributor.store');
+        Route::get('/paket', [\App\Http\Controllers\Reseller\ResPaketController::class, 'index'])->name('paket.index');
     });
 
     Route::middleware(['role:customer'])->prefix('customer')->name('customer.')->group(function () {
         Route::get('/dashboard', [CusDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/templates', [CusDashboardController::class, 'templates'])->name('templates.index');
         Route::get('kelola-undangan', [CusKelolaUndanganController::class, 'index'])->name('kelola-undangan.index');
         Route::get('kelola-undangan/create', [CusKelolaUndanganController::class, 'create'])->name('kelola-undangan.create');
         Route::get('kelola-undangan/{id}/edit', [CusKelolaUndanganController::class, 'edit'])->name('kelola-undangan.edit');
@@ -115,6 +123,13 @@ Route::middleware(['auth'])->group(function () {
         Route::post('kelola-undangan/{id}/toggle-status', [CusKelolaUndanganController::class, 'toggleStatus'])
         ->name('kelola-undangan.toggle-status');
         Route::get('/themes/{id}/preview', [CusDashboardController::class, 'preview'])->name('themes.preview');
+        
+        Route::get('/paket', [CusPaketController::class, 'index'])->name('paket.index');
+        Route::get('/kontributor', [CusKontributorController::class, 'index'])->name('kontributor.index');
+        Route::post('/kontributor', [CusKontributorController::class, 'store'])->name('kontributor.store');
+        
+        Route::get('/reseller', [CusResellerController::class, 'index'])->name('reseller.index');
+        Route::post('/reseller', [CusResellerController::class, 'store'])->name('reseller.store');
     });
 });
 

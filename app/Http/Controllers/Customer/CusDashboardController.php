@@ -14,10 +14,43 @@ class CusDashboardController extends Controller
      */
     public function index()
     {
-        // Mengambil semua tema untuk ditampilkan dalam bentuk card ke customer
+        $user = \Illuminate\Support\Facades\Auth::user();
+        
+        $totalInvitations = Invitation::where('user_id', $user->id)->count();
+        $recentInvitations = Invitation::where('user_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+            
+        return view('customer.dashboard', compact(
+            'totalInvitations',
+            'recentInvitations'
+        ));
+    }
+
+    public function templates()
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        
+        $totalInvitations = Invitation::where('user_id', $user->id)->count();
+        $activeInvitations = Invitation::where('user_id', $user->id)->where('is_active', true)->count();
+        $totalCustomers = 0;
+
+        $recentInvitations = Invitation::where('user_id', $user->id)
+            ->with('theme') 
+            ->latest()
+            ->take(5)
+            ->get();
+
         $themes = Theme::with('category')->get();
 
-        return view('customer.dashboard', compact('themes'));
+        return view('customer.templates', compact(
+            'totalInvitations', 
+            'activeInvitations', 
+            'totalCustomers', 
+            'recentInvitations',
+            'themes'
+        ));
     }
 
     /**
