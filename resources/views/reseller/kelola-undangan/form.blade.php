@@ -81,6 +81,21 @@
                             </div>
                         </div>
 
+                        @php
+                            $reqThemeId = request('theme_id');
+                            $currentThemeId = old('theme_id', $invitation->theme_id ?? $reqThemeId ?? '');
+                            $currentTypeId = old('invitation_type_id', $invitation->invitation_type_id ?? '');
+
+                            if (empty($currentTypeId) && !empty($reqThemeId)) {
+                                $matchedTheme = collect($themes)->firstWhere('id', $reqThemeId);
+                                if ($matchedTheme) {
+                                    $matchedType = collect($types)->firstWhere('slug', $matchedTheme->category_slug);
+                                    if ($matchedType) {
+                                        $currentTypeId = $matchedType->id;
+                                    }
+                                }
+                            }
+                        @endphp
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1.5">Tipe Undangan</label>
@@ -89,7 +104,7 @@
                                     <option value="">-- Pilih Tipe --</option>
                                     @foreach ($types as $type)
                                         <option value="{{ $type->id }}" data-slug="{{ $type->slug }}"
-                                            {{ ($invitation->invitation_type_id ?? '') == $type->id ? 'selected' : '' }}>
+                                            {{ $currentTypeId == $type->id ? 'selected' : '' }}>
                                             {{ $type->name }}</option>
                                     @endforeach
                                 </select>
@@ -672,6 +687,12 @@
 
             toggleProfileFields();
             toggleParentsForm();
+
+            if (!isInvitationExists && currentThemeId !== "") {
+                setTimeout(() => {
+                    triggerAutoSave(true);
+                }, 500); // Beri waktu sejenak agar dropdown value siap
+            }
         });
 
         // -------------------------------------------------------------
@@ -989,7 +1010,7 @@
 
         const themesData = @json($themes);
         const typesData = @json($types);
-        const currentThemeId = "{{ $invitation->theme_id ?? '' }}";
+        const currentThemeId = "{{ $currentThemeId }}";
 
         function toggleProfileFields() {
             const typeSelect = document.getElementById('type-select');
