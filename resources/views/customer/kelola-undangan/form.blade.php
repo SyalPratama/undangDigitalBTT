@@ -604,11 +604,11 @@
 
             {{-- Wrapper Iframe / Placeholder --}}
             <div id="preview-container-box"
-                class="flex-1 overflow-y-auto flex p-8 custom-scrollbar">
+                class="flex-1 overflow-y-auto flex flex-col items-center p-8 custom-scrollbar">
                 @if (isset($invitation) && $invitation->exists && $invitation->theme_id)
                     <div id="preview-wrapper"
-                        class="relative transition-all duration-500 shadow-2xl bg-white border-[12px] border-slate-800 rounded-[2.5rem] overflow-hidden my-auto mx-auto"
-                        style="width: 375px; height: 812px; min-height: 812px; flex-shrink: 0;">
+                        class="relative transition-all duration-500 shadow-2xl bg-white border-[12px] border-slate-800 rounded-[2.5rem] overflow-hidden my-auto w-full max-w-[375px]"
+                        style="height: 812px; min-height: 812px; flex-shrink: 0;">
                         <iframe id="preview-frame" src="{{ route('invitation.show', $invitation->slug) }}?preview=1"
                             class="w-full h-full border-none bg-white pointer-events-auto"></iframe>
                     </div>
@@ -955,18 +955,18 @@
                 btn.style.color = '#64748b'; // slate-500
             });
             if (device === 'mobile') {
-                wrapper.style.width = '375px';
+                wrapper.style.width = '100%';
                 wrapper.style.height = '812px';
                 wrapper.className =
-                    "relative transition-all duration-500 shadow-2xl bg-white border-[12px] border-slate-800 rounded-[2.5rem] overflow-hidden flex-shrink-0 my-auto mx-auto";
+                    "relative transition-all duration-500 shadow-2xl bg-white border-[12px] border-slate-800 rounded-[2.5rem] overflow-hidden flex-shrink-0 my-auto max-w-[375px]";
                 const btn = document.getElementById('btn-mobile');
                 btn.style.backgroundColor = '#0f172a'; // slate-900
                 btn.style.color = '#ffffff';
             } else if (device === 'tablet') {
-                wrapper.style.width = '768px';
+                wrapper.style.width = '100%';
                 wrapper.style.height = '1024px';
                 wrapper.className =
-                    "relative transition-all duration-500 shadow-2xl bg-white border-[16px] border-slate-800 rounded-[3rem] overflow-hidden flex-shrink-0 my-auto mx-auto";
+                    "relative transition-all duration-500 shadow-2xl bg-white border-[16px] border-slate-800 rounded-[3rem] overflow-hidden flex-shrink-0 my-auto max-w-[768px]";
                 const btn = document.getElementById('btn-tablet');
                 btn.style.backgroundColor = '#0f172a';
                 btn.style.color = '#ffffff';
@@ -974,7 +974,7 @@
                 wrapper.style.width = '100%';
                 wrapper.style.height = '100%';
                 wrapper.className =
-                    "relative transition-all duration-500 shadow-2xl bg-white border-4 border-slate-800 rounded-xl overflow-hidden w-full h-full";
+                    "relative transition-all duration-500 shadow-2xl bg-white border-4 border-slate-800 rounded-xl overflow-hidden flex-shrink-0 w-full h-full";
                 const btn = document.getElementById('btn-desktop');
                 btn.style.backgroundColor = '#0f172a';
                 btn.style.color = '#ffffff';
