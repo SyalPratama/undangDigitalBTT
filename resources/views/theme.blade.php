@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Ngajak.com | Pilih Tema Terbaikmu')
+@section('title', 'Pilih Tema Terbaikmu')
 
 @section('content')
     <div id="themes" class="mt-10 mb-20 max-w-6xl mx-auto px-4 text-center" x-data="{

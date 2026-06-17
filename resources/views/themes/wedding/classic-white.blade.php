@@ -128,8 +128,14 @@
     </div>
     @endif
 
+    <!-- DEBUG PROJECT DATA: @json($projectData) -->
+    <!-- DEBUG SECTION ORDER: @json($sectionOrder) -->
     @foreach ($sectionOrder as $section)
     @if ($section['visible'])
+    @if (in_array(($section['id'] ?? $section['type'] ?? ''), ['univ_countdown', 'univ_maps', 'univ_rsvp', 'univ_comments']))
+        @include('themes.partials.universal-sections', ['renderOnly' => ($section['id'] ?? $section['type'] ?? '')])
+    @endif
+
 
     {{-- 1. HERO / COVER SECTION --}}
     @if ($section['id'] == 'cover')

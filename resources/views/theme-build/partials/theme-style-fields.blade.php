@@ -51,14 +51,19 @@
     <div class="mb-4">
         <label class="text-[10px] uppercase font-bold text-slate-400">Tambah Section</label>
         <div class="flex gap-2 mt-1">
-            <select id="newSectionType" class="flex-1 text-xs border-slate-200 rounded-lg">
-                <option value="cover">Cover</option>
-                <option value="quote">Quote</option>
-                <option value="profile">Profile</option>
-                <option value="event">Event</option>
-                <option value="gallery">Gallery</option>
-                <option value="closing">Closing</option>
-            </select>
+                <select id="newSectionType"
+                    class="flex-1 text-xs border-slate-200 rounded-lg">
+                    <option value="cover">Cover (Hero)</option>
+                    <option value="quote">Quote / Ayat</option>
+                    <option value="profile">Profile Pengantin</option>
+                    <option value="event">Acara / Event</option>
+                    <option value="gallery">Galeri Foto</option>
+                    <option value="closing">Penutup</option>
+                    <option value="univ_countdown">Countdown Acara (Univ)</option>
+                    <option value="univ_maps">Lokasi Maps (Univ)</option>
+                    <option value="univ_rsvp">RSVP (Univ)</option>
+                    <option value="univ_comments">Ucapan & Doa (Univ)</option>
+                </select>
             <button type="button" onclick="addSection()"
                 class="px-4 py-2 bg-slate-800 text-white rounded-lg text-xs font-bold">+</button>
         </div>
@@ -301,7 +306,17 @@
 
         // 4. Hapus Foto Galeri (AJAX)
         async function removeGalleryImage(mediaId, btnElement) {
-            if (!confirm('Hapus foto ini dari galeri?')) return;
+            const result = await Swal.fire({
+                title: 'Hapus Foto?',
+                text: 'Hapus foto ini dari galeri?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            });
+            if (!result.isConfirmed) return;
 
             try {
                 const response = await fetch(`/customer/kelola-undangan/media/delete/${mediaId}`, {
@@ -315,7 +330,7 @@
                 if (response.ok) {
                     btnElement.closest('.gallery-item').remove();
                 } else {
-                    alert('Gagal menghapus gambar.');
+                    Swal.fire('Error', 'Gagal menghapus gambar.', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);

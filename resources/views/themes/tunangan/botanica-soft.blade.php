@@ -1176,6 +1176,6 @@
         // TODO: fetch('/wishes', { method:'POST', headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}, body: new FormData(e.target) })
     }
 </script>
-
+    @include('themes.partials.universal-sections')
 </body>
 </html>

@@ -8,6 +8,7 @@ use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboard;
 use App\Http\Controllers\Superadmin\KelolaUserController;
 use App\Http\Controllers\Superadmin\KelolaUndanganController;
 use App\Http\Controllers\Superadmin\ThemeController;
+use App\Http\Controllers\Superadmin\PackageController;
 
 // RESELLER
 use App\Http\Controllers\Reseller\ResDashboardController;
@@ -26,22 +27,30 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\BuilderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ThemeBuildController;
+use App\Http\Controllers\PublicInteractionController;
 use Illuminate\Support\Facades\Route;
 
 // OTP
 use App\Http\Controllers\Auth\RegisterOtpController;
+
+Route::domain('{subdomain}.' . env('APP_DOMAIN', 'localhost'))->group(function () {
+    Route::get('/', [InvitationController::class, 'showSubdomain'])->name('invitation.subdomain');
+});
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('/pricing', function () {
-    return view('pricing');
+    $packages = \App\Models\Package::where('is_active', true)->orderBy('price')->get();
+    return view('pricing', compact('packages'));
 })->name('pricing');
 
 Route::get('/themes', [HomeController::class, 'index'])->name('themes.index');
 Route::get('/themes/{id}/preview', [HomeController::class, 'preview'])->name('themes.preview');
 Route::get('/undangan/{slug}', [InvitationController::class, 'show'])->name('invitation.show');
+Route::post('/invitation/{id}/rsvp', [PublicInteractionController::class, 'storeRsvp'])->name('invitation.rsvp');
+Route::post('/invitation/{id}/comment', [PublicInteractionController::class, 'storeComment'])->name('invitation.comment');
 
 Route::get('/builder/{invitation}', [BuilderController::class, 'index']);
 Route::post('/builder/{invitation}/save', [BuilderController::class, 'save']);
@@ -77,6 +86,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('themes/{id}', [ThemeController::class, 'destroy'])->name('themes.destroy');
         Route::patch('themes/{id}/toggle', [ThemeController::class, 'toggleStatus'])->name('themes.toggle');
         Route::get('themes/{id}/preview', [ThemeController::class, 'preview'])->name('themes.preview');
+        Route::resource('packages', PackageController::class)->except(['show']);
     });
 
     // RESELLER
@@ -93,6 +103,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('kelola-undangan/save/{id?}', [ResKelolaUndanganController::class, 'save'])->name('kelola-undangan.save');
         Route::delete('kelola-undangan/{id}', [ResKelolaUndanganController::class, 'destroy'])->name('kelola-undangan.destroy');
         Route::post('kelola-undangan/{id}/toggle-status', [ResKelolaUndanganController::class, 'toggleStatus'])->name('kelola-undangan.toggle-status');
+        Route::get('kelola-undangan/{id}/guests', [ResKelolaUndanganController::class, 'guests'])->name('kelola-undangan.guests');
+        Route::get('kelola-undangan/{id}/map', [ResKelolaUndanganController::class, 'map'])->name('kelola-undangan.map');
         Route::get('/themes/{id}/preview', [CusDashboardController::class, 'preview'])->name('themes.preview');
         Route::get('/kontributor', [\App\Http\Controllers\Reseller\ResContributorController::class, 'index'])->name('kontributor.index');
         Route::post('/kontributor', [\App\Http\Controllers\Reseller\ResContributorController::class, 'store'])->name('kontributor.store');
@@ -108,6 +120,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('kelola-undangan/save/{id?}', [CusKelolaUndanganController::class, 'save'])->name('kelola-undangan.save');
         Route::delete('kelola-undangan/{id}', [CusKelolaUndanganController::class, 'destroy'])->name('kelola-undangan.destroy');
         Route::post('kelola-undangan/{id}/toggle-status', [CusKelolaUndanganController::class, 'toggleStatus'])->name('kelola-undangan.toggle-status');
+        Route::get('kelola-undangan/{id}/guests', [CusKelolaUndanganController::class, 'guests'])->name('kelola-undangan.guests');
+        Route::get('kelola-undangan/{id}/map', [CusKelolaUndanganController::class, 'map'])->name('kelola-undangan.map');
         Route::get('/themes/{id}/preview', [CusDashboardController::class, 'preview'])->name('themes.preview');
         
         Route::get('/paket', [CusPaketController::class, 'index'])->name('paket.index');

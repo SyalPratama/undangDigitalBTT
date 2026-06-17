@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Superadmin Dashboard') - ngajak.com</title>
+    <title>@yield('title', 'Superadmin Dashboard')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -11,9 +11,35 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-serif { font-family: 'Instrument Serif', serif; }
         .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 20px; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function showLockedAlert(featureName, upgradeUrl) {
+            Swal.fire({
+                title: 'Fitur Terkunci',
+                text: 'Anda tidak memiliki akses ke fitur ' + featureName + '. Silakan upgrade paket Anda.',
+                icon: 'lock',
+                iconHtml: '🔒',
+                showCancelButton: true,
+                confirmButtonColor: '#6d28d9',
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Upgrade Paket',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    title: 'font-serif text-2xl text-slate-800',
+                    popup: 'rounded-2xl',
+                    confirmButton: 'rounded-full px-6 font-semibold',
+                    cancelButton: 'rounded-full px-6 font-semibold'
+                }
+            }).then((result) => {
+                if (result.isConfirmed && upgradeUrl) {
+                    window.location.href = upgradeUrl;
+                }
+            });
+        }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 </head>
 <body class="text-slate-800 antialiased bg-gradient-to-br from-[#f4e6fa] via-[#e5f4fd] to-[#d6fbfb] min-h-screen flex overflow-hidden">
     
@@ -21,9 +47,14 @@
     <aside class="w-[260px] bg-white flex flex-col shrink-0 min-h-screen border-r border-slate-100 z-10">
         <div class="p-6 flex items-center gap-3 mb-4">
             <div class="w-8 h-8 rounded-full bg-[#6d28d9] text-white flex items-center justify-center shadow-md shadow-purple-500/30">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0 -1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                    <path d="M20 2v4"></path>
+                    <path d="M22 4h-4"></path>
+                    <circle cx="4" cy="20" r="2"></circle>
+                </svg>
             </div>
-            <span class="font-serif text-[26px] font-bold text-slate-900 tracking-tight leading-none mt-1">ngajak<span class="text-[#6d28d9]">.com</span></span>
+            <span class="font-serif text-[26px] font-bold text-slate-900 tracking-tight leading-none mt-1">ngajak<span class="text-[#6d28d9]">.my.id</span></span>
         </div>
 
         <div class="px-6 pb-2">
@@ -61,6 +92,14 @@
                 {{ request()->routeIs('superadmin.themes.*') ? 'bg-[#6d28d9] text-white shadow-md shadow-purple-500/20' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
                 <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
                 Template Desain
+            </a>
+
+            {{-- Kelola Paket --}}
+            <a href="{{ route('superadmin.packages.index') }}"
+                class="flex items-center gap-3 px-4 py-3 text-[14px] font-medium rounded-full transition-all duration-200
+                {{ request()->routeIs('superadmin.packages.*') ? 'bg-[#6d28d9] text-white shadow-md shadow-purple-500/20' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
+                <i class="fa-solid fa-box-open text-[16px] w-[18px] text-center"></i>
+                Kelola Paket
             </a>
         </nav>
 

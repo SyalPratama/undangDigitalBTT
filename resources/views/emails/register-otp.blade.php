@@ -21,7 +21,7 @@
             box-shadow: 0 4px 24px rgba(0,0,0,0.08);
         }
         .header {
-            background: linear-gradient(135deg, #ec4899 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #6d28d9 0%, #4c229a 100%);
             padding: 36px 32px 28px;
             text-align: center;
         }
@@ -111,18 +111,21 @@
     <div class="container">
         <div class="header">
             <div class="logo-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="white" width="26" height="26" style="transform:rotate(-45deg)">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="26" height="26">
+                    <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0 -1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                    <path d="M20 2v4"></path>
+                    <path d="M22 4h-4"></path>
+                    <circle cx="4" cy="20" r="2"></circle>
                 </svg>
             </div>
-            <h1>{{ config('app.name') }}</h1>
+            <h1>ngajak.my.id</h1>
             <p>Platform Undangan Digital</p>
         </div>
 
         <div class="body">
             <p>Halo,</p>
             <p>
-                Kami menerima permintaan pendaftaran akun baru di <strong>{{ config('app.name') }}</strong>.
+                Kami menerima permintaan pendaftaran akun baru di <strong>ngajak.my.id</strong>.
                 Masukkan kode berikut pada halaman pendaftaran:
             </p>
 
@@ -137,12 +140,12 @@
             </div>
 
             <p>Jika Anda tidak melakukan pendaftaran ini, abaikan email ini. Akun Anda tetap aman.</p>
-            <p>Salam hangat,<br><strong>Tim {{ config('app.name') }}</strong></p>
+            <p>Salam hangat,<br><strong>Tim ngajak.my.id</strong></p>
         </div>
 
         <div class="footer">
             <p>
-                © {{ date('Y') }} {{ config('app.name') }}. All rights reserved.<br>
+                © {{ date('Y') }} ngajak.my.id. All rights reserved.<br>
                 Email ini dikirim secara otomatis, mohon jangan membalas email ini.
             </p>
         </div>

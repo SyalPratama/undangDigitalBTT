@@ -27,6 +27,7 @@ class Invitation extends Model
         'custom_domain',
         'password',
         'is_active',
+        'is_finalized',
         'published_at',
         'event_date',
         'visitor_count',
@@ -36,6 +37,7 @@ class Invitation extends Model
 
     protected $casts = [
         'is_active'      => 'boolean',
+        'is_finalized'   => 'boolean',
         'published_at'   => 'datetime',
         'event_date'     => 'datetime',
         'visitor_count'  => 'integer',
@@ -161,6 +163,14 @@ class Invitation extends Model
             'invitation_id'
         )->orderBy('event_date')
         ->orderBy('start_time');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(
+            InvitationComment::class,
+            'invitation_id'
+        )->latest();
     }
 
     public function builder()

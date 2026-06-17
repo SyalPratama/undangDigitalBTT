@@ -283,5 +283,6 @@
             }
         }
     </script>
+    @include('themes.partials.universal-sections')
 </body>
 </html>

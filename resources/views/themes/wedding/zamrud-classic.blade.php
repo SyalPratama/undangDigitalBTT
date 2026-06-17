@@ -714,6 +714,10 @@
 
 @foreach ($sectionOrder as $section)
 @if ($section['visible'])
+    @if (in_array(($section['id'] ?? $section['type'] ?? ''), ['univ_countdown', 'univ_maps', 'univ_rsvp', 'univ_comments']))
+        @include('themes.partials.universal-sections', ['renderOnly' => ($section['id'] ?? $section['type'] ?? '')])
+    @endif
+
 
 @if ($section['id'] == 'cover')
 <section id="hero">
@@ -1037,6 +1041,5 @@
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
-
 </body>
 </html>

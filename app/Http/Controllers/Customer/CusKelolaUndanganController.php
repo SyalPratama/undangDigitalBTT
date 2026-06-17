@@ -18,7 +18,7 @@ class CusKelolaUndanganController extends Controller
     public function index(Request $request)
     {
         $query = Invitation::with(['type', 'theme', 'profile', 'cover', 'galleries', 'events'])
-            ->where('user_id', Auth::id());
+            ->where('user_id', Auth::id())->where('is_finalized', true);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -44,7 +44,7 @@ class CusKelolaUndanganController extends Controller
         // Load themes beserta slug category-nya dari tabel relasi agar bisa di filter JS
         $themes = DB::table('themes')
             ->leftJoin('theme_categories', 'themes.theme_category_id', '=', 'theme_categories.id')
-            ->select('themes.id', 'themes.name', 'theme_categories.slug as category_slug')
+            ->select('themes.id', 'themes.name', 'themes.is_premium', 'themes.thumbnail', 'theme_categories.slug as category_slug')
             ->where('themes.is_active', true)
             ->orderBy('themes.name')
             ->get();
@@ -59,7 +59,7 @@ class CusKelolaUndanganController extends Controller
         $types = InvitationType::orderBy('name')->get();
         $themes = DB::table('themes')
             ->leftJoin('theme_categories', 'themes.theme_category_id', '=', 'theme_categories.id')
-            ->select('themes.id', 'themes.name', 'theme_categories.slug as category_slug')
+            ->select('themes.id', 'themes.name', 'themes.is_premium', 'themes.thumbnail', 'theme_categories.slug as category_slug')
             ->where('themes.is_active', true)
             ->orderBy('themes.name')
             ->get();
@@ -97,7 +97,7 @@ class CusKelolaUndanganController extends Controller
             'invitation_type_id' => 'required|exists:invitation_types,id',
             'event_date'         => 'required|date',
             'password'           => 'nullable|string|min:4',
-            'custom_domain'      => 'nullable|string|max:255',
+            'custom_domain'      => ['nullable', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\-]+$/', 'unique:invitations,custom_domain,' . ($isEdit ? $id : 'NULL') . ',id'],
             'first_name'         => 'required|string|max:255',
             'first_nickname'     => 'required|string|max:255',
             'second_name'        => 'nullable|string|max:255',
@@ -118,6 +118,15 @@ class CusKelolaUndanganController extends Controller
                 return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
             }
             return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Cek akses tema premium
+        $theme = Theme::findOrFail($request->theme_id);
+        if ($theme->is_premium && !Auth::user()->hasFeature('is_premium_template_access')) {
+            if ($request->ajax()) {
+                return response()->json(['status' => 'error', 'errors' => ['theme_id' => ['Anda tidak memiliki akses ke tema premium ini. Silakan upgrade paket Anda.']]], 422);
+            }
+            return redirect()->back()->withErrors(['theme_id' => 'Anda tidak memiliki akses ke tema premium ini. Silakan upgrade paket Anda.'])->withInput();
         }
 
         $invitationType = InvitationType::findOrFail($request->invitation_type_id);
@@ -142,11 +151,22 @@ class CusKelolaUndanganController extends Controller
 
                 $oldThemeId = null;
                 if ($isEdit) {
+                    // Update: if user clicks "Simpan", finalize it.
+                    if ($request->has('is_final') && $request->is_final == '1') {
+                        $invitationData['is_finalized'] = true;
+                    }
                     $oldThemeId = $invitation->theme_id;
                     $invitation->update($invitationData);
                 } else {
                     $invitationData['user_id'] = Auth::id();
-                    $invitationData['is_active'] = false; 
+                    $invitationData['is_active'] = false;
+                    $invitationData['is_finalized'] = false;
+                    
+                    // Jika langsung klik simpan pertama kali
+                    if ($request->has('is_final') && $request->is_final == '1') {
+                        $invitationData['is_finalized'] = true;
+                    }
+
                     $invitation = Invitation::create($invitationData);
                 }
 
@@ -185,6 +205,7 @@ class CusKelolaUndanganController extends Controller
                     $builderDataArray = [
                         'primary_color' => $request->input('builder.primary_color', '#10b981'),
                         'section_order' => json_decode($request->input('builder.section_order', '[]'), true),
+                        'universal_sections_order' => json_decode($request->input('builder.universal_sections_order', '[]'), true),
                         'show_parents'  => filter_var($rawShowParents, FILTER_VALIDATE_BOOLEAN),
                     ];
 
@@ -350,14 +371,20 @@ class CusKelolaUndanganController extends Controller
             });
 
             if ($request->ajax()) {
-                // Menambahkan save_url agar form tau kemana harus nge-POST setelah draft pertama terbuat
-                return response()->json([
+                $responsePayload = [
                     'status' => 'success', 
                     'message' => 'Undangan berhasil disimpan.',
                     'redirect_url' => route('customer.kelola-undangan.edit', $invitation->id),
-                    'save_url' => route('customer.kelola-undangan.save', $invitation->id), // <--- TAMBAHKAN BARIS INI
+                    'save_url' => route('customer.kelola-undangan.save', $invitation->id),
                     'preview_url' => route('invitation.show', $invitation->slug)
-                ]);
+                ];
+
+                if ($request->has('is_final') && $request->is_final == '1') {
+                    $responsePayload['redirect_url'] = route('customer.kelola-undangan.index');
+                    $responsePayload['final_redirect'] = true;
+                }
+
+                return response()->json($responsePayload);
             }
 
             return redirect()->route('customer.kelola-undangan.index')
@@ -399,5 +426,28 @@ class CusKelolaUndanganController extends Controller
         $invitation->save();
 
         return redirect()->back()->with('success', 'Status undangan berhasil diubah!');
+    }
+
+    public function guests($id)
+    {
+        $invitation = Invitation::where('user_id', Auth::id())->findOrFail($id);
+        
+        // Asumsi relasi ke guests ditambahkan di Invitation model. Jika belum ada relasinya, query manual
+        $guests = \App\Models\InvitationGuest::where('invitation_id', $id)->get();
+        
+        $hadirCount = $guests->where('status', 'hadir')->count();
+        $mungkinCount = $guests->where('status', 'mungkin')->count();
+        $tidakHadirCount = $guests->where('status', 'tidak_hadir')->count();
+        $locationSharedCount = $guests->where('is_location_shared', true)->count();
+
+        return view('customer.kelola-undangan.guests', compact(
+            'invitation', 'guests', 'hadirCount', 'mungkinCount', 'tidakHadirCount', 'locationSharedCount'
+        ));
+    }
+
+    public function map($id)
+    {
+        $invitation = Invitation::where('user_id', Auth::id())->with('events')->findOrFail($id);
+        return view('customer.kelola-undangan.map', compact('invitation'));
     }
 }

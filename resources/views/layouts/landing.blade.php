@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Ngajak.com | Cinematic Digital Invitation')</title>
+    <title>@yield('title', 'Cinematic Digital Invitation')</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
@@ -187,6 +187,7 @@
         }
     </style>
     @stack('styles')
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 </head>
 
 <body
@@ -200,14 +201,15 @@
                 <div class="flex items-center gap-2 cursor-pointer">
                     <div
                         class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-indigo-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-                            stroke="currentColor" class="w-4 h-4 transform -rotate-45">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                        </svg>
+                            <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0 -1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0 -1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                                <path d="M20 2v4"></path>
+                                <path d="M22 4h-4"></path>
+                                <circle cx="4" cy="20" r="2"></circle>
+                            </svg>
                     </div>
                     <span class="font-bold text-xl tracking-tight text-[#2d124d]">
-                        ngajak<span class="text-indigo-600">.com</span>
+                        ngajak<span class="text-indigo-600">.my.id</span>
                     </span>
                 </div>
 
@@ -279,14 +281,15 @@
                     <div class="flex items-center gap-2 cursor-pointer mb-4">
                         <div
                             class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-indigo-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 transform -rotate-45">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                            <svg class="w-3.5 h-3.5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0 -1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                                <path d="M20 2v4"></path>
+                                <path d="M22 4h-4"></path>
+                                <circle cx="4" cy="20" r="2"></circle>
                             </svg>
                         </div>
                         <span class="font-bold text-lg tracking-tight text-[#2d124d]">ngajak<span
-                                class="text-indigo-600">.com</span></span>
+                                class="text-indigo-600">.my.id</span></span>
                     </div>
                     <p class="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-sm">
                         Platform undangan digital premium untuk momen yang layak dikenang. Cepat, elegan, interaktif.
@@ -315,8 +318,8 @@
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Perusahaan</h4>
                         <p class="text-xs sm:text-sm font-semibold text-slate-800 mb-1">PT Berkah Teknologi Terdepan
                         </p>
-                        <a href="mailto:support@ngajak.com"
-                            class="text-xs sm:text-sm text-slate-500 hover:text-indigo-600 transition">support@ngajak.com</a>
+                        <a href="mailto:support@ngajak.my.id"
+                            class="text-xs sm:text-sm text-slate-500 hover:text-indigo-600 transition">support@ngajak.my.id</a>
                     </div>
                 </div>
             </div>

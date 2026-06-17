@@ -13,8 +13,9 @@ class CusDashboardController extends Controller
     {
         $user = \Illuminate\Support\Facades\Auth::user();
         
-        $totalInvitations = Invitation::where('user_id', $user->id)->count();
+        $totalInvitations = Invitation::where('user_id', $user->id)->where('is_finalized', true)->count();
         $recentInvitations = Invitation::where('user_id', $user->id)
+            ->where('is_finalized', true)
             ->latest()
             ->take(5)
             ->get();
@@ -29,11 +30,12 @@ class CusDashboardController extends Controller
     {
         $user = \Illuminate\Support\Facades\Auth::user();
         
-        $totalInvitations = Invitation::where('user_id', $user->id)->count();
-        $activeInvitations = Invitation::where('user_id', $user->id)->where('is_active', true)->count();
+        $totalInvitations = Invitation::where('user_id', $user->id)->where('is_finalized', true)->count();
+        $activeInvitations = Invitation::where('user_id', $user->id)->where('is_finalized', true)->where('is_active', true)->count();
         $totalCustomers = 0;
 
         $recentInvitations = Invitation::where('user_id', $user->id)
+            ->where('is_finalized', true)
             ->with('theme') 
             ->latest()
             ->take(5)

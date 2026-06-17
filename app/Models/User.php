@@ -15,6 +15,7 @@ class User extends Authenticatable
         'name',
         'reseller_id',
         'email',
+        'package_id',
         'active_package',
         'package_expires_at',
         'password',
@@ -67,5 +68,30 @@ class User extends Authenticatable
     public function invitations()
     {
         return $this->hasMany(Invitation::class);
+    }
+
+    public function package()
+    {
+        return $this->belongsTo(Package::class, 'package_id');
+    }
+
+    /**
+     * Cek apakah user memiliki fitur paket tertentu
+     */
+    public function hasFeature($featureKey)
+    {
+        if ($this->hasRole('superadmin')) {
+            return true;
+        }
+
+        if (!$this->package) {
+            return false;
+        }
+
+        if ($this->package_expires_at && $this->package_expires_at->isPast()) {
+            return false;
+        }
+
+        return $this->package->{$featureKey} ?? false;
     }
 }

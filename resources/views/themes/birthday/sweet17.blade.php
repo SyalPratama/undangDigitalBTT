@@ -784,5 +784,6 @@
             showToast('Account copied to clipboard! 📋');
         }
     </script>
+    @include('themes.partials.universal-sections')
 </body>
 </html>

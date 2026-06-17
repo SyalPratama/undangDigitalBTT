@@ -13,9 +13,36 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        function showLockedAlert(featureName, upgradeUrl) {
+            Swal.fire({
+                title: 'Fitur Terkunci',
+                text: 'Anda tidak memiliki akses ke fitur ' + featureName + '. Silakan upgrade paket Anda.',
+                icon: 'lock',
+                iconHtml: '🔒',
+                showCancelButton: true,
+                confirmButtonColor: '#6d28d9',
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Upgrade Paket',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    title: 'font-serif text-2xl text-slate-800',
+                    popup: 'rounded-2xl',
+                    confirmButton: 'rounded-full px-6 font-semibold',
+                    cancelButton: 'rounded-full px-6 font-semibold'
+                }
+            }).then((result) => {
+                if (result.isConfirmed && upgradeUrl) {
+                    window.location.href = upgradeUrl;
+                }
+            });
+        }
+    </script>
 </head>
 
 <body class="font-sans antialiased">

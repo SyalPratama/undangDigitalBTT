@@ -1187,5 +1187,6 @@ function submitWish(e) {
     f.reset();
 }
 </script>
+    @include('themes.partials.universal-sections')
 </body>
 </html>

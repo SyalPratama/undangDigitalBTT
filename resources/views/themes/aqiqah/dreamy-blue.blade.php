@@ -121,5 +121,7 @@
             document.getElementById('weddingMusic').play();
         }
     </script>
+
+    @include('themes.partials.universal-sections')
 </body>
 </html>

@@ -92,6 +92,10 @@
 
     @foreach ($sectionOrder as $section)
     @if ($section['visible'])
+    @if (in_array(($section['id'] ?? $section['type'] ?? ''), ['univ_countdown', 'univ_maps', 'univ_rsvp', 'univ_comments']))
+        @include('themes.partials.universal-sections', ['renderOnly' => ($section['id'] ?? $section['type'] ?? '')])
+    @endif
+
 
     @if ($section['id'] == 'cover')
     <section class="min-h-screen flex items-center justify-center text-center px-6 relative bg-white">

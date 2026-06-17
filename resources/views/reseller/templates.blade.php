@@ -77,8 +77,12 @@
                         <div class="p-4 flex-1 flex flex-col justify-between">
                             <div class="mb-4">
                                 <h4
-                                    class="font-bold text-slate-800 group-hover:text-[#6d28d9] transition-colors line-clamp-1">
-                                    {{ $theme->name }}</h4>
+                                    class="font-bold text-slate-800 group-hover:text-[#6d28d9] transition-colors line-clamp-1 flex items-center gap-2">
+                                    @if($theme->is_premium)
+                                        <i class="fa-solid fa-crown text-yellow-500" title="Premium Template"></i>
+                                    @endif
+                                    {{ $theme->name }}
+                                </h4>
                                 <p class="text-xs text-slate-400 mt-1">Desain responsif, elegan, dan siap digunakan untuk
                                     momentum spesial Anda.</p>
                             </div>
@@ -96,13 +100,20 @@
                                     </svg>
                                     Preview
                                 </a>
-                                <a href="{{ route('reseller.kelola-undangan.create', ['theme_id' => $theme->id]) }}"
-                                    class="flex-1 text-center text-xs font-semibold text-white bg-[#6d28d9] hover:bg-purple-800 py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-1.5 shadow-sm shadow-purple-500/30">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                    </svg>
-                                    Gunakan
-                                </a>
+                                @if($theme->is_premium && !auth()->user()->hasFeature('is_premium_template_access'))
+                                    <button onclick="showLockedAlert('Template Premium', '{{ route('reseller.paket.index') }}')" title="Upgrade paket untuk menggunakan tema premium ini"
+                                        class="flex-1 text-center text-xs font-semibold text-slate-400 bg-slate-100 hover:bg-slate-200 py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer">
+                                        <i class="fa-solid fa-lock"></i> Premium
+                                    </button>
+                                @else
+                                    <a href="{{ route('reseller.kelola-undangan.create', ['theme_id' => $theme->id]) }}"
+                                        class="flex-1 text-center text-xs font-semibold text-white bg-[#6d28d9] hover:bg-purple-800 py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-1.5 shadow-sm shadow-purple-500/30">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                        Gunakan
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>

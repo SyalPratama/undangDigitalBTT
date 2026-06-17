@@ -61,6 +61,11 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $customerRole = \App\Models\Role::where('name', 'customer')->first();
+        if ($customerRole) {
+            $user->roles()->attach($customerRole->id);
+        }
+
         // Hapus flag verifikasi dari cache setelah berhasil
         Cache::forget('register_otp_verified:' . $email);
 

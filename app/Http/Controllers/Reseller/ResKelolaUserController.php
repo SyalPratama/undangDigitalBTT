@@ -21,12 +21,14 @@ class ResKelolaUserController extends Controller
         $customersCount = User::where('reseller_id', $userId)->count();
         $invitationsCount = \App\Models\Invitation::whereHas('user', function($q) use ($userId) {
             $q->where('reseller_id', $userId);
-        })->count();
+        })->where('is_finalized', true)->count();
         $activeSubscriptions = 0; // Dummy
         $totalViews = 991; // Dummy
 
         // 2. Data Table
-        $users = User::withCount('invitations')
+        $users = User::withCount(['invitations' => function ($query) {
+                $query->where('is_finalized', true);
+            }])
             ->where('reseller_id', $userId)
             ->latest()
             ->paginate(10);

@@ -362,7 +362,6 @@
         @method('DELETE')
     </form>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // FUNGSI MANAJEMEN MODAL DETAIL (NATIVE JS OPTIMIZED)
         function showDetailModal(button) {

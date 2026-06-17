@@ -80,6 +80,10 @@
                                 <option value="event">Event</option>
                                 <option value="gallery">Gallery</option>
                                 <option value="closing">Closing</option>
+                                <option value="univ_countdown">Countdown Acara (Univ)</option>
+                                <option value="univ_maps">Lokasi Maps (Univ)</option>
+                                <option value="univ_rsvp">RSVP (Univ)</option>
+                                <option value="univ_comments">Ucapan & Doa (Univ)</option>
                             </select>
                             <button type="button" onclick="addSection()"
                                 class="px-4 py-2 bg-slate-800 text-white rounded-lg text-xs font-bold">+</button>

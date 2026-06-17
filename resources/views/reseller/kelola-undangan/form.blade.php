@@ -128,7 +128,8 @@
                                 <label class="block text-xs font-semibold text-slate-600 mb-1.5">Custom Domain</label>
                                 <input type="text" name="custom_domain"
                                     value="{{ old('custom_domain', $invitation->custom_domain ?? '') }}"
-                                    placeholder="dinda-raffi.com"
+                                    placeholder="dinda-raffi"
+                                    oninput="this.value = this.value.replace(/[^a-zA-Z0-9-]/g, '')"
                                     class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:bg-white focus:border-sky-500 outline-none transition-all">
                             </div>
                         </div>
@@ -226,6 +227,10 @@
                                             <option value="event">Event</option>
                                             <option value="gallery">Gallery</option>
                                             <option value="closing">Closing</option>
+                                            <option value="univ_countdown">Countdown Acara (Univ)</option>
+                                            <option value="univ_maps">Lokasi Maps (Univ)</option>
+                                            <option value="univ_rsvp">RSVP (Univ)</option>
+                                            <option value="univ_comments">Ucapan & Doa (Univ)</option>
                                         </select>
                                         <button type="button" onclick="addSection()"
                                             class="px-4 py-2 bg-slate-800 text-white rounded-lg text-xs font-bold">+</button>
@@ -821,11 +826,13 @@
         }
 
         // Fungsi Utama Menyimpan Background
-        function triggerAutoSave(forceRefresh = false) {
+        function triggerAutoSave(forceRefresh = false, isFinal = false) {
             const themeSelect = document.getElementById('theme-select');
             if (!themeSelect.value) return;
 
             const formData = new FormData(autoSaveForm);
+            if(isFinal) formData.append('is_final', '1');
+            
             const previewContainer = document.getElementById('preview-container-box');
             const emptyState = document.getElementById('preview-empty-state');
 
@@ -862,6 +869,10 @@
                 })
                 .then(data => {
                     if (data.status === 'success') {
+                        if (data.final_redirect && data.redirect_url) {
+                            window.location.href = data.redirect_url;
+                            return;
+                        }
 
                         // MENGOSONGKAN INPUT FILE AGAR BISA UPLOAD FOTO BARU (TIDAK DOUBLE)
                         if (document.getElementById('input-cover')) document.getElementById('input-cover').value = '';
@@ -914,9 +925,12 @@
                     document.querySelectorAll('.temp-gallery-item').forEach(el => el.remove());
 
                     // 3. MUNCULKAN POP-UP PERINGATAN KE USER
-                    alert("GAGAL MENYIMPAN: \n" + err.message +
-                        "\n\n(TIPS: Jika gagal upload, pastikan ukuran Foto maks 5MB dan Musik maks 10MB. Jika masih gagal, cek batas upload_max_filesize di php.ini Anda)."
-                    );
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'GAGAL MENYIMPAN',
+                        text: err.message + '\n\n(TIPS: Jika gagal upload, pastikan ukuran Foto maks 5MB dan Musik maks 10MB)',
+                        customClass: { popup: 'rounded-2xl' }
+                    });
 
                     const emptyState = document.getElementById('preview-empty-state');
                     if (!isInvitationExists && emptyState) {
@@ -1011,6 +1025,7 @@
         const themesData = @json($themes);
         const typesData = @json($types);
         const currentThemeId = "{{ $currentThemeId }}";
+        const userCanAccessPremium = {{ auth()->user()->hasFeature('is_premium_template_access') ? 'true' : 'false' }};
 
         function toggleProfileFields() {
             const typeSelect = document.getElementById('type-select');
@@ -1071,15 +1086,36 @@
             }
 
             const themeSelect = document.getElementById('theme-select');
+            let previousThemeId = themeSelect.value;
             themeSelect.innerHTML = '<option value="">-- Pilih Tema --</option>';
             const selectedTypeData = typesData.find(t => t.id === typeSelect.value);
             if (selectedTypeData) {
                 const filteredThemes = themesData.filter(t => t.category_slug === selectedTypeData.slug);
                 filteredThemes.forEach(t => {
                     const isSelected = (t.id === currentThemeId) ? 'selected' : '';
-                    themeSelect.innerHTML += `<option value="${t.id}" ${isSelected}>${t.name}</option>`;
+                    const isPremium = t.is_premium ? true : false;
+                    
+                    if (isPremium && !userCanAccessPremium) {
+                        themeSelect.innerHTML += `<option value="${t.id}" data-locked="true">👑 ${t.name} (Premium)</option>`;
+                    } else {
+                        const premiumIcon = isPremium ? '👑 ' : '';
+                        themeSelect.innerHTML += `<option value="${t.id}" ${isSelected}>${premiumIcon}${t.name}</option>`;
+                    }
                 });
             }
+            // Update previousThemeId after populating
+            previousThemeId = themeSelect.value;
+            
+            // Listen for theme selection changes
+            themeSelect.addEventListener('change', function(e) {
+                const selectedOption = e.target.options[e.target.selectedIndex];
+                if (selectedOption && selectedOption.dataset.locked === 'true') {
+                    showLockedAlert('Template Premium', '{{ route('reseller.paket.index') }}');
+                    e.target.value = previousThemeId; // Revert selection
+                } else {
+                    previousThemeId = e.target.value;
+                }
+            });
         }
 
         window.toggleParentsForm = function() {
@@ -1189,6 +1225,26 @@
             {
                 id: 'closing',
                 name: 'Penutup Undangan',
+                visible: true
+            },
+            {
+                id: 'univ_countdown',
+                name: 'Countdown Acara',
+                visible: true
+            },
+            {
+                id: 'univ_maps',
+                name: 'Lokasi Maps',
+                visible: true
+            },
+            {
+                id: 'univ_rsvp',
+                name: 'RSVP (Kehadiran)',
+                visible: true
+            },
+            {
+                id: 'univ_comments',
+                name: 'Ucapan & Doa',
                 visible: true
             }
         ];
@@ -1397,7 +1453,7 @@
 
         // FUNGSI SIMPAN MANUAL
         window.manualSave = function() {
-            triggerAutoSave(true);
+            triggerAutoSave(true, true); // forceRefresh=true, isFinal=true
             triggerThemeAutoSave(true);
             const btn = document.querySelector('button[onclick="manualSave()"]');
             if(btn) {
@@ -1466,10 +1522,15 @@
             })
             .then(r => r.json())
             .then(data => {
+                if(data.status === 'success' && data.final_redirect && data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                    return;
+                }
                 if (forceRefresh) refreshPreview();
             })
             .catch(err => console.error("Theme auto-save gagal: ", err));
         };
+
 
         // Auto save listener for theme builder
         document.addEventListener('input', (e) => {
@@ -1590,8 +1651,6 @@
                 }
             }
         };
-
-    
         // THEME BUILDER SECTIONS LOGIC
         window.updateThemeSectionsInput = function() {
             const sections = [];
@@ -1607,6 +1666,7 @@
         window.addSection = function() {
             const type = document.getElementById('newSectionType').value;
             const ul = document.getElementById('sectionList');
+            if(!type) return;
             
             const li = document.createElement('li');
             li.className = "bg-slate-50 border border-slate-200 p-3 rounded-xl flex justify-between items-center cursor-move";
@@ -1657,18 +1717,21 @@
                     themeSectionList.insertBefore(draggedThemeItem, afterElement);
                 }
             });
-            function getDragAfterElement(container, y) {
-                const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
-                return draggableElements.reduce((closest, child) => {
-                    const box = child.getBoundingClientRect();
-                    const offset = y - box.top - box.height / 2;
-                    if (offset < 0 && offset > closest.offset) {
-                        return { offset: offset, element: child };
-                    } else {
-                        return closest;
-                    }
-                }, { offset: Number.NEGATIVE_INFINITY }).element;
-            }
+        }
+
+
+        // Global Drag and Drop helper
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
         }
     </script>
     

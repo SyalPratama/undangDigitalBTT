@@ -67,11 +67,34 @@
                 {{-- Features List --}}
                 <div class="mb-8">
                     <span class="text-[11px] font-bold text-slate-400 tracking-wider uppercase block mb-4">FITUR</span>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-8">
-                        @foreach ($activePackage['features'] as $feature)
-                            <div class="flex items-center gap-2.5">
-                                <i class="fa-regular fa-circle-check text-emerald-500"></i>
-                                <span class="text-sm text-slate-600">{{ $feature }}</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-8">
+                        @php
+                            $featureItems = [
+                                ['name' => 'Template Premium', 'has' => $user->package->is_premium_template_access],
+                                ['name' => 'Nama Tamu Otomatis', 'has' => $user->package->has_auto_guest_name],
+                                ['name' => 'Countdown Acara', 'has' => $user->package->has_event_countdown],
+                                ['name' => 'Google Maps', 'has' => $user->package->has_google_maps],
+                                ['name' => 'Galeri Foto', 'has' => $user->package->has_photo_gallery],
+                                ['name' => 'Love Story', 'has' => $user->package->has_love_story],
+                                ['name' => 'Musik Background', 'has' => $user->package->has_background_music],
+                                ['name' => 'Amplop Digital', 'has' => $user->package->has_digital_envelope],
+                                ['name' => 'Ucapan & Doa Tamu', 'has' => $user->package->has_guest_comments],
+                                ['name' => 'RSVP', 'has' => $user->package->has_rsvp],
+                                ['name' => 'Statistik RSVP', 'has' => $user->package->has_rsvp_stats],
+                                ['name' => 'Real-time Tracking Tamu', 'has' => $user->package->has_realtime_tracking],
+                                ['name' => 'Daftar Tamu Sudah Membuka', 'has' => $user->package->has_opened_list],
+                                ['name' => 'Daftar Tamu Belum Membuka', 'has' => $user->package->has_unopened_list],
+                                ['name' => 'Dashboard Monitoring', 'has' => $user->package->has_monitoring_dashboard],
+                            ];
+                        @endphp
+                        @foreach ($featureItems as $feature)
+                            <div class="flex items-center gap-2.5 {{ $feature['has'] ? '' : 'opacity-40' }}">
+                                @if($feature['has'])
+                                    <i class="fa-regular fa-circle-check text-emerald-500"></i>
+                                @else
+                                    <i class="fa-regular fa-circle-xmark text-slate-400"></i>
+                                @endif
+                                <span class="text-sm {{ $feature['has'] ? 'text-slate-600' : 'text-slate-400 line-through' }}">{{ $feature['name'] }}</span>
                             </div>
                         @endforeach
                     </div>

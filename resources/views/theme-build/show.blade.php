@@ -110,7 +110,9 @@
     @else
         {{-- Kondisi 3: Tampilkan section --}}
         @foreach ($visibleSections as $section)
-            @if (view()->exists('theme-build.sections.' . $section['type']))
+            @if (in_array($section['type'], ['univ_countdown', 'univ_maps', 'univ_rsvp', 'univ_comments']))
+                @include('themes.partials.universal-sections', ['renderOnly' => $section['type']])
+            @elseif (view()->exists('theme-build.sections.' . $section['type']))
                 @include('theme-build.sections.' . $section['type'])
             @endif
         @endforeach

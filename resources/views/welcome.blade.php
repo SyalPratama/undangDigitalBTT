@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Ngajak.com | Cinematic Digital Invitation')
+@section('title', 'Cinematic Digital Invitation')
 
 @section('content')
     <!-- Hero Badge -->
@@ -28,18 +28,27 @@
 
     <!-- Main CTAs -->
     <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-        <button
-            class="w-full sm:w-auto bg-[#4c229a] hover:bg-[#3b1979] text-white px-8 py-4 rounded-full font-medium shadow-xl shadow-purple-900/10 transition duration-300 flex items-center justify-center gap-2 group">
+        @auth
+            @if(Auth::user()->hasRole('reseller'))
+                <a href="{{ route('reseller.kelola-undangan.index') }}" class="w-full sm:w-auto bg-[#4c229a] hover:bg-[#3b1979] text-white px-8 py-4 rounded-full font-medium shadow-xl shadow-purple-900/10 transition duration-300 flex items-center justify-center gap-2 group">
+            @elseif(Auth::user()->hasRole('superadmin'))
+                <a href="{{ route('superadmin.dashboard') }}" class="w-full sm:w-auto bg-[#4c229a] hover:bg-[#3b1979] text-white px-8 py-4 rounded-full font-medium shadow-xl shadow-purple-900/10 transition duration-300 flex items-center justify-center gap-2 group">
+            @else
+                <a href="{{ route('customer.kelola-undangan.index') }}" class="w-full sm:w-auto bg-[#4c229a] hover:bg-[#3b1979] text-white px-8 py-4 rounded-full font-medium shadow-xl shadow-purple-900/10 transition duration-300 flex items-center justify-center gap-2 group">
+            @endif
+        @else
+            <a href="{{ route('register') }}" class="w-full sm:w-auto bg-[#4c229a] hover:bg-[#3b1979] text-white px-8 py-4 rounded-full font-medium shadow-xl shadow-purple-900/10 transition duration-300 flex items-center justify-center gap-2 group">
+        @endauth
             Create your invitation
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 class="w-4 h-4 group-hover:translate-x-1 transition-transform">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
             </svg>
-        </button>
-        <button
-            class="w-full sm:w-auto bg-white/80 hover:bg-white backdrop-blur-sm text-slate-800 px-8 py-4 rounded-full font-medium border border-slate-200/60 shadow-sm transition duration-300">
+        </a>
+        <a href="{{ route('themes.index') }}"
+            class="w-full sm:w-auto bg-white/80 hover:bg-white backdrop-blur-sm text-slate-800 px-8 py-4 rounded-full font-medium border border-slate-200/60 shadow-sm transition duration-300 flex items-center justify-center">
             Explore templates
-        </button>
+        </a>
     </div>
 
     <!-- Stepper Visual Journey -->
@@ -253,18 +262,27 @@
         </p>
 
         <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button
+            <a href="{{ route('pricing') }}"
                 class="w-full sm:w-auto bg-[#4c229a] hover:bg-[#3b1979] text-white px-6 py-3 rounded-full text-sm font-medium shadow-md transition duration-300 flex items-center justify-center gap-2">
                 Lihat semua paket
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                     stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
-            </button>
-            <button
-                class="w-full sm:w-auto bg-white/90 hover:bg-white text-slate-800 px-6 py-3 rounded-full text-sm font-medium border border-slate-200 shadow-sm transition duration-300">
+            </a>
+            @auth
+                @if(Auth::user()->hasRole('reseller'))
+                    <a href="{{ route('reseller.kelola-undangan.index') }}" class="w-full sm:w-auto bg-white/90 hover:bg-white text-slate-800 px-6 py-3 rounded-full text-sm font-medium border border-slate-200 shadow-sm transition duration-300 flex items-center justify-center">
+                @elseif(Auth::user()->hasRole('superadmin'))
+                    <a href="{{ route('superadmin.dashboard') }}" class="w-full sm:w-auto bg-white/90 hover:bg-white text-slate-800 px-6 py-3 rounded-full text-sm font-medium border border-slate-200 shadow-sm transition duration-300 flex items-center justify-center">
+                @else
+                    <a href="{{ route('customer.kelola-undangan.index') }}" class="w-full sm:w-auto bg-white/90 hover:bg-white text-slate-800 px-6 py-3 rounded-full text-sm font-medium border border-slate-200 shadow-sm transition duration-300 flex items-center justify-center">
+                @endif
+            @else
+                <a href="{{ route('register') }}" class="w-full sm:w-auto bg-white/90 hover:bg-white text-slate-800 px-6 py-3 rounded-full text-sm font-medium border border-slate-200 shadow-sm transition duration-300 flex items-center justify-center">
+            @endauth
                 Coba gratis
-            </button>
+            </a>
         </div>
     </div>
 @endsection
