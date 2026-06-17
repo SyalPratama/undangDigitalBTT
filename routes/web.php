@@ -33,7 +33,13 @@ use Illuminate\Support\Facades\Route;
 // OTP
 use App\Http\Controllers\Auth\RegisterOtpController;
 
-Route::domain('{subdomain}.' . env('APP_DOMAIN', 'localhost'))->group(function () {
+$appDomain = env('APP_DOMAIN');
+if (!$appDomain) {
+    $parsed = parse_url(config('app.url'));
+    $appDomain = $parsed['host'] ?? 'localhost';
+}
+
+Route::domain('{subdomain}.' . $appDomain)->group(function () {
     Route::get('/', [InvitationController::class, 'showSubdomain'])->name('invitation.subdomain');
 });
 
