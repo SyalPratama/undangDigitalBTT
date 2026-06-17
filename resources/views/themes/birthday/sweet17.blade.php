@@ -551,9 +551,9 @@
 
             while (node = walker.nextNode()) {
                 const text = node.nodeValue;
-                if (text.includes('@if') || text.includes('@foreach') || text.includes('@endforeach') || text.includes('@else') || text.includes('@endif')) {
+                if (text.includes('@@if') || text.includes('@@foreach') || text.includes('@@endforeach') || text.includes('@@else') || text.includes('@@endif')) {
                     nodesToClean.push({ node, type: 'directive' });
-                } else if (text.includes('{{') && text.includes('}}')) {
+                } else if (text.includes('@{{') && text.includes('@}}')) {
                     nodesToClean.push({ node, type: 'variable', originalText: text });
                 }
             }
@@ -589,7 +589,7 @@
             });
 
             document.querySelectorAll('input, select, textarea').forEach(el => {
-                if (el.value.includes('{{')) el.value = '';
+                if (el.value.includes('@{{')) el.value = '';
             });
 
             // Initialize Background Sparkles
