@@ -460,6 +460,13 @@ class ResKelolaUndanganController extends Controller
     {
         $customerIds = \App\Models\User::where('reseller_id', Auth::id())->pluck('id')->push(Auth::id());
         $invitation = Invitation::whereIn('user_id', $customerIds)->with('events')->findOrFail($id);
-        return view('reseller.kelola-undangan.map', compact('invitation'));
+        
+        $guests = \App\Models\InvitationGuest::where('invitation_id', $id)
+            ->where('is_location_shared', true)
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get();
+            
+        return view('reseller.kelola-undangan.map', compact('invitation', 'guests'));
     }
 }

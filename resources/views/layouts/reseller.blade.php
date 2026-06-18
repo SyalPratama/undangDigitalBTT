@@ -91,20 +91,20 @@
             </a>
 
             {{-- Jadi Kontributor --}}
-            <a href="{{ route('reseller.kontributor.index') }}"
+            {{-- <a href="{{ route('reseller.kontributor.index') }}"
                 class="flex items-center gap-3 px-4 py-3 text-[14px] font-medium rounded-full transition-all duration-200
                 {{ request()->routeIs('reseller.kontributor.*') ? 'bg-[#6d28d9] text-white shadow-md shadow-purple-500/20' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
                 <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
                 Jadi Kontributor
-            </a>
+            </a> --}}
 
             {{-- Reseller --}}
-            <a href="{{ route('reseller.user.index') }}"
+            {{-- <a href="{{ route('reseller.user.index') }}"
                 class="flex items-center gap-3 px-4 py-3 text-[14px] font-medium rounded-full transition-all duration-200
                 {{ request()->routeIs('reseller.user.*') ? 'bg-[#6d28d9] text-white shadow-md shadow-purple-500/20' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
                 <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                 Reseller
-            </a>
+            </a> --}}
         </nav>
 
         <div class="p-6 shrink-0">

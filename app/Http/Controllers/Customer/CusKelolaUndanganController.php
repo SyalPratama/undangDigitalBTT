@@ -448,6 +448,13 @@ class CusKelolaUndanganController extends Controller
     public function map($id)
     {
         $invitation = Invitation::where('user_id', Auth::id())->with('events')->findOrFail($id);
-        return view('customer.kelola-undangan.map', compact('invitation'));
+        
+        $guests = \App\Models\InvitationGuest::where('invitation_id', $id)
+            ->where('is_location_shared', true)
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get();
+            
+        return view('customer.kelola-undangan.map', compact('invitation', 'guests'));
     }
 }

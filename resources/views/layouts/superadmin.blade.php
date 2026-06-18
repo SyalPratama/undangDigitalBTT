@@ -14,6 +14,7 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 20px; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
         function showLockedAlert(featureName, upgradeUrl) {
             Swal.fire({
@@ -100,6 +101,14 @@
                 {{ request()->routeIs('superadmin.packages.*') ? 'bg-[#6d28d9] text-white shadow-md shadow-purple-500/20' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
                 <i class="fa-solid fa-box-open text-[16px] w-[18px] text-center"></i>
                 Kelola Paket
+            </a>
+
+            {{-- Kelola Pembayaran --}}
+            <a href="{{ route('superadmin.transactions.index') }}"
+                class="flex items-center gap-3 px-4 py-3 text-[14px] font-medium rounded-full transition-all duration-200
+                {{ request()->routeIs('superadmin.transactions.*') ? 'bg-[#6d28d9] text-white shadow-md shadow-purple-500/20' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
+                <i class="fa-solid fa-money-bill-transfer text-[16px] w-[18px] text-center"></i>
+                Kelola Pembayaran
             </a>
         </nav>
 

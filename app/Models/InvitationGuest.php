@@ -18,8 +18,11 @@ class InvitationGuest extends Model
     protected $fillable = [
         'invitation_id',
         'name',
+        'email',
         'status',
         'is_location_shared',
+        'latitude',
+        'longitude',
     ];
 
     protected $casts = [

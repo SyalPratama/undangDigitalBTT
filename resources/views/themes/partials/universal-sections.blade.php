@@ -230,6 +230,10 @@
                             <input type="text" id="univ-rsvp-name" class="univ-input" placeholder="Masukkan nama Anda" required>
                         </div>
                         <div>
+                            <label class="block text-sm opacity-70 mb-1">Email Aktif</label>
+                            <input type="email" id="univ-rsvp-email" class="univ-input" placeholder="Untuk menerima pengingat/lokasi acara">
+                        </div>
+                        <div>
                             <label class="block text-sm opacity-70 mb-1">Konfirmasi Kehadiran</label>
                             <select id="univ-rsvp-status" class="univ-input" required>
                                 <option value="" disabled selected>Pilih status kehadiran</option>
@@ -266,6 +270,7 @@
 
                 const data = {
                     name: document.getElementById('univ-rsvp-name').value,
+                    email: document.getElementById('univ-rsvp-email').value,
                     status: document.getElementById('univ-rsvp-status').value,
                     _token: '{{ csrf_token() }}'
                 };

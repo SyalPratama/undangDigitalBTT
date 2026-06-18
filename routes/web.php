@@ -28,6 +28,8 @@ use App\Http\Controllers\BuilderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ThemeBuildController;
 use App\Http\Controllers\PublicInteractionController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\Superadmin\TransactionController as SuperadminTransactionController;
 use Illuminate\Support\Facades\Route;
 
 // OTP
@@ -58,6 +60,9 @@ Route::get('/undangan/{slug}', [InvitationController::class, 'show'])->name('inv
 Route::post('/invitation/{id}/rsvp', [PublicInteractionController::class, 'storeRsvp'])->name('invitation.rsvp');
 Route::post('/invitation/{id}/comment', [PublicInteractionController::class, 'storeComment'])->name('invitation.comment');
 
+Route::get('/guest/{id}/checkin', [PublicInteractionController::class, 'showCheckin'])->name('guest.checkin');
+Route::post('/guest/{id}/checkin', [PublicInteractionController::class, 'storeCheckinLocation'])->name('guest.checkin.store');
+
 Route::get('/builder/{invitation}', [BuilderController::class, 'index']);
 Route::post('/builder/{invitation}/save', [BuilderController::class, 'save']);
 
@@ -70,6 +75,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Transaksi user
+    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -93,6 +101,11 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('themes/{id}/toggle', [ThemeController::class, 'toggleStatus'])->name('themes.toggle');
         Route::get('themes/{id}/preview', [ThemeController::class, 'preview'])->name('themes.preview');
         Route::resource('packages', PackageController::class)->except(['show']);
+        
+        // Transaksi
+        Route::get('transactions', [SuperadminTransactionController::class, 'index'])->name('transactions.index');
+        Route::post('transactions/{id}/confirm', [SuperadminTransactionController::class, 'confirm'])->name('transactions.confirm');
+        Route::post('transactions/{id}/reject', [SuperadminTransactionController::class, 'reject'])->name('transactions.reject');
     });
 
     // RESELLER
