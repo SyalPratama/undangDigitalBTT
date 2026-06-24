@@ -40,8 +40,20 @@ services:
     networks:
       - invitation_net
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: invitation-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - invitation_net
+
 networks:
   invitation_net:
 
 volumes:
   db_data:
+  ollama-data:

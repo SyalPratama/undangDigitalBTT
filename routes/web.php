@@ -9,6 +9,7 @@ use App\Http\Controllers\Superadmin\KelolaUserController;
 use App\Http\Controllers\Superadmin\KelolaUndanganController;
 use App\Http\Controllers\Superadmin\ThemeController;
 use App\Http\Controllers\Superadmin\PackageController;
+use App\Http\Controllers\AdminChatController;
 
 // RESELLER
 use App\Http\Controllers\Reseller\ResDashboardController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\BuilderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ThemeBuildController;
 use App\Http\Controllers\PublicInteractionController;
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Superadmin\TransactionController as SuperadminTransactionController;
 use Illuminate\Support\Facades\Route;
@@ -106,7 +108,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('transactions', [SuperadminTransactionController::class, 'index'])->name('transactions.index');
         Route::post('transactions/{id}/confirm', [SuperadminTransactionController::class, 'confirm'])->name('transactions.confirm');
         Route::post('transactions/{id}/reject', [SuperadminTransactionController::class, 'reject'])->name('transactions.reject');
-    });
+
+        
+        Route::get('chatbot', [AdminChatController::class, 'index'])->name('chatbot.index');
+        Route::post('chatbot/knowledge', [AdminChatController::class, 'storeChatbotKnowledge'])->name('chatbot.store');
+        Route::patch('chatbot/knowledge/{id}', [AdminChatController::class, 'updateChatbotKnowledge'])->name('chatbot.update');
+        Route::delete('chatbot/knowledge/{id}', [AdminChatController::class, 'destroyChatbotKnowledge'])->name('chatbot.destroy');
+        Route::patch('chatbot/leads/{id}/status', [AdminChatController::class, 'toggleLeadStatus'])->name('chatbot.lead.status');
+        Route::get('chatbot/leads/{id}/history', [AdminChatController::class, 'getLeadHistory'])->name('chatbot.lead.history');
+        Route::post('chatbot/leads/{id}/reply', [AdminChatController::class, 'reply']);
+        });
 
     // RESELLER
     Route::middleware(['role:reseller'])->prefix('reseller')->name('reseller.')->group(function () {
@@ -166,5 +177,10 @@ Route::prefix('theme-builder')->middleware(['auth'])->group(function(){
     Route::get('/{invitation}/preview', [ThemeBuildController::class, 'preview'])->name('theme-builder.preview');
 });
 
+Route::post('/api/chatbot/send', [ChatbotController::class, 'processChat']);
+
+Route::post('/api/chatbot/live/request', [ChatbotController::class, 'requestLiveChat']);
+Route::post('/api/chatbot/live/send', [ChatbotController::class, 'sendLiveChatMessage']);
+Route::get('/api/chatbot/live/poll/{leadId}', [ChatbotController::class, 'pollLiveChat']);
 
 require __DIR__.'/auth.php';
