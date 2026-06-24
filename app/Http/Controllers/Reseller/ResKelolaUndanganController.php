@@ -307,6 +307,11 @@ class ResKelolaUndanganController extends Controller
                     }
                 }
 
+                // ====== PASTIKAN FOLDER TUJUAN UPLOAD ADA ======
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+
                 if ($request->hasFile('media_cover') && $request->file('media_cover')->isValid()) {
                     $file = $request->file('media_cover');
                     $fileSize = $file->getSize();

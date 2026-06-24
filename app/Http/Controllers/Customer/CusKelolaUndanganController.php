@@ -282,6 +282,11 @@ class CusKelolaUndanganController extends Controller
                     }
                 }
 
+                // ====== PASTIKAN FOLDER TUJUAN UPLOAD ADA ======
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+
                 // ====== PENANGANAN UPLOAD MEDIA COVER ======
                 if ($request->hasFile('media_cover') && $request->file('media_cover')->isValid()) {
                     $file = $request->file('media_cover');

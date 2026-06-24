@@ -216,7 +216,8 @@
 
     {{-- SECTION: RSVP --}}
     {{-- SECTION: RSVP --}}
-    @if($secId == 'univ_rsvp')
+    @if($secId == 'univ_rsvp' && !isset($hasRenderedRsvpSection))
+    @php $hasRenderedRsvpSection = true; @endphp
         @if($userPackage && $userPackage->hasFeature('has_rsvp'))
         <section class="py-16 px-6 border-t border-black/5">
             <div class="max-w-3xl mx-auto">
@@ -327,7 +328,8 @@
     @endif
 
     {{-- SECTION: GUEST COMMENTS --}}
-    @if($secId == 'univ_comments')
+    @if($secId == 'univ_comments' && !isset($hasRenderedCommentSection))
+    @php $hasRenderedCommentSection = true; @endphp
         @if($userPackage && $userPackage->hasFeature('has_guest_comments'))
         <section class="py-16 px-6 border-t border-black/5">
             <div class="max-w-3xl mx-auto">

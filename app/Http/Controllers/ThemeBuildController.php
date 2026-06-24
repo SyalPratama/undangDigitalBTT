@@ -66,7 +66,11 @@ class ThemeBuildController extends Controller
             $file = $request->file('background_image');
             $filename = 'bg_' . $invitation->id . '_' . time() . '.' . $file->getClientOriginalExtension();
             
-            $file->move(public_path('assets/themes/build'), $filename);
+            $buildPath = public_path('assets/themes/build');
+            if (!file_exists($buildPath)) {
+                mkdir($buildPath, 0755, true);
+            }
+            $file->move($buildPath, $filename);
             $data['background_image'] = 'assets/themes/build/' . $filename;
         }
 

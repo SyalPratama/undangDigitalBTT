@@ -484,8 +484,13 @@
 <div id="stars-bg"></div>
 <div id="petals-bg"></div>
 
+@php
+    $bgMusic = $invitation->media()->where('type', 'music')->first();
+@endphp
 <audio id="bgMusic" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    @if($bgMusic)
+        <source src="{{ asset($bgMusic->file_path) }}" type="{{ $bgMusic->mime_type ?? 'audio/mpeg' }}">
+    @endif
 </audio>
 
 {{-- ══════════════════════════════════════════════
@@ -573,8 +578,8 @@
 
         {{-- Slideshow BG --}}
         @php $bgImgs=[]; @endphp
-        @if($invitation->cover?->file_path) @php $bgImgs[]=asset('storage/'.$invitation->cover->file_path); @endphp @endif
-        @foreach($invitation->galleries->take(3) as $g) @php $bgImgs[]=asset('storage/'.$g->file_path); @endphp @endforeach
+        @if($invitation->cover?->file_path) @php $bgImgs[]=asset($invitation->cover->file_path); @endphp @endif
+        @foreach($invitation->galleries->take(3) as $g) @php $bgImgs[]=asset($g->file_path); @endphp @endforeach
         @if(empty($bgImgs)) @php $bgImgs=['https://images.unsplash.com/photo-1528360983277-13d401cdc186?q=80&w=2000&auto=format&fit=crop']; @endphp @endif
         @foreach($bgImgs as $i=>$img)
             <div class="h-slide" data-i="{{ $i }}" style="position:absolute;inset:0;background-image:url('{{ $img }}');background-size:cover;background-position:center;transition:opacity 2.4s ease;opacity:{{ $i===0?'.28':'0' }};z-index:1"></div>
@@ -693,7 +698,7 @@
             <div class="profile-strip anim a2">
                 @if($invitation->firstPersonPhoto)
                     <div class="circle-photo">
-                        <img src="{{ asset('storage/'.$invitation->firstPersonPhoto->file_path) }}" alt="{{ $invitation->profile->first_name }}"
+                        <img src="{{ asset($invitation->firstPersonPhoto->file_path) }}" alt="{{ $invitation->profile->first_name }}"
                              onerror="this.style.display='none'">
                     </div>
                 @else
@@ -728,7 +733,7 @@
             <div class="profile-strip rev anim a4">
                 @if($invitation->secondPersonPhoto)
                     <div class="circle-photo" style="border-color:var(--gold)">
-                        <img src="{{ asset('storage/'.$invitation->secondPersonPhoto->file_path) }}" alt="{{ $invitation->profile->second_name }}"
+                        <img src="{{ asset($invitation->secondPersonPhoto->file_path) }}" alt="{{ $invitation->profile->second_name }}"
                              onerror="this.style.display='none'">
                     </div>
                 @else
@@ -834,7 +839,7 @@
             </div>
             <div class="gal-grid anim a2">
                 @forelse($invitation->galleries as $gallery)
-                    <div class="gi"><img src="{{ asset('storage/'.$gallery->file_path) }}" alt="Gallery {{ $loop->index+1 }}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='rgba(255,255,255,.03)'"></div>
+                    <div class="gi"><img src="{{ asset($gallery->file_path) }}" alt="Gallery {{ $loop->index+1 }}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='rgba(255,255,255,.03)'"></div>
                 @empty
                     @for($i=0;$i<6;$i++) <div class="gi" style="background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center"><i class="fa-regular fa-image" style="font-size:1.6rem;color:rgba(244,184,204,.14)"></i></div> @endfor
                 @endforelse
@@ -858,10 +863,11 @@
                 <div style="display:flex;flex-direction:column;gap:12px">
                     <input type="text" name="name" placeholder="Nama lengkap Anda" class="inv-inp" value="{{ request()->get('to') }}" required>
                     <input type="text" name="phone" placeholder="Nomor WhatsApp (opsional)" class="inv-inp">
-                    <select name="attending" class="inv-inp" style="appearance:none" required>
+                    <select name="status" class="inv-inp" style="appearance:none" required>
                         <option value="" disabled selected>Konfirmasi kehadiran</option>
-                        <option value="yes">✓ &nbsp; Ya, saya akan hadir</option>
-                        <option value="no">✗ &nbsp; Mohon maaf, tidak bisa hadir</option>
+                        <option value="hadir">✓ &nbsp; Ya, saya akan hadir</option>
+                        <option value="mungkin">? &nbsp; Mungkin hadir</option>
+                        <option value="tidak_hadir">✗ &nbsp; Mohon maaf, tidak bisa hadir</option>
                     </select>
                     <div style="display:flex;gap:10px;align-items:center">
                         <span style="font-size:12px;color:var(--muted-lt);white-space:nowrap;flex-shrink:0">Jumlah tamu:</span>
@@ -954,7 +960,7 @@
                     </div>
                     @if($invitation->qris?->file_path)
                     <div style="padding:12px;background:#fff;border-radius:10px;border:1px solid rgba(212,153,58,.28);margin-bottom:10px">
-                        <img src="{{ asset('storage/'.$invitation->qris->file_path) }}" alt="QRIS" style="width:96px;height:96px;object-fit:contain;display:block">
+                        <img src="{{ asset($invitation->qris->file_path) }}" alt="QRIS" style="width:96px;height:96px;object-fit:contain;display:block">
                     </div>
                     @else
                     <div style="width:122px;height:122px;background:var(--fog-2);border-radius:10px;border:1.5px dashed rgba(212,153,58,.35);margin-bottom:10px;display:flex;align-items:center;justify-content:center">
@@ -1122,25 +1128,80 @@
     // ─── RSVP ───
     function submitRsvp(e) {
         e.preventDefault();
-        // TODO: fetch('/rsvp', { method:'POST', headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}, body: new FormData(e.target) })
-        document.getElementById('rsvp-form').style.display = 'none';
-        document.getElementById('rsvp-ok').style.display   = 'block';
+        const form = e.target;
+        const btn  = form.querySelector('button[type="submit"]');
+        const origText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="font-size:11px"></i>&nbsp; Mengirim...';
+
+        const data = {
+            name:   form.name.value,
+            email:  '',
+            status: form.status.value,
+            _token: '{{ csrf_token() }}'
+        };
+
+        fetch('{{ route("invitation.rsvp", $invitation->id) }}', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body:    JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                document.getElementById('rsvp-form').style.display = 'none';
+                document.getElementById('rsvp-ok').style.display   = 'block';
+            } else {
+                alert(res.message || 'Gagal mengirim konfirmasi.');
+                btn.disabled = false;
+                btn.innerHTML = origText;
+            }
+        })
+        .catch(() => {
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+            btn.disabled = false;
+            btn.innerHTML = origText;
+        });
     }
 
     // ─── WISHES ───
     function submitWish(e) {
         e.preventDefault();
-        const f = e.target;
+        const f    = e.target;
         const name = f.wish_name.value.trim();
         const msg  = f.wish_msg.value.trim();
         if (!name || !msg) return;
-        const list = document.getElementById('wishes-twin');
-        const card = document.createElement('div');
-        card.className = 'wish-card';
-        card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><p style="font-size:12px;font-weight:500;color:rgba(237,232,255,.88)">${name}</p><p style="font-size:8px;color:var(--muted-lt)">Baru saja</p></div><p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:rgba(237,232,255,.55);line-height:1.85">"${msg}"</p>`;
-        list.prepend(card);
-        f.reset();
-        // TODO: fetch('/wishes', { method:'POST', headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}, body: new FormData(e.target) })
+
+        const btn      = f.querySelector('button[type="submit"]');
+        const origHTML = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="font-size:11px"></i>';
+
+        fetch('{{ route("invitation.comment", $invitation->id) }}', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body:    JSON.stringify({ name: name, message: msg, _token: '{{ csrf_token() }}' })
+        })
+        .then(r => r.json())
+        .then(res => {
+            btn.disabled = false;
+            btn.innerHTML = origHTML;
+            if (res.success) {
+                const list = document.getElementById('wishes-twin');
+                const card = document.createElement('div');
+                card.className = 'wish-card';
+                card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><p style="font-size:12px;font-weight:500;color:rgba(237,232,255,.88)">${name}</p><p style="font-size:8px;color:var(--muted-lt)">Baru saja</p></div><p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:rgba(237,232,255,.55);line-height:1.85">"${msg}"</p>`;
+                list.prepend(card);
+                f.reset();
+            } else {
+                alert(res.message || 'Gagal mengirim ucapan.');
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.innerHTML = origHTML;
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+        });
     }
 
     // ─── SLIDESHOW ───
@@ -1154,6 +1215,5 @@
         }, 5500);
     }
 </script>
-    @include('themes.partials.universal-sections')
 </body>
 </html>

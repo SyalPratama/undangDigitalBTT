@@ -220,13 +220,20 @@
                 </nav>
 
                 <div class="hidden md:flex items-center gap-4 text-sm font-medium">
-                    <a href="/login" class="text-slate-700 hover:text-indigo-600 transition">
-                        Masuk
-                    </a>
-                    <a href="/register"
-                        class="bg-[#4c229a] hover:bg-[#3b1979] text-white px-5 py-2.5 rounded-full shadow-lg shadow-indigo-100 transition duration-300">
-                        Mulai gratis
-                    </a>
+                    @auth
+                        <a href="{{ route('dashboard') }}"
+                            class="bg-[#4c229a] hover:bg-[#3b1979] text-white px-5 py-2.5 rounded-full shadow-lg shadow-indigo-100 transition duration-300">
+                            Dashboard
+                        </a>
+                    @else
+                        <a href="/login" class="text-slate-700 hover:text-indigo-600 transition">
+                            Masuk
+                        </a>
+                        <a href="/register"
+                            class="bg-[#4c229a] hover:bg-[#3b1979] text-white px-5 py-2.5 rounded-full shadow-lg shadow-indigo-100 transition duration-300">
+                            Mulai gratis
+                        </a>
+                    @endauth
                 </div>
 
                 <div class="flex md:hidden">
@@ -258,14 +265,21 @@
             </nav>
             <hr class="border-slate-200/60">
             <div class="flex flex-col gap-3 font-medium">
-                <a href="/login"
-                    class="mobile-nav-link text-center text-slate-700 hover:text-indigo-600 transition py-2 rounded-lg border border-slate-200">
-                    Masuk
-                </a>
-                <a href="/register"
-                    class="text-center bg-[#4c229a] hover:bg-[#3b1979] text-white py-2.5 rounded-full shadow-md transition duration-300">
-                    Mulai gratis
-                </a>
+                @auth
+                    <a href="{{ route('dashboard') }}"
+                        class="text-center bg-[#4c229a] hover:bg-[#3b1979] text-white py-2.5 rounded-full shadow-md transition duration-300">
+                        Dashboard
+                    </a>
+                @else
+                    <a href="/login"
+                        class="mobile-nav-link text-center text-slate-700 hover:text-indigo-600 transition py-2 rounded-lg border border-slate-200">
+                        Masuk
+                    </a>
+                    <a href="/register"
+                        class="text-center bg-[#4c229a] hover:bg-[#3b1979] text-white py-2.5 rounded-full shadow-md transition duration-300">
+                        Mulai gratis
+                    </a>
+                @endauth
             </div>
         </div>
     </header>
