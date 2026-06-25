@@ -14,7 +14,10 @@ class ThemeController extends Controller
 {
     public function index()
     {
-        $themes = Theme::with('category')->latest()->paginate(10);
+        $themes = Theme::with('category')
+            ->orderByRaw('GREATEST(created_at, updated_at) DESC')
+            ->paginate(10);
+            
         $categories = ThemeCategory::orderBy('name', 'asc')->get();
 
         return view('superadmin.theme.index', compact('themes', 'categories'));

@@ -12,7 +12,11 @@ class HomeController extends Controller
 
     public function index()
     {
-        $themes = Theme::with('category')->get();
+        // Menambahkan filter where('is_active', true)
+        $themes = Theme::with('category')
+                        ->where('is_active', true)
+                        ->get();
+                        
         $categories = ThemeCategory::all();
 
         return view('theme', compact('themes', 'categories'));
