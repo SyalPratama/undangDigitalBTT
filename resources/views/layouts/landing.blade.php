@@ -202,12 +202,16 @@
                 <div class="flex items-center gap-2 cursor-pointer">
                     <div
                         class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-indigo-200">
-                            <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0 -1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0 -1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
-                                <path d="M20 2v4"></path>
-                                <path d="M22 4h-4"></path>
-                                <circle cx="4" cy="20" r="2"></circle>
-                            </svg>
+                        <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path
+                                d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0 -1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0 -1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z">
+                            </path>
+                            <path d="M20 2v4"></path>
+                            <path d="M22 4h-4"></path>
+                            <circle cx="4" cy="20" r="2"></circle>
+                        </svg>
                     </div>
                     <span class="font-bold text-xl tracking-tight text-[#2d124d]">
                         ngajak<span class="text-indigo-600">.my.id</span>
@@ -221,13 +225,76 @@
                 </nav>
 
                 <div class="hidden md:flex items-center gap-4 text-sm font-medium">
-                    <a href="/login" class="text-slate-700 hover:text-indigo-600 transition">
-                        Masuk
-                    </a>
-                    <a href="/register"
-                        class="bg-[#4c229a] hover:bg-[#3b1979] text-white px-5 py-2.5 rounded-full shadow-lg shadow-indigo-100 transition duration-300">
-                        Mulai gratis
-                    </a>
+                    @auth
+                        <div class="relative group">
+                            <button class="flex items-center gap-2 text-slate-700 hover:text-indigo-600 transition py-2">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 border border-indigo-200">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </div>
+                                <span>{{ Auth::user()->name }}</span>
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <div
+                                class="absolute right-0 top-full mt-0 w-48 bg-white rounded-xl shadow-2xl border border-slate-100 py-2 hidden group-hover:block z-50">
+                                <div class="px-4 py-2 border-b border-slate-50">
+                                    <p class="text-xs text-slate-400">Akun Anda</p>
+                                    <p class="text-sm font-bold text-slate-700 truncate">{{ Auth::user()->name }}</p>
+                                </div>
+
+                                {{-- LOGIKA ROLE --}}
+                                @php
+                                    $user = Auth::user();
+                                    // Tentukan route dashboard berdasarkan role
+                                    $dashboardRoute = match (true) {
+                                        $user->hasRole('superadmin') => route('superadmin.dashboard'),
+                                        $user->hasRole('reseller') => route('reseller.dashboard'),
+                                        default => route('customer.dashboard'),
+                                    };
+                                @endphp
+
+                                {{-- Menu Dashboard --}}
+                                <a href="{{ $dashboardRoute }}"
+                                    class="group flex items-center gap-3 px-4 py-2.5 text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200">
+                                    <svg class="w-4 h-4 opacity-70 group-hover:opacity-100" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                    </svg>
+                                    <span class="font-medium">Dashboard</span>
+                                </a>
+
+                                {{-- Garis pembatas tipis --}}
+                                <div class="my-1 border-t border-slate-100"></div>
+
+                                {{-- Menu Logout --}}
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 hover:text-red-700 transition-all duration-200">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        <span class="font-medium">Logout</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @else
+                        <a href="/login" class="text-slate-700 hover:text-indigo-600 transition">Masuk</a>
+                        <a href="/register"
+                            class="bg-[#4c229a] hover:bg-[#3b1979] text-white px-5 py-2.5 rounded-full shadow-lg shadow-indigo-100 transition duration-300">
+                            Mulai gratis
+                        </a>
+                    @endauth
                 </div>
 
                 <div class="flex md:hidden">
@@ -254,19 +321,46 @@
             <nav class="flex flex-col gap-4 text-base font-medium text-slate-600">
                 <a href="{{ url('/') }}#features"
                     class="mobile-nav-link hover:text-indigo-600 transition py-1">Fitur</a>
-                <a href="{{ route('themes.index') }}" class="mobile-nav-link hover:text-indigo-600 transition py-1">Template</a>
-                <a href="{{ route('pricing') }}" class="mobile-nav-link hover:text-indigo-600 transition py-1">Harga</a>
+                <a href="{{ route('themes.index') }}"
+                    class="mobile-nav-link hover:text-indigo-600 transition py-1">Template</a>
+                <a href="{{ route('pricing') }}"
+                    class="mobile-nav-link hover:text-indigo-600 transition py-1">Harga</a>
             </nav>
             <hr class="border-slate-200/60">
             <div class="flex flex-col gap-3 font-medium">
-                <a href="/login"
-                    class="mobile-nav-link text-center text-slate-700 hover:text-indigo-600 transition py-2 rounded-lg border border-slate-200">
-                    Masuk
-                </a>
-                <a href="/register"
-                    class="text-center bg-[#4c229a] hover:bg-[#3b1979] text-white py-2.5 rounded-full shadow-md transition duration-300">
-                    Mulai gratis
-                </a>
+                @auth
+                    @php $user = Auth::user(); @endphp
+
+                    @if ($user->hasRole('superadmin'))
+                        <a href="{{ route('superadmin.dashboard') }}"
+                            class="mobile-nav-link text-center text-slate-700 py-2 rounded-lg border border-slate-200">
+                            Kembali ke Dashboard
+                        </a>
+                    @elseif($user->hasRole('reseller'))
+                        <a href="{{ route('reseller.dashboard') }}"
+                            class="mobile-nav-link text-center text-slate-700 py-2 rounded-lg border border-slate-200">
+                            Kembali ke Dashboard
+                        </a>
+                    @else
+                        <a href="{{ route('customer.dashboard') }}"
+                            class="mobile-nav-link text-center text-slate-700 py-2 rounded-lg border border-slate-200">
+                            Kembali ke Dashboard {{ $user->name }}
+                        </a>
+                    @endif
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="w-full text-center bg-red-600 text-white py-2.5 rounded-full shadow-md">
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <a href="/login"
+                        class="mobile-nav-link text-center text-slate-700 py-2 rounded-lg border border-slate-200">Masuk</a>
+                    <a href="/register" class="text-center bg-[#4c229a] text-white py-2.5 rounded-full shadow-md">Mulai
+                        gratis</a>
+                @endauth
             </div>
         </div>
     </header>
@@ -282,8 +376,12 @@
                     <div class="flex items-center gap-2 cursor-pointer mb-4">
                         <div
                             class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-indigo-100">
-                            <svg class="w-3.5 h-3.5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0 -1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                            <svg class="w-3.5 h-3.5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0 -1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z">
+                                </path>
                                 <path d="M20 2v4"></path>
                                 <path d="M22 4h-4"></path>
                                 <circle cx="4" cy="20" r="2"></circle>
@@ -300,7 +398,8 @@
                 <div>
                     <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Produk</h4>
                     <ul class="space-y-2.5 text-xs sm:text-sm font-medium text-slate-600">
-                        <li><a href="{{ route('themes.index') }}" class="hover:text-indigo-600 transition">Template</a></li>
+                        <li><a href="{{ route('themes.index') }}"
+                                class="hover:text-indigo-600 transition">Template</a></li>
                         <li><a href="{{ route('pricing') }}" class="hover:text-indigo-600 transition">Harga</a></li>
                         <li><a href="/register" class="hover:text-indigo-600 transition">Mulai gratis</a></li>
                         <li><a href="/login" class="hover:text-indigo-600 transition">Masuk</a></li>
@@ -334,7 +433,7 @@
         </div>
     </footer>
 
-    
+
     @include('components.chatbot')
 
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
