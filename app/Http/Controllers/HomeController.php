@@ -51,6 +51,7 @@ class HomeController extends Controller
         if (!$invitation) {
             abort(404, "Data dummy undangan dengan ID: {$invitationId} tidak ditemukan di database.");
         }
+        
 
         $invitation->setRelation('theme', $theme);
 

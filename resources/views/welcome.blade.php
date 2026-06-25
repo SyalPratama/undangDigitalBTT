@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Cinematic Digital Invitation')
+@section('title', 'Ngajak.my.id | Home')
 
 @section('content')
     <!-- Hero Badge -->

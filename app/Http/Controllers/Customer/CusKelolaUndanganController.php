@@ -110,7 +110,7 @@ class CusKelolaUndanganController extends Controller
             'events.*.address'   => 'required|string',
             'media_cover'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'media_gallery.*'    => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'media_music'        => 'nullable|file|mimes:mp3,wav,ogg|max:15360', // Dukung hingga 15MB
+            'media_music' => 'nullable', // Dukung hingga 15MB
         ]);
 
         if ($validator->fails()) {
@@ -391,15 +391,31 @@ class CusKelolaUndanganController extends Controller
                             ->with('success', $isEdit ? 'Undangan berhasil diperbarui.' : 'Undangan berhasil dibuat.');
 
         } catch (\Exception $e) {
-            Log::error('=== PROSES SIMPAN/UPDATE UNDANGAN GAGAL (ROLLBACK) ===', [
+            Log::error('=== PROSES SIMPAN/UPDATE UNDANGAN GAGAL ===', [
                 'error_message' => $e->getMessage()
             ]);
 
-            if ($request->ajax()) {
-                return response()->json(['status' => 'error', 'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()], 500);
+            // Pesan default
+            $errorMessage = 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.';
+
+            // Cek apakah error karena pelanggaran constraint database (Unique Violation)
+            if ($e instanceof \Illuminate\Database\QueryException) {
+                $errorCode = $e->getCode(); // 23505 untuk PostgreSQL
+                if (str_contains($e->getMessage(), 'invitations_slug_unique')) {
+                    $errorMessage = 'Slug tersebut sudah digunakan, silakan pilih nama lain.';
+                } elseif (str_contains($e->getMessage(), 'invitations_custom_domain_unique')) {
+                    $errorMessage = 'Domain custom tersebut sudah digunakan orang lain.';
+                }
             }
 
-            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan sistem.');
+            if ($request->ajax()) {
+                return response()->json([
+                    'status' => 'error', 
+                    'message' => $errorMessage
+                ], 422); // Gunakan 422 agar konsisten dengan error validasi
+            }
+
+            return redirect()->back()->withInput()->with('error', $errorMessage);
         }
     }
 

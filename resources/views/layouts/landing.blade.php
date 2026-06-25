@@ -300,10 +300,10 @@
                 <div>
                     <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Produk</h4>
                     <ul class="space-y-2.5 text-xs sm:text-sm font-medium text-slate-600">
-                        <li><a href="#" class="hover:text-indigo-600 transition">Template</a></li>
-                        <li><a href="#" class="hover:text-indigo-600 transition">Harga</a></li>
-                        <li><a href="#" class="hover:text-indigo-600 transition">Mulai gratis</a></li>
-                        <li><a href="#" class="hover:text-indigo-600 transition">Masuk</a></li>
+                        <li><a href="{{ route('themes.index') }}" class="hover:text-indigo-600 transition">Template</a></li>
+                        <li><a href="{{ route('pricing') }}" class="hover:text-indigo-600 transition">Harga</a></li>
+                        <li><a href="/register" class="hover:text-indigo-600 transition">Mulai gratis</a></li>
+                        <li><a href="/login" class="hover:text-indigo-600 transition">Masuk</a></li>
                     </ul>
                 </div>
 
@@ -311,8 +311,8 @@
                     <div>
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Gabung Tim</h4>
                         <ul class="space-y-2.5 text-xs sm:text-sm font-medium text-slate-600">
-                            <li><a href="#" class="hover:text-indigo-600 transition">Jadi Kontributor</a></li>
-                            <li><a href="#" class="hover:text-indigo-600 transition">Jadi Reseller</a></li>
+                            <li><a href="/register" class="hover:text-indigo-600 transition">Jadi Kontributor</a></li>
+                            <li><a href="/register" class="hover:text-indigo-600 transition">Jadi Reseller</a></li>
                         </ul>
                     </div>
                     <div>

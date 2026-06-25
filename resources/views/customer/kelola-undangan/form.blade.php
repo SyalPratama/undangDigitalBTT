@@ -33,7 +33,8 @@
         $universitas = $projectData['universitas'] ?? '';
     @endphp
 
-    <div class="flex h-[calc(100vh-2rem)] min-h-screen overflow-hidden font-sans bg-slate-100 border border-slate-200 rounded-2xl shadow-xl mt-2 mb-2 lg:mx-6 lg:mb-6 lg:-mt-2">
+    <div
+        class="flex h-[calc(100vh-2rem)] min-h-screen overflow-hidden font-sans bg-slate-100 border border-slate-200 rounded-2xl shadow-xl mt-2 mb-2 lg:mx-6 lg:mb-6 lg:-mt-2">
 
         {{-- BAGIAN KIRI: EDITOR PANEL (SIDEBAR) --}}
         <div class="w-full lg:w-[480px] bg-white border-r border-slate-200 flex flex-col z-20 shadow-sm shrink-0">
@@ -83,7 +84,7 @@
 
                         @php
                             $reqThemeId = request('theme_id');
-                            $currentThemeId = old('theme_id', $invitation->theme_id ?? $reqThemeId ?? '');
+                            $currentThemeId = old('theme_id', $invitation->theme_id ?? ($reqThemeId ?? ''));
                             $currentTypeId = old('invitation_type_id', $invitation->invitation_type_id ?? '');
 
                             if (empty($currentTypeId) && !empty($reqThemeId)) {
@@ -163,8 +164,9 @@
 
                     <div id="theme-builder-panel" class="hidden">
                         <div class="flex-1 overflow-y-auto p-6">
-                            <div id="theme-auto-save-form" data-action="{{ isset($invitation) && $invitation->exists ? route('theme-builder.update', $invitation->id) : '' }}">
-                                
+                            <div id="theme-auto-save-form"
+                                data-action="{{ isset($invitation) && $invitation->exists ? route('theme-builder.update', $invitation->id) : '' }}">
+
 
                                 {{-- Warna & Font --}}
                                 <div class="space-y-4 mb-6">
@@ -239,18 +241,23 @@
 
                                 <ul id="sectionList" class="space-y-2 mb-6">
                                     @php
-                                        $themeSections = (!empty($invitation->design->sections) && is_array($invitation->design->sections)) 
-                                                            ? $invitation->design->sections 
-                                                            : [];
+                                        $themeSections =
+                                            !empty($invitation->design->sections) &&
+                                            is_array($invitation->design->sections)
+                                                ? $invitation->design->sections
+                                                : [];
                                     @endphp
                                     @foreach ($themeSections as $section)
                                         <li class="bg-slate-50 border border-slate-200 p-3 rounded-xl flex justify-between items-center cursor-move"
                                             data-type="{{ $section['type'] }}" draggable="true">
-                                            <span class="text-xs font-semibold text-slate-700 flex items-center pointer-events-none">
-                                                <i class="fa-solid fa-grip-vertical text-slate-300 mr-3 pointer-events-none"></i>{{ ucfirst($section['type']) }}
+                                            <span
+                                                class="text-xs font-semibold text-slate-700 flex items-center pointer-events-none">
+                                                <i
+                                                    class="fa-solid fa-grip-vertical text-slate-300 mr-3 pointer-events-none"></i>{{ ucfirst($section['type']) }}
                                             </span>
                                             <div class="flex items-center gap-3">
-                                                <input type="checkbox" onchange="updateThemeSectionsInput(); triggerThemeAutoSave(true);"
+                                                <input type="checkbox"
+                                                    onchange="updateThemeSectionsInput(); triggerThemeAutoSave(true);"
                                                     class="section-visible w-4 h-4 rounded-full auto-save"
                                                     {{ $section['visible'] ?? true ? 'checked' : '' }}>
                                                 <button type="button" onclick="removeSection(this)"
@@ -260,17 +267,22 @@
                                         </li>
                                     @endforeach
                                 </ul>
-                                <input type="hidden" name="sections" id="sectionsInput" value="{{ json_encode($themeSections) }}">
+                                <input type="hidden" name="sections" id="sectionsInput"
+                                    value="{{ json_encode($themeSections) }}">
                                 {{-- Upload Background --}}
                                 <div class="mb-6">
                                     <label class="text-[10px] uppercase font-bold text-slate-400">Background Image</label>
                                     <div class="mb-3">
-                                        <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block">Opacity Warna Background</label>
+                                        <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block">Opacity
+                                            Warna Background</label>
                                         <div class="flex items-center gap-2">
-                                            <input type="range" name="settings[bg_opacity]" min="0" max="100" value="{{ $invitation->design->settings['bg_opacity'] ?? 30 }}" 
+                                            <input type="range" name="settings[bg_opacity]" min="0"
+                                                max="100"
+                                                value="{{ $invitation->design->settings['bg_opacity'] ?? 30 }}"
                                                 class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer auto-save"
                                                 oninput="this.nextElementSibling.innerText = this.value + '%'">
-                                            <span class="text-xs font-bold text-slate-500 w-8">{{ $invitation->design->settings['bg_opacity'] ?? 30 }}%</span>
+                                            <span
+                                                class="text-xs font-bold text-slate-500 w-8">{{ $invitation->design->settings['bg_opacity'] ?? 30 }}%</span>
                                         </div>
                                     </div>
                                     <div class="mt-1 relative group">
@@ -544,7 +556,9 @@
                                 <img id="cover-preview-img"
                                     src="{{ isset($invitation) && $invitation->media->where('type', 'cover')->first() ? asset($invitation->media->where('type', 'cover')->first()->file_path) : '' }}"
                                     class="absolute inset-0 w-full h-full object-cover z-0 {{ isset($invitation) && $invitation->media->where('type', 'cover')->first() ? '' : 'hidden' }}">
-                                <button type="button" id="btn-remove-cover" onclick="removeCoverImage('{{ isset($invitation) && $invitation->media->where('type', 'cover')->first() ? $invitation->media->where('type', 'cover')->first()->id : '' }}')" class="absolute top-2 right-2 bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center transition-all z-20 shadow-md {{ isset($invitation) && $invitation->media->where('type', 'cover')->first() ? '' : 'hidden' }}">
+                                <button type="button" id="btn-remove-cover"
+                                    onclick="removeCoverImage('{{ isset($invitation) && $invitation->media->where('type', 'cover')->first() ? $invitation->media->where('type', 'cover')->first()->id : '' }}')"
+                                    class="absolute top-2 right-2 bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center transition-all z-20 shadow-md {{ isset($invitation) && $invitation->media->where('type', 'cover')->first() ? '' : 'hidden' }}">
                                     <i class="fa-solid fa-trash text-xs"></i>
                                 </button>
                             </div>
@@ -584,13 +598,14 @@
                         </div>
                     </div>
 
-                
-        <div class="sticky bottom-0 bg-white border-t border-slate-200 p-4 z-30">
-            <button type="button" onclick="manualSave()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
-            </button>
-        </div>
-    </form>
+
+                    <div class="sticky bottom-0 bg-white border-t border-slate-200 p-4 z-30">
+                        <button type="button" onclick="manualSave()"
+                            class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
             </div>
 
         </div>
@@ -602,15 +617,18 @@
             <div class="flex items-center justify-center pt-6 pb-2">
                 <div class="flex items-center bg-white p-1.5 rounded-xl shadow-sm border border-slate-200 gap-1">
                     <button type="button" onclick="changeDevice('mobile')" id="btn-mobile"
-                        class="device-btn px-4 py-1.5 rounded-lg text-xs font-semibold transition-all" style="background-color: #0f172a; color: #ffffff;">
+                        class="device-btn px-4 py-1.5 rounded-lg text-xs font-semibold transition-all"
+                        style="background-color: #0f172a; color: #ffffff;">
                         <i class="fa-solid fa-mobile-screen mr-1"></i> Mobile
                     </button>
                     <button type="button" onclick="changeDevice('tablet')" id="btn-tablet"
-                        class="device-btn px-4 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 text-xs font-semibold transition-all" style="background-color: transparent;">
+                        class="device-btn px-4 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 text-xs font-semibold transition-all"
+                        style="background-color: transparent;">
                         <i class="fa-solid fa-tablet-screen-button mr-1"></i> Tablet
                     </button>
                     <button type="button" onclick="changeDevice('desktop')" id="btn-desktop"
-                        class="device-btn px-4 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 text-xs font-semibold transition-all" style="background-color: transparent;">
+                        class="device-btn px-4 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 text-xs font-semibold transition-all"
+                        style="background-color: transparent;">
                         <i class="fa-solid fa-desktop mr-1"></i> Desktop
                     </button>
                     <div class="w-[1px] h-4 bg-slate-300 mx-1"></div>
@@ -671,7 +689,7 @@
     <script>
         // Menyimpan Status Data
         let isInvitationExists = {{ isset($invitation) && $invitation->exists ? 'true' : 'false' }};
-    let currentInvitationId = '{{ $invitation->id ?? '' }}';
+        let currentInvitationId = '{{ $invitation->id ?? '' }}';
         const autoSaveForm = document.getElementById('auto-save-form');
         let eventIndex = 0;
         const existingEvents = @json(isset($invitation) ? $invitation->events->toArray() : []);
@@ -831,8 +849,8 @@
             if (!themeSelect.value) return;
 
             const formData = new FormData(autoSaveForm);
-            if(isFinal) formData.append('is_final', '1');
-            
+            if (isFinal) formData.append('is_final', '1');
+
             const previewContainer = document.getElementById('preview-container-box');
             const emptyState = document.getElementById('preview-empty-state');
 
@@ -856,11 +874,14 @@
                 .then(async r => {
                     if (!r.ok) {
                         const errData = await r.json().catch(() => ({}));
-                        let errMsg = errData.message || 'Terjadi masalah pada server. Periksa isian form.';
+                        console.error("Detail Error Server:", errData); // <-- TAMBAHKAN INI
+
+                        let errMsg = errData.message || 'Terjadi masalah pada server.';
 
                         if (errData.errors) {
-                            const firstErrorKey = Object.keys(errData.errors)[0];
-                            errMsg = errData.errors[firstErrorKey][0];
+                            // Ambil semua error, bukan cuma yang pertama agar kita tahu apa yang salah
+                            const allErrors = Object.values(errData.errors).flat();
+                            errMsg = allErrors[0];
                         }
 
                         throw new Error(errMsg);
@@ -888,17 +909,18 @@
 
                             // UBAH BARIS INI: Gunakan save_url untuk action form (POST)
                             autoSaveForm.action = data.save_url;
-                    
-                    // Extract ID
-                    const urlParts = data.save_url.split('/');
-                    currentInvitationId = urlParts[urlParts.length - 1];
-                    
-                    // Update theme builder action
-                    const themeContainer = document.getElementById('theme-auto-save-form');
-                    if(themeContainer) {
-                        themeContainer.setAttribute('data-action', window.location.origin + '/theme-builder/' + currentInvitationId);
-                    }
-        
+
+                            // Extract ID
+                            const urlParts = data.save_url.split('/');
+                            currentInvitationId = urlParts[urlParts.length - 1];
+
+                            // Update theme builder action
+                            const themeContainer = document.getElementById('theme-auto-save-form');
+                            if (themeContainer) {
+                                themeContainer.setAttribute('data-action', window.location.origin + '/theme-builder/' +
+                                    currentInvitationId);
+                            }
+
 
                             // Tetap gunakan redirect_url untuk mengubah alamat di browser atas (visual saja)
                             window.history.replaceState(null, null, data.redirect_url);
@@ -928,8 +950,11 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'GAGAL MENYIMPAN',
-                        text: err.message + '\n\n(TIPS: Jika gagal upload, pastikan ukuran Foto maks 5MB dan Musik maks 10MB)',
-                        customClass: { popup: 'rounded-2xl' }
+                        text: err.message +
+                            '\n\n(TIPS: Jika gagal upload, pastikan ukuran Foto maks 5MB dan Musik maks 10MB)',
+                        customClass: {
+                            popup: 'rounded-2xl'
+                        }
                     });
 
                     const emptyState = document.getElementById('preview-empty-state');
@@ -1094,18 +1119,20 @@
                 filteredThemes.forEach(t => {
                     const isSelected = (t.id === currentThemeId) ? 'selected' : '';
                     const isPremium = t.is_premium ? true : false;
-                    
+
                     if (isPremium && !userCanAccessPremium) {
-                        themeSelect.innerHTML += `<option value="${t.id}" data-locked="true">👑 ${t.name} (Premium)</option>`;
+                        themeSelect.innerHTML +=
+                            `<option value="${t.id}" data-locked="true">👑 ${t.name} (Premium)</option>`;
                     } else {
                         const premiumIcon = isPremium ? '👑 ' : '';
-                        themeSelect.innerHTML += `<option value="${t.id}" ${isSelected}>${premiumIcon}${t.name}</option>`;
+                        themeSelect.innerHTML +=
+                            `<option value="${t.id}" ${isSelected}>${premiumIcon}${t.name}</option>`;
                     }
                 });
             }
             // Update previousThemeId after populating
             previousThemeId = themeSelect.value;
-            
+
             // Listen for theme selection changes
             themeSelect.addEventListener('change', function(e) {
                 const selectedOption = e.target.options[e.target.selectedIndex];
@@ -1419,7 +1446,7 @@
 
         function updateBuilderVisibility() {
             const selectedTheme = themeSelect.value;
-            
+
             let isSpecialTheme = false;
             if (typeof themesData !== 'undefined') {
                 const themeObj = themesData.find(t => t.id === selectedTheme);
@@ -1449,23 +1476,25 @@
 
         // Panggil saat halaman dimuat (jika sudah ada tema yang tersimpan)
         document.addEventListener('DOMContentLoaded', updateBuilderVisibility);
-    
+
 
         // FUNGSI SIMPAN MANUAL
         window.manualSave = function() {
             triggerAutoSave(true, true); // forceRefresh=true, isFinal=true
             triggerThemeAutoSave(true);
             const btn = document.querySelector('button[onclick="manualSave()"]');
-            if(btn) {
+            if (btn) {
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
-                setTimeout(() => { btn.innerHTML = originalText; }, 1500);
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 1500);
             }
         };
 
         // FUNGSI HAPUS COVER IMAGE
         window.removeCoverImage = function(id) {
-            if(!id) {
+            if (!id) {
                 document.getElementById('input-cover').value = '';
                 document.getElementById('cover-preview-img').src = '';
                 document.getElementById('cover-preview-img').classList.add('hidden');
@@ -1478,21 +1507,21 @@
             hiddenInput.name = 'deleted_media[]';
             hiddenInput.value = id;
             document.getElementById('auto-save-form').appendChild(hiddenInput);
-            
+
             document.getElementById('cover-preview-img').src = '';
             document.getElementById('cover-preview-img').classList.add('hidden');
             document.getElementById('cover-placeholder').classList.remove('hidden');
             document.getElementById('btn-remove-cover').classList.add('hidden');
-            
+
             triggerAutoSave(true);
         };
 
         // THEME BUILDER AUTO SAVE
         window.triggerThemeAutoSave = function(forceRefresh = false) {
             const themeContainer = document.getElementById('theme-auto-save-form');
-            if(!themeContainer || !isInvitationExists) return;
+            if (!themeContainer || !isInvitationExists) return;
             const actionUrl = themeContainer.getAttribute('data-action');
-            if(!actionUrl) return;
+            if (!actionUrl) return;
 
             const inputs = themeContainer.querySelectorAll('input, select');
             const formData = new FormData();
@@ -1500,9 +1529,9 @@
             formData.append('_method', 'PUT');
 
             inputs.forEach(input => {
-                if(input.type === 'file') {
-                    if(input.files.length > 0) formData.append(input.name, input.files[0]);
-                } else if(input.type === 'checkbox') {
+                if (input.type === 'file') {
+                    if (input.files.length > 0) formData.append(input.name, input.files[0]);
+                } else if (input.type === 'checkbox') {
                     // For sections logic, handled by sectionList below
                 } else {
                     formData.append(input.name, input.value);
@@ -1511,36 +1540,38 @@
 
             // handle sections
             const sectionInputs = document.getElementById('sectionsInput');
-            if(sectionInputs && sectionInputs.value) {
+            if (sectionInputs && sectionInputs.value) {
                 formData.append('sections', sectionInputs.value);
             }
 
             fetch(actionUrl, {
-                method: 'POST',
-                body: formData,
-                headers: { 'Accept': 'application/json' }
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (forceRefresh) refreshPreview();
-            })
-            .catch(err => console.error("Theme auto-save gagal: ", err));
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (forceRefresh) refreshPreview();
+                })
+                .catch(err => console.error("Theme auto-save gagal: ", err));
         };
 
         // Auto save listener for theme builder
         document.addEventListener('input', (e) => {
             if (e.target.closest('#theme-auto-save-form')) {
                 if (e.target.type === 'file') return;
-                
+
                 syncToPreview(e.target.name, e.target.value);
-                
+
                 clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(() => {
                     triggerThemeAutoSave(false);
                 }, 1500);
             }
         });
-        
+
         document.addEventListener('change', (e) => {
             if (e.target.closest('#theme-auto-save-form')) {
                 if (e.target.type !== 'text') {
@@ -1552,19 +1583,21 @@
         // HAPUS BACKGROUND IMAGE
         window.removeBackgroundImage = function() {
             const themeContainer = document.getElementById('theme-auto-save-form');
-            if(!themeContainer || !isInvitationExists) return;
+            if (!themeContainer || !isInvitationExists) return;
             const actionUrl = themeContainer.getAttribute('data-action');
-            
+
             // Simulasikan penghapusan background dengan request null atau deleted_background
             const formData = new FormData();
             formData.append('_token', document.querySelector('input[name="_token"]').value);
             formData.append('_method', 'PUT');
             formData.append('remove_background_image', '1');
-            
+
             fetch(actionUrl, {
                 method: 'POST',
                 body: formData,
-                headers: { 'Accept': 'application/json' }
+                headers: {
+                    'Accept': 'application/json'
+                }
             }).then(() => {
                 document.getElementById('image-preview-container').classList.add('hidden');
                 document.getElementById('bg-input').value = '';
@@ -1575,13 +1608,13 @@
         // PREVIEW BACKGROUND IMAGE SEBELUM UPLOAD
         window.previewImage = function(event) {
             const reader = new FileReader();
-            reader.onload = function(){
+            reader.onload = function() {
                 const output = document.getElementById('current-bg-image');
                 output.src = reader.result;
                 document.getElementById('image-preview-container').classList.remove('hidden');
                 triggerThemeAutoSave(true);
             };
-            if(event.target.files[0]) {
+            if (event.target.files[0]) {
                 reader.readAsDataURL(event.target.files[0]);
             }
         };
@@ -1605,7 +1638,7 @@
                 const el = document.querySelector(`[name="${key}"]`);
                 if (el && !el.value) {
                     el.value = val;
-                    if(typeof syncToPreview === 'function') syncToPreview(key, val);
+                    if (typeof syncToPreview === 'function') syncToPreview(key, val);
                     needsSave = true;
                 }
             }
@@ -1618,7 +1651,7 @@
         window.updateBuilderVisibility = function() {
             originalUpdateBuilderVisibility();
             const selectedTheme = themeSelect.value;
-            
+
             let isSpecialTheme = false;
             if (typeof themesData !== 'undefined') {
                 const themeObj = themesData.find(t => t.id === selectedTheme);
@@ -1632,16 +1665,16 @@
 
             if (isSpecialTheme) {
                 applyDefaultDataIfEmpty();
-                
+
                 // Jika undangan belum ada ID nya, buat dulu draft nya
-                if(!isInvitationExists) {
+                if (!isInvitationExists) {
                     triggerAutoSave(true);
                 } else {
                     // Update the form action dynamically if we just got the ID
                     const themeContainer = document.getElementById('theme-auto-save-form');
-                    if(themeContainer && !themeContainer.getAttribute('data-action')) {
-                         const actionUrl = `${window.location.origin}/theme-builder/${currentInvitationId}`;
-                         themeContainer.setAttribute('data-action', actionUrl);
+                    if (themeContainer && !themeContainer.getAttribute('data-action')) {
+                        const actionUrl = `${window.location.origin}/theme-builder/${currentInvitationId}`;
+                        themeContainer.setAttribute('data-action', actionUrl);
                     }
                 }
             }
@@ -1661,10 +1694,11 @@
         window.addSection = function() {
             const type = document.getElementById('newSectionType').value;
             const ul = document.getElementById('sectionList');
-            if(!type) return;
-            
+            if (!type) return;
+
             const li = document.createElement('li');
-            li.className = "bg-slate-50 border border-slate-200 p-3 rounded-xl flex justify-between items-center cursor-move";
+            li.className =
+                "bg-slate-50 border border-slate-200 p-3 rounded-xl flex justify-between items-center cursor-move";
             li.dataset.type = type;
             li.draggable = true;
             li.innerHTML = `
@@ -1692,12 +1726,12 @@
         if (themeSectionList) {
             let draggedThemeItem = null;
             themeSectionList.addEventListener('dragstart', function(e) {
-                if(e.target.tagName !== 'LI') return;
+                if (e.target.tagName !== 'LI') return;
                 draggedThemeItem = e.target;
                 setTimeout(() => draggedThemeItem.style.opacity = '0.5', 0);
             });
             themeSectionList.addEventListener('dragend', function(e) {
-                if(!draggedThemeItem) return;
+                if (!draggedThemeItem) return;
                 draggedThemeItem.style.opacity = '1';
                 draggedThemeItem = null;
                 updateThemeSectionsInput();
@@ -1722,12 +1756,17 @@
                 const box = child.getBoundingClientRect();
                 const offset = y - box.top - box.height / 2;
                 if (offset < 0 && offset > closest.offset) {
-                    return { offset: offset, element: child };
+                    return {
+                        offset: offset,
+                        element: child
+                    };
                 } else {
                     return closest;
                 }
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }, {
+                offset: Number.NEGATIVE_INFINITY
+            }).element;
         }
     </script>
-    
+
 @endsection
